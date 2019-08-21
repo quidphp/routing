@@ -15,8 +15,8 @@ class Exception extends Base\Test
 		$e = new Routing\Exception('well');
 
 		// exception
-		assert(!$e instanceof Main\Contract\Catchable);
-		assert($e->getCode() === 34);
+		\assert(!$e instanceof Main\Contract\Catchable);
+		\assert($e->getCode() === 34);
 		
 		return true;
 	}

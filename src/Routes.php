@@ -12,16 +12,16 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	
 	
 	// config
-	public static $config = array(
+	public static $config = [
 		'priorityIncrement'=>10, // incrémentation de la priorité lors de la méthode init
-		'option'=>array(
+		'option'=>[
 			'methodIgnore'=>'isIgnored',
-			'subClass'=>Route::class)
-	);
+			'subClass'=>Route::class]
+	];
 	
 	
 	// map
-	protected static $allow = array('set','unset','remove','filter','sort','serialize','clone'); // méthodes permises
+	protected static $allow = ['set','unset','remove','filter','sort','serialize','clone']; // méthodes permises
 	protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
 	
 	
@@ -29,9 +29,9 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// prepare une clé pour les méthodes qui soumette une clé
 	protected function onPrepareKey($return) 
 	{
-		if((is_string($return) && class_exists($return,false)) || is_object($return))
+		if((\is_string($return) && \class_exists($return,false)) || \is_object($return))
 		{
-			if(is_a($return,Route::class,true))
+			if(\is_a($return,Route::class,true))
 			$return = static::getKey($return);
 		}
 		
@@ -57,7 +57,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// retourne toutes les routes qui match l'objet requête
 	public function match(Main\Request $request,?Main\Session $session=null):array 
 	{
-		$return = array();
+		$return = [];
 		$session = ($session instanceof Main\Session)? $session:Main\Session::inst();
 		
 		foreach ($this->arr() as $key => $value) 
@@ -82,7 +82,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 		
 		foreach ($this->arr() as $value) 
 		{
-			if(is_string($after))
+			if(\is_string($after))
 			{
 				if($value === $after)
 				$after = null;
@@ -126,7 +126,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// si aucun parent, la valeur est null
 	public function keyParent():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $value) 
 		{
@@ -193,7 +193,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 		if(!empty($value))
 		{
 			$parent = $value::parent();
-			if(is_string($parent))
+			if(\is_string($parent))
 			$return = $this->get($parent);
 		}
 		
@@ -363,7 +363,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// toutes les différentes versions de segment sont aussi triggés pour routeSegment
 	public function all():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $key => $value)
 		{
@@ -393,14 +393,14 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// possible de retourner plusieurs langues
 	public function sitemap($langs,?array $option=null):array 
 	{
-		$return = array();
+		$return = [];
 
-		if(!is_array($langs))
-		$langs = array($langs);
+		if(!\is_array($langs))
+		$langs = [$langs];
 		
 		foreach ($langs as $lang) 
 		{
-			if(is_string($lang))
+			if(\is_string($lang))
 			{
 				foreach ($this->arr() as $key => $value) 
 				{
@@ -414,7 +414,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 							{
 								$uri = $value::make($segment)->uriAbsolute($lang,$option);
 								
-								if(!in_array($uri,$return,true))
+								if(!\in_array($uri,$return,true))
 								$return[] = $uri;
 							}
 						}
@@ -423,7 +423,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 						{
 							$uri = $value::make()->uriAbsolute($lang,$option);
 							
-							if(!in_array($uri,$return,true))
+							if(!\in_array($uri,$return,true))
 							$return[] = $uri;
 						}
 					}
@@ -494,7 +494,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 		$keys = $this->keys();
 		foreach (Base\Arr::camelCaseParent($keys) as $key => $value) 
 		{
-			if(is_string($value))
+			if(\is_string($value))
 			{
 				$key = $this->get($key);
 				$value = $this->get($value);
@@ -513,7 +513,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	public static function makeBreadcrumbs(string $separator,$pattern=null,Route ...$routes):string 
 	{
 		$return = '';
-		$array = array();
+		$array = [];
 		
 		foreach ($routes as $route) 
 		{
@@ -521,7 +521,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 		}
 		
 		if(!empty($array))
-		$return = implode($separator,$array);
+		$return = \implode($separator,$array);
 		
 		return $return;
 	}
