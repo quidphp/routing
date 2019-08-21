@@ -47,7 +47,7 @@ class RouteRequest extends Main\Root
 	// méthode protégé
 	protected function reset():self 
 	{
-		$this->valid = [];
+		$this->valid = array();
 		$this->fallback = null;
 		
 		return $this;
