@@ -76,25 +76,25 @@ trait _segment
 		else
 		$return = $routeRequest->segment();
 
-		if(\is_array($return))
+		if(is_array($return))
 		{
-			if(\is_scalar($key))
+			if(is_scalar($key))
 			{
-				if(\is_string($key) && \array_key_exists($key,$return))
+				if(is_string($key) && array_key_exists($key,$return))
 				$return = $return[$key];
 				
-				elseif(\is_int($key) && \array_key_exists($key,($return = \array_values($return))))
+				elseif(is_int($key) && array_key_exists($key,($return = array_values($return))))
 				$return = $return[$key];
 				
 				else
 				static::throw('doesNotExist',$key);
 			}
 			
-			elseif(\is_array($key))
+			elseif(is_array($key))
 			{
 				$return = Base\Arr::gets($key,$return);
 				
-				if(\count($return) !== \count($key))
+				if(count($return) !== count($key))
 				static::throw('doesNotExist');
 			}
 		}
@@ -125,7 +125,7 @@ trait _segment
 	// l'objet route et routeSegmentRequest sont cloné
 	public function changeSegment(string $key,$value):self 
 	{
-		return $this->changeSegments([$key=>$value]);
+		return $this->changeSegments(array($key=>$value));
 	}
 
 
@@ -163,7 +163,7 @@ trait _segment
 		
 		foreach (static::paths() as $path) 
 		{
-			if(\is_string($path) && \strpos($path,"[") !== false)
+			if(is_string($path) && strpos($path,"[") !== false)
 			{
 				$return = true;
 				break;
@@ -212,7 +212,7 @@ trait _segment
 	// n'est pas abstraite
 	public static function allSegment()
 	{
-		return [];
+		return array();
 	}
 	
 	
@@ -225,11 +225,11 @@ trait _segment
 		$segments = static::$config['segment'];
 		$callable = null;
 		
-		if(\is_array($segments) && \array_key_exists($key,$segments))
+		if(is_array($segments) && array_key_exists($key,$segments))
 		$callable = $segments[$key];
 		
-		if(\is_string($callable))
-		$callable = [static::class,$callable];
+		if(is_string($callable))
+		$callable = array(static::class,$callable);
 		
 		if(static::classIsCallable($callable))
 		$return = $callable;

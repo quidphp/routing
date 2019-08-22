@@ -8,16 +8,16 @@ use Quid\Base;
 class RouteRequest extends Main\Root
 {
 	// config
-	public static $config = [
-		'match'=>['ssl','ajax','host','method','query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout'], // clé valable pour match
-		'verify'=>['query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout'] // clé valable pour verify
-	];
+	public static $config = array(
+		'match'=>array('ssl','ajax','host','method','query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout'), // clé valable pour match
+		'verify'=>array('query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout') // clé valable pour verify
+	);
 
 
 	// dynamique
 	protected $route = null; // nom de la classe de la route
 	protected $request = null; // copie ou référence de la requête
-	protected $valid = []; // garde en mémoire les tests passés, comme match et verify
+	protected $valid = array(); // garde en mémoire les tests passés, comme match et verify
 	protected $fallback = null; // garde en mémoire la raison que la route ira en fallback
 	
 	
@@ -47,7 +47,7 @@ class RouteRequest extends Main\Root
 	// méthode protégé
 	protected function reset():self 
 	{
-		$this->valid = [];
+		$this->valid = array();
 		$this->fallback = null;
 		
 		return $this;
@@ -144,8 +144,8 @@ class RouteRequest extends Main\Root
 	{
 		$return = $this->valid;
 		
-		if(\is_string($key))
-		$return = (\array_key_exists($key,$this->valid) && \is_bool($this->valid[$key]))? $this->valid[$key]:false;
+		if(is_string($key))
+		$return = (array_key_exists($key,$this->valid) && is_bool($this->valid[$key]))? $this->valid[$key]:false;
 		
 		return $return;
 	}
@@ -175,7 +175,7 @@ class RouteRequest extends Main\Root
 			{
 				$route = $this->route();
 				$route::timeoutStamp($timedOut);
-				$fallback = [$key,$timedOut];
+				$fallback = array($key,$timedOut);
 			}
 		}
 		
@@ -202,7 +202,7 @@ class RouteRequest extends Main\Root
 	// lance la méthode reset
 	public function setRoute(string $route):self 
 	{
-		if(\is_subclass_of($route,Route::class,true))
+		if(is_subclass_of($route,Route::class,true))
 		{
 			$this->reset();
 			$this->route = $route;
@@ -229,10 +229,10 @@ class RouteRequest extends Main\Root
 	// lance la méthode reset
 	public function setRequest($request=null):self
 	{
-		if(\is_string($request) || \is_array($request))
+		if(is_string($request) || is_array($request))
 		$request = Main\Request::newOverload($request);
 		
-		elseif($request === null || (\is_object($request) && !$request instanceof Main\Request))
+		elseif($request === null || (is_object($request) && !$request instanceof Main\Request))
 		$request = Main\Request::instSafe() ?? Main\Request::live();
 		
 		if($request instanceof Main\Request)
@@ -256,23 +256,23 @@ class RouteRequest extends Main\Root
 		$return = false;
 		$lang = $session->lang();
 		$route = $this->route();
-		$match = $route::$config['match'] ?? [];
+		$match = $route::$config['match'] ?? array();
 		
 		$path = $route::path($lang,true);
 		$emptyPath = $route::path(null,true);
 		$go = false;
 		
-		if((\is_string($path) || $path === null) && $this->path($path))
+		if((is_string($path) || $path === null) && $this->path($path))
 		$go = true;
 		
-		elseif((\is_string($emptyPath) || $emptyPath === null) && $this->path($emptyPath))
+		elseif((is_string($emptyPath) || $emptyPath === null) && $this->path($emptyPath))
 		$go = true;
 		
 		if($go === true)
 		{
 			foreach ($match as $key => $value) 
 			{
-				if(\is_string($key) && \in_array($key,static::$config['match'],true))
+				if(is_string($key) && in_array($key,static::$config['match'],true))
 				{
 					$return = ($value===null)? true:$this->$key($value,$session);
 					
@@ -301,11 +301,11 @@ class RouteRequest extends Main\Root
 	{
 		$return = false;
 		$route = $this->route();
-		$verify = $route::$config['verify'] ?? [];
+		$verify = $route::$config['verify'] ?? array();
 
 		foreach ($verify as $key => $value) 
 		{
-			if(\is_string($key) && \in_array($key,static::$config['verify'],true))
+			if(is_string($key) && in_array($key,static::$config['verify'],true))
 			{
 				$return = ($value===null)? true:$this->$key($value,$session);
 				
@@ -348,7 +348,7 @@ class RouteRequest extends Main\Root
 		if($value === null)
 		$return = true;
 		
-		elseif(\is_string($value))
+		elseif(is_string($value))
 		{
 			$match = $this->request()->pathMatch();
 			$value = Base\Path::stripStart($value);
@@ -370,7 +370,7 @@ class RouteRequest extends Main\Root
 		if($value === null)
 		$return = true;
 		
-		elseif(\is_bool($value))
+		elseif(is_bool($value))
 		{
 			if($value === $this->request()->isSsl())
 			$return = true;
@@ -389,7 +389,7 @@ class RouteRequest extends Main\Root
 		if($value === null)
 		$return = true;
 		
-		elseif(\is_bool($value))
+		elseif(is_bool($value))
 		{
 			if($value === $this->request()->isAjax())
 			$return = true;
@@ -414,10 +414,10 @@ class RouteRequest extends Main\Root
 			
 			if(!empty($host))
 			{
-				if(\is_string($value))
-				$value = [$value];
+				if(is_string($value))
+				$value = array($value);
 				
-				if(\is_array($value) && !empty($value) && \in_array($host,$value,true))
+				if(is_array($value) && !empty($value) && in_array($host,$value,true))
 				$return = true;
 			}
 		}
@@ -441,14 +441,14 @@ class RouteRequest extends Main\Root
 			
 			if(!empty($method))
 			{
-				if(\is_string($value))
-				$value = [$value];
+				if(is_string($value))
+				$value = array($value);
 				
-				if(\is_array($value) && !empty($value))
+				if(is_array($value) && !empty($value))
 				{
-					$value = \array_map('strtolower',$value);
+					$value = array_map('strtolower',$value);
 					
-					if(\in_array($method,$value,true))
+					if(in_array($method,$value,true))
 					$return = true;
 				}
 			}
@@ -473,10 +473,10 @@ class RouteRequest extends Main\Root
 			$headers = $this->request()->headers();
 			$headers = Base\Arrs::keysValuesLower($headers);
 			
-			if(\is_array($value))
+			if(is_array($value))
 			$value = Base\Arrs::keysValuesLower($value);
 			
-			elseif(\is_string($value))
+			elseif(is_string($value))
 			$value = Base\Str::lower($value);
 			
 			$return = $this->validateArray($value,$headers);
@@ -501,10 +501,10 @@ class RouteRequest extends Main\Root
 			
 			if(!empty($lang))
 			{
-				if(\is_string($value))
-				$value = [$value];
+				if(is_string($value))
+				$value = array($value);
 				
-				if(\is_array($value) && !empty($value) && \in_array($lang,$value,true))
+				if(is_array($value) && !empty($value) && in_array($lang,$value,true))
 				$return = true;
 			}
 		}
@@ -524,10 +524,10 @@ class RouteRequest extends Main\Root
 		
 		else
 		{
-			if(\is_string($value))
-			$value = [$value];
+			if(is_string($value))
+			$value = array($value);
 			
-			if(\is_array($value))
+			if(is_array($value))
 			{
 				$ip = $this->request()->ip();
 				
@@ -555,10 +555,10 @@ class RouteRequest extends Main\Root
 
 			if(!empty($browserName))
 			{
-				if(\is_string($value))
-				$value = [$value];
+				if(is_string($value))
+				$value = array($value);
 				
-				if(\is_array($value) && !empty($value) && Base\Arr::in($browserName,$value,false))
+				if(is_array($value) && !empty($value) && Base\Arr::in($browserName,$value,false))
 				$return = true;
 			}
 		}
@@ -641,14 +641,14 @@ class RouteRequest extends Main\Root
 		
 		else
 		{
-			if(!\is_array($value))
-			$value = [$value];
+			if(!is_array($value))
+			$value = array($value);
 			
 			foreach ($value as $method) 
 			{
 				$return = false;
 				
-				if(\is_string($method))
+				if(is_string($method))
 				$return = $session->$method();
 				
 				if($return === false)
@@ -735,9 +735,9 @@ class RouteRequest extends Main\Root
 		$route = $this->route();
 		
 		if($value === true)
-		$value = \array_keys($route::timeout());
+		$value = array_keys($route::timeout());
 		
-		if((\is_string($value) || \is_array($value)))
+		if((is_string($value) || is_array($value)))
 		{
 			$value = (array) $value;
 			
@@ -786,9 +786,9 @@ class RouteRequest extends Main\Root
 		$return = null;
 		$route = $this->route();
 		$path = $route::path($lang);
-		$option = Base\Arr::plus($option,['schemeHost'=>true]);
+		$option = Base\Arr::plus($option,array('schemeHost'=>true));
 		
-		if(\is_string($path))
+		if(is_string($path))
 		$return = $this->uriPrepare($path,$lang,$option);
 		
 		return $return;
@@ -806,11 +806,11 @@ class RouteRequest extends Main\Root
 	{
 		$request = $this->request();
 		$route = $this->route();
-		$option = Base\Arr::plus(['query'=>true,'schemeHost'=>false],$option);
+		$option = Base\Arr::plus(array('query'=>true,'schemeHost'=>false),$option);
 		
-		if(\is_string($lang))
+		if(is_string($lang))
 		{
-			$strlen = \strlen($return);
+			$strlen = strlen($return);
 			$return = Base\Path::str($return);
 			
 			if($strlen > 0 && !Base\Path::hasExtension($return))
@@ -831,7 +831,7 @@ class RouteRequest extends Main\Root
 			}
 		}
 		
-		elseif(\is_array($option['query']))
+		elseif(is_array($option['query']))
 		$return = Base\Uri::changeQuery($option['query'],$return);
 		
 		if($option['schemeHost'] === true)
@@ -855,10 +855,10 @@ class RouteRequest extends Main\Root
 		$return = null;
 		$path = $this->uri($lang,$option);
 		
-		if(\is_string($path))
+		if(is_string($path))
 		{			
 			$schemeHost = $option['schemeHost'] ?? $this->schemeHost(true);
-			$option = Base\Arr::plus($option,['schemeHost'=>$schemeHost]);
+			$option = Base\Arr::plus($option,array('schemeHost'=>$schemeHost));
 			$return = Base\Uri::output($path,$option);
 		}
 		
@@ -874,7 +874,7 @@ class RouteRequest extends Main\Root
 		$return = null;
 		$path = $this->uri($lang,$option);
 		
-		if(\is_string($path))
+		if(is_string($path))
 		$return = Base\Uri::relative($path,$option);
 		
 		return $return;
@@ -890,7 +890,7 @@ class RouteRequest extends Main\Root
 		$return = null;
 		$path = $this->uri($lang,$option);
 		
-		if(\is_string($path))
+		if(is_string($path))
 		{
 			$schemeHost = $option['schemeHost'] ?? $this->schemeHost();
 			$return = Base\Uri::absolute($path,$schemeHost,$option);

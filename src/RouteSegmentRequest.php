@@ -8,7 +8,7 @@ use Quid\Base;
 class RouteSegmentRequest extends RouteRequest
 {
 	// config
-	public static $config = [];
+	public static $config = array();
 	
 	
 	// dynamique
@@ -92,7 +92,7 @@ class RouteSegmentRequest extends RouteRequest
 	// lance la méthode reset
 	public function setRoute(string $route):parent
 	{
-		if(\is_subclass_of($route,Route::class,true))
+		if(is_subclass_of($route,Route::class,true))
 		{
 			$this->reset();
 			$this->route = $route;
@@ -100,10 +100,10 @@ class RouteSegmentRequest extends RouteRequest
 			$path = $route::path($lang);
 			$segment = null;
 			
-			if(\is_string($path))
+			if(is_string($path))
 			$segment = Base\Segment::get(null,$path);
 			
-			if(\is_array($segment) && !empty($segment))
+			if(is_array($segment) && !empty($segment))
 			$this->routeSegment = $segment;
 			
 			else
@@ -172,7 +172,7 @@ class RouteSegmentRequest extends RouteRequest
 	{
 		$routeSegment = $this->routeSegment();
 
-		if(\is_array($routeSegment) && !empty($routeSegment))
+		if(is_array($routeSegment) && !empty($routeSegment))
 		{
 			$this->type = 1;
 			
@@ -187,7 +187,7 @@ class RouteSegmentRequest extends RouteRequest
 			if($catchAll === true && $requestSegment === null)
 			$requestSegment = $this->parseRequestSegmentFromRequestCatchAll();
 			
-			if(\is_array($requestSegment) && !empty($requestSegment) && \count($requestSegment) === \count($routeSegment))
+			if(is_array($requestSegment) && !empty($requestSegment) && count($requestSegment) === count($routeSegment))
 			$this->requestSegment = Base\Arr::cast($requestSegment);
 		}
 		
@@ -203,19 +203,19 @@ class RouteSegmentRequest extends RouteRequest
 	// support pour catchAll avec un seul segment, sinon exception
 	protected function parseRequestSegmentFromRequestCatchAll():array 
 	{
-		$return = [];
+		$return = array();
 		$route = $this->route();
 		$routeSegment = $this->routeSegment();
 		$langCode = $this->langCode();
 		$path = $route::path($langCode);
 
-		if(\is_string($path) && \strlen($path))
+		if(is_string($path) && strlen($path))
 		{
 			$request = $this->request();
 			$requestPath = $request->pathMatch();
 			$segment = Base\Arr::valueLast($routeSegment);
 			
-			if(\is_string($segment) && \strlen($segment))
+			if(is_string($segment) && strlen($segment))
 			{
 				$path = Base\Path::spliceLast($path);
 				$path = Base\Path::stripWrap($path,false,false);
@@ -229,9 +229,9 @@ class RouteSegmentRequest extends RouteRequest
 					$segmentPath = Base\Path::stripWrap($segmentPath,false,false);
 				}
 				
-				if(\strlen($segmentPath))
+				if(strlen($segmentPath))
 				{
-					$requestPath = \substr($requestPath,0,-\strlen($segmentPath));
+					$requestPath = substr($requestPath,0,-strlen($segmentPath));
 					$requestPath = Base\Path::stripWrap($requestPath,false,false);
 					
 					$segments = Base\Path::getSegments($path,$requestPath);
@@ -255,18 +255,18 @@ class RouteSegmentRequest extends RouteRequest
 	{
 		$routeSegment = $this->routeSegment();
 
-		if(\is_array($routeSegment) && !empty($routeSegment))
+		if(is_array($routeSegment) && !empty($routeSegment))
 		{
 			$this->type = 2;
 			
 			foreach ($routeSegment as $i => $k) 
 			{
-				if(\is_array($value))
+				if(is_array($value))
 				{
-					if(\array_key_exists($k,$value))
+					if(array_key_exists($k,$value))
 					$v = $value[$k];
 					
-					elseif(\array_key_exists($i,$value))
+					elseif(array_key_exists($i,$value))
 					$v = $value[$i];
 					
 					else 
@@ -326,7 +326,7 @@ class RouteSegmentRequest extends RouteRequest
 			$routeSegment = $this->routeSegment();
 			$requestSegment = $this->requestSegment;
 
-			if(\is_array($requestSegment) && !empty($requestSegment) && \count($requestSegment) === \count($routeSegment))
+			if(is_array($requestSegment) && !empty($requestSegment) && count($requestSegment) === count($routeSegment))
 			$return = true;
 		}
 		
@@ -360,7 +360,7 @@ class RouteSegmentRequest extends RouteRequest
 		
 		foreach ($values as $value) 
 		{
-			$return = \array_key_exists($value,$segment);
+			$return = array_key_exists($value,$segment);
 			
 			if($return === false)
 			break;
@@ -388,7 +388,7 @@ class RouteSegmentRequest extends RouteRequest
 	// un objet changé vide le tableau valid et la propriété segment
 	public function changeRequestSegment(string $key,$value):self 
 	{
-		return $this->changeRequestSegments([$key=>$value]);
+		return $this->changeRequestSegments(array($key=>$value));
 	}
 
 
@@ -399,7 +399,7 @@ class RouteSegmentRequest extends RouteRequest
 	// valeur true est remplacé par replaceSegment
 	public function changeRequestSegments(array $values):self 
 	{
-		$this->checkRequestSegment(...\array_keys($values));
+		$this->checkRequestSegment(...array_keys($values));
 		$this->reset();
 		$route = $this->route();
 		$defaultSegment = $route::getDefaultSegment();
@@ -408,10 +408,10 @@ class RouteSegmentRequest extends RouteRequest
 		$values = Base\Obj::cast($values);
 		foreach ($values as $key => $value) 
 		{
-			if($value === false && \is_string($defaultSegment))
+			if($value === false && is_string($defaultSegment))
 			$values[$key] = $defaultSegment;
 			
-			elseif($value === true && \is_string($replaceSegment))
+			elseif($value === true && is_string($replaceSegment))
 			$values[$key] = $replaceSegment;
 		}
 		
@@ -431,7 +431,7 @@ class RouteSegmentRequest extends RouteRequest
 		
 		foreach ($this->requestSegment as $key => $value) 
 		{
-			if(!\in_array($key,$values,true))
+			if(!in_array($key,$values,true))
 			$this->requestSegment[$key] = null;
 		}
 		
@@ -458,10 +458,10 @@ class RouteSegmentRequest extends RouteRequest
 			
 			foreach ($requestSegment as $key => $value) 
 			{
-				if(\is_string($defaultSegment) && ($value === $defaultSegment || $value === false))
+				if(is_string($defaultSegment) && ($value === $defaultSegment || $value === false))
 				$v = $defaultSegment;
 				
-				elseif(\is_string($replaceSegment) && ($value === $replaceSegment || $value === true))
+				elseif(is_string($replaceSegment) && ($value === $replaceSegment || $value === true))
 				$v = $replaceSegment;
 				
 				else
@@ -469,20 +469,20 @@ class RouteSegmentRequest extends RouteRequest
 					$callable = $route::callableSegment($key);
 					$v = $callable('make',$value,$requestSegment);
 					
-					if($v === false && \is_string($defaultSegment))
+					if($v === false && is_string($defaultSegment))
 					$v = $defaultSegment;
 					
-					elseif($v === true && \is_string($replaceSegment))
+					elseif($v === true && is_string($replaceSegment))
 					$v = $replaceSegment;
 					
-					elseif(\is_object($v))
+					elseif(is_object($v))
 					$v = Base\Obj::cast($v);
 					
-					if(\is_numeric($v) && !\is_string($v))
+					if(is_numeric($v) && !is_string($v))
 					$v = (string) $v;
 				}
 				
-				if(!\is_string($v))
+				if(!is_string($v))
 				static::throw($route,$key,'mustReturnString');
 				
 				else
@@ -537,14 +537,14 @@ class RouteSegmentRequest extends RouteRequest
 		$route = $this->route();
 		$keyValue = $this->requestSegment();
 		$defaultSegment = $route::getDefaultSegment();
-		$this->segment = [];
+		$this->segment = array();
 		
 		foreach ($keyValue as $key => $value) 
 		{
 			$return = false;
 			$callable = $route::callableSegment($key);
 			
-			if($value === null || (\is_string($value) && $value === $defaultSegment))
+			if($value === null || (is_string($value) && $value === $defaultSegment))
 			$v = $callable('validateDefault',null,$keyValue);
 			
 			else
@@ -552,8 +552,8 @@ class RouteSegmentRequest extends RouteRequest
 			
 			if($v === false)
 			{
-				$this->fallback = ['segment',$key];
-				$this->segment = [];
+				$this->fallback = array('segment',$key);
+				$this->segment = array();
 				
 				if($exception === true)
 				static::throw($route,$key,$value);
@@ -582,7 +582,7 @@ class RouteSegmentRequest extends RouteRequest
 	{
 		$return = false;
 		
-		if(\is_array($value))
+		if(is_array($value))
 		{
 			$segment = $this->requestSegment();
 			
@@ -621,7 +621,7 @@ class RouteSegmentRequest extends RouteRequest
 	{
 		$return = false;
 		
-		if(\is_string($value) && Base\Path::hasSegment($value))
+		if(is_string($value) && Base\Path::hasSegment($value))
 		{
 			if($this->isRouteCatchAll())
 			$return = $this->pathCatchAll($value);
@@ -652,19 +652,19 @@ class RouteSegmentRequest extends RouteRequest
 		$return = false;
 		$route = $this->route();
 		$routeSegment = $this->routeSegment();
-		$countSegment = \count($routeSegment);
+		$countSegment = count($routeSegment);
 		
-		if($countSegment > 0 && \strlen($value))
+		if($countSegment > 0 && strlen($value))
 		{
 			$lastSegment = Base\Arr::valueLast($routeSegment);
 			$match = $this->request()->pathMatch();
 			
-			if(\is_string($lastSegment) && \strlen($match) && Base\Str::isEnd("[$lastSegment]",$value))
+			if(is_string($lastSegment) && strlen($match) && Base\Str::isEnd("[$lastSegment]",$value))
 			{
 				$value = Base\Path::arr($value);
 				$value = Base\Arr::spliceLast($value);
 				$match = Base\Path::arr($match);
-				$match = Base\Arr::gets(\array_keys($value),$match);
+				$match = Base\Arr::gets(array_keys($value),$match);
 				
 				if(empty($value) && empty($match))
 				$return = true;
@@ -699,9 +699,9 @@ class RouteSegmentRequest extends RouteRequest
 		$segment = $this->makeRequestSegment();
 		
 		$path = Base\Segment::sets(null,$segment,$path);
-		$option = Base\Arr::plus($option,['schemeHost'=>true]);
+		$option = Base\Arr::plus($option,array('schemeHost'=>true));
 		
-		if(\is_string($path) && \strlen($path))
+		if(is_string($path) && strlen($path))
 		$return = $this->uriPrepare($path,$lang,$option);
 		
 		else
