@@ -125,7 +125,7 @@ trait _segment
 	// l'objet route et routeSegmentRequest sont cloné
 	public function changeSegment(string $key,$value):self 
 	{
-		return $this->changeSegments(array($key=>$value));
+		return $this->changeSegments([$key=>$value]);
 	}
 
 
@@ -212,7 +212,7 @@ trait _segment
 	// n'est pas abstraite
 	public static function allSegment()
 	{
-		return array();
+		return [];
 	}
 	
 	
@@ -229,7 +229,7 @@ trait _segment
 		$callable = $segments[$key];
 		
 		if(is_string($callable))
-		$callable = array(static::class,$callable);
+		$callable = [static::class,$callable];
 		
 		if(static::classIsCallable($callable))
 		$return = $callable;

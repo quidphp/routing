@@ -12,16 +12,16 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	
 	
 	// config
-	public static $config = array(
+	public static $config = [
 		'priorityIncrement'=>10, // incrémentation de la priorité lors de la méthode init
-		'option'=>array(
+		'option'=>[
 			'methodIgnore'=>'isIgnored',
-			'subClass'=>Route::class)
-	);
+			'subClass'=>Route::class]
+	];
 	
 	
 	// map
-	protected static $allow = array('set','unset','remove','filter','sort','serialize','clone'); // méthodes permises
+	protected static $allow = ['set','unset','remove','filter','sort','serialize','clone']; // méthodes permises
 	protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
 	
 	
@@ -57,7 +57,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// retourne toutes les routes qui match l'objet requête
 	public function match(Main\Request $request,?Main\Session $session=null):array 
 	{
-		$return = array();
+		$return = [];
 		$session = ($session instanceof Main\Session)? $session:Main\Session::inst();
 		
 		foreach ($this->arr() as $key => $value) 
@@ -126,7 +126,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// si aucun parent, la valeur est null
 	public function keyParent():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $value) 
 		{
@@ -363,7 +363,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// toutes les différentes versions de segment sont aussi triggés pour routeSegment
 	public function all():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $key => $value)
 		{
@@ -393,10 +393,10 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	// possible de retourner plusieurs langues
 	public function sitemap($langs,?array $option=null):array 
 	{
-		$return = array();
+		$return = [];
 
 		if(!is_array($langs))
-		$langs = array($langs);
+		$langs = [$langs];
 		
 		foreach ($langs as $lang) 
 		{
@@ -513,7 +513,7 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	public static function makeBreadcrumbs(string $separator,$pattern=null,Route ...$routes):string 
 	{
 		$return = '';
-		$array = array();
+		$array = [];
 		
 		foreach ($routes as $route) 
 		{

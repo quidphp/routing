@@ -8,7 +8,7 @@ use Quid\Base;
 class RouteSegmentRequest extends RouteRequest
 {
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// dynamique
@@ -203,7 +203,7 @@ class RouteSegmentRequest extends RouteRequest
 	// support pour catchAll avec un seul segment, sinon exception
 	protected function parseRequestSegmentFromRequestCatchAll():array 
 	{
-		$return = array();
+		$return = [];
 		$route = $this->route();
 		$routeSegment = $this->routeSegment();
 		$langCode = $this->langCode();
@@ -388,7 +388,7 @@ class RouteSegmentRequest extends RouteRequest
 	// un objet changé vide le tableau valid et la propriété segment
 	public function changeRequestSegment(string $key,$value):self 
 	{
-		return $this->changeRequestSegments(array($key=>$value));
+		return $this->changeRequestSegments([$key=>$value]);
 	}
 
 
@@ -537,7 +537,7 @@ class RouteSegmentRequest extends RouteRequest
 		$route = $this->route();
 		$keyValue = $this->requestSegment();
 		$defaultSegment = $route::getDefaultSegment();
-		$this->segment = array();
+		$this->segment = [];
 		
 		foreach ($keyValue as $key => $value) 
 		{
@@ -552,8 +552,8 @@ class RouteSegmentRequest extends RouteRequest
 			
 			if($v === false)
 			{
-				$this->fallback = array('segment',$key);
-				$this->segment = array();
+				$this->fallback = ['segment',$key];
+				$this->segment = [];
 				
 				if($exception === true)
 				static::throw($route,$key,$value);
@@ -699,7 +699,7 @@ class RouteSegmentRequest extends RouteRequest
 		$segment = $this->makeRequestSegment();
 		
 		$path = Base\Segment::sets(null,$segment,$path);
-		$option = Base\Arr::plus($option,array('schemeHost'=>true));
+		$option = Base\Arr::plus($option,['schemeHost'=>true]);
 		
 		if(is_string($path) && strlen($path))
 		$return = $this->uriPrepare($path,$lang,$option);

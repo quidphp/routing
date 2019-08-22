@@ -12,9 +12,9 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	
 	
 	// config
-	public static $config = array(
+	public static $config = [
 		'path'=>'undefined', // match path de la route, peut y avoir plusieurs, si il y a clé c'est une lang
-		'match'=>array( // vérification lancé pour trouver le match
+		'match'=>[ // vérification lancé pour trouver le match
 			'ssl'=>null, // ssl n'a pas d'importance pour le match, unique à match
 			'ajax'=>null, // ajax n'a pas d'importance pour le match, unique à match
 			'host'=>null, // tous les hosts sont acceptés, unique à match
@@ -30,8 +30,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 			'role'=>null, // validation du code ou de la classe de permission
 			'csrf'=>null, // validation que le champ csrf et le même que dans session
 			'captcha'=>null, // validation que le champ captcha est le même que dans session
-			'timeout'=>null), // défini les timeouts à vérifier
-		'verify'=>array( // vérification lancé après le match
+			'timeout'=>null], // défini les timeouts à vérifier
+		'verify'=>[ // vérification lancé après le match
 			'query'=>null, // validation sur contenu de query
 			'post'=>null, // validation sur contenu de post
 			'genuine'=>null, // validation que post contient la clé genuine et que le contenu est vide
@@ -43,27 +43,27 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 			'role'=>null, // validation du code ou de la classe de permission
 			'csrf'=>null, // validation que le champ csrf et le même que dans session
 			'captcha'=>null, // validation que le champ captcha et le même que dans session
-			'timeout'=>null), // défini les timeouts à vérifier
-		'response'=>array(
+			'timeout'=>null], // défini les timeouts à vérifier
+		'response'=>[
 			'timeLimit'=>null, // limit de temps pour la route
 			'code'=>200, // code de réponse
 			'contentType'=>'html', // contentType de la réponse
-			'header'=>null), // tableau de header à sets à la réponse
+			'header'=>null], // tableau de header à sets à la réponse
 		'timeout'=>null, // défini les timeouts à lier à la route trigger
 		'query'=>null, // détermine les éléments de query conservés dans la route
-		'replace'=>array( // permet de spécifier des callbacks pour les valeurs du tableau de remplacement
-			'title'=>array(Base\Html::class,'titleValue'),
-			'metaTitle'=>array(Base\Html::class,'titleValue'),
-			'metaDescription'=>array(Base\Html::class,'metaDescriptionValue'),
-			'metaKeywords'=>array(Base\Html::class,'metaKeywordsValue'),
-			'metaUri'=>array(Base\Html::class,'metaUriValue'),
-			'bodyClass'=>array(Base\Attr::class,'prepareClass'),
-			'bodyStyle'=>array(Base\Style::class,'str')),
-		'docOpen'=>array( // utilisé pour l'ouverture du document
-			'html'=>array('lang'=>'%lang%'),
-			'head'=>array(
+		'replace'=>[ // permet de spécifier des callbacks pour les valeurs du tableau de remplacement
+			'title'=>[Base\Html::class,'titleValue'],
+			'metaTitle'=>[Base\Html::class,'titleValue'],
+			'metaDescription'=>[Base\Html::class,'metaDescriptionValue'],
+			'metaKeywords'=>[Base\Html::class,'metaKeywordsValue'],
+			'metaUri'=>[Base\Html::class,'metaUriValue'],
+			'bodyClass'=>[Base\Attr::class,'prepareClass'],
+			'bodyStyle'=>[Base\Style::class,'str']],
+		'docOpen'=>[ // utilisé pour l'ouverture du document
+			'html'=>['lang'=>'%lang%'],
+			'head'=>[
 				'title'=>'%title%',
-				'meta'=>array(
+				'meta'=>[
 					'description'=>'%metaDescription%',
 					'keywords'=>'%metaKeywords%',
 					'og:type'=>'website',
@@ -71,27 +71,27 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 					'og:url'=>'%metaUri%',
 					'og:image'=>'%metaImage%',
 					'viewport'=>'width=device-width, initial-scale=1',
-					'msapplication-config'=>'none'),
-				'link'=>array(),
-				'script'=>array(),
-				'css'=>array(),
-				'js'=>array()),
-			'body'=>array('%name%','%parent%','%group%','%bodyClass%','style'=>'%bodyStyle%'),
-			'wrapper'=>true),
-		'docClose'=>array( // utilisé pour la fermeture du document
+					'msapplication-config'=>'none'],
+				'link'=>[],
+				'script'=>[],
+				'css'=>[],
+				'js'=>[]],
+			'body'=>['%name%','%parent%','%group%','%bodyClass%','style'=>'%bodyStyle%'],
+			'wrapper'=>true],
+		'docClose'=>[ // utilisé pour la fermeture du document
 			'wrapper'=>true,
-			'script'=>array(),
-			'js'=>array()),
-		'a'=>array( // attribut et option pour la tag a
+			'script'=>[],
+			'js'=>[]],
+		'a'=>[ // attribut et option pour la tag a
 			'attr'=>null,
-			'option'=>null),
-		'form'=>array( // attribut et option pour la tag form
+			'option'=>null],
+		'form'=>[ // attribut et option pour la tag form
 			'method'=>'get', // method par défaut si pas de méthode a la route
 			'attr'=>null,
-			'option'=>null),
+			'option'=>null],
 		'redirectable'=>null, // défini si la route est redirigable
 		'sitemap'=>null, // la route fait parti de sitemap
-		'uri'=>array('absolute'=>false), // attribut pour output, relative et absolut
+		'uri'=>['absolute'=>false], // attribut pour output, relative et absolut
 		'parent'=>null, // classe parente de la route
 		'priority'=>0, // priorité de la route
 		'navigation'=>true, // active la navigation via history sur la route
@@ -102,8 +102,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		'catchAll'=>false, // si true, le dernier segment attrape tout le reste du chemin dans le processus de match
 		'defaultSegment'=>'-', // caractère pour un segment avec valeur par défaut
 		'replaceSegment'=>'%%%', // pattern utilisé pour faire un remplacement sur un segment, cette valeur passe dans makSegment à tout coup
-		'segment'=>array() // tableau qui permet de remplacer une clé de segment par un autre, utiliser dans methodSegment
-	);
+		'segment'=>[] // tableau qui permet de remplacer une clé de segment par un autre, utiliser dans methodSegment
+	];
 	
 	
 	// static
@@ -340,11 +340,11 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 			static::sessionCom()->neg('captcha');
 		}
 		
-		elseif(in_array($context,array('csrf','genuine'),true))
+		elseif(in_array($context,['csrf','genuine'],true))
 		{
 			$code = 400;
 			$log = $context;
-			static::sessionCom()->neg(array($context,'retry'));
+			static::sessionCom()->neg([$context,'retry']);
 		}
 		
 		elseif($this->request()->isFailedFileUpload())
@@ -352,7 +352,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 			$code = 400;
 			$log = 'failedFileUpload';
 			$maxFilesize = Base\Ini::uploadMaxFilesize(2);
-			$replace = array('maxFilesize'=>$maxFilesize);
+			$replace = ['maxFilesize'=>$maxFilesize];
 			static::sessionCom()->neg('fileUpload/maxFilesize',$replace);
 			static::sessionCom()->neg('fileUpload/dataLost');
 		}
@@ -362,7 +362,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		
 		if(!empty($log))
 		{
-			$log = array('fallback'=>$log);
+			$log = ['fallback'=>$log];
 			$this->request()->setLogData($log);
 		}
 		
@@ -424,7 +424,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// retourne les uris supplémentaires qui doivent être marqués comme sélectionnés
 	public function selectedUri():array
 	{
-		return array();
+		return [];
 	}
 	
 	
@@ -575,7 +575,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		if($return !== false)
 		{
 			$session = static::session();
-			$response = static::$config['response'] ?? array();
+			$response = static::$config['response'] ?? [];
 			
 			if(array_key_exists('timeLimit',$response) && is_int($response['timeLimit']))
 			Base\Response::timeLimit($response['timeLimit']);
@@ -606,7 +606,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// méthode protégé
 	protected function after():self 
 	{
-		$response = static::$config['response'] ?? array();
+		$response = static::$config['response'] ?? [];
 		static::setResponseCode();
 		
 		if(!empty($response['contentType']) && is_string($response['contentType']))
@@ -665,7 +665,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// méthode protégé
 	protected function getMetaFromContract(Main\Contract\Meta $meta,array $return):array
 	{
-		$array = array();
+		$array = [];
 		
 		$array['title'] = $meta->getMetaTitle($return['title'] ?? null);
 		$array['metaKeywords'] = $meta->getMetaKeywords($return['metaKeywords'] ?? null);
@@ -792,9 +792,9 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// méthode protégé 
 	protected function prepareDoc(string $type):array
 	{
-		$return = array();
+		$return = [];
 		
-		if(in_array($type,array('docOpen','docClose'),true))
+		if(in_array($type,['docOpen','docClose'],true))
 		{
 			$doc = static::$config[$type] ?? null;
 			
@@ -1152,7 +1152,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		$return = static::$config['path'] ?? null;
 		
 		if(!is_array($return))
-		$return = array($return);
+		$return = [$return];
 		
 		return $return;
 	}
@@ -1220,7 +1220,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 			$return = true;
 			
 			elseif(is_string($method))
-			$method = array($method);
+			$method = [$method];
 			
 			if(is_array($method) && !empty($method))
 			{
@@ -1256,8 +1256,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	public static function hasCheck(string $type):bool
 	{
 		$return = false;
-		$match = static::$config['match'] ?? array();
-		$verify = static::$config['verify'] ?? array();
+		$match = static::$config['match'] ?? [];
+		$verify = static::$config['verify'] ?? [];
 		
 		if(!empty($match[$type]) || !empty($verify[$type]))
 		$return = true;
@@ -1270,7 +1270,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// retourne le tableau de timeout pour la route
 	public static function timeout():array 
 	{
-		return static::$config['timeout'] ?? array();
+		return static::$config['timeout'] ?? [];
 	}
 	
 	
@@ -1296,7 +1296,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// tableau avec nom de la classe + clé
 	protected static function makeTimeoutKey(string $key):array
 	{
-		return array(static::class,$key);
+		return [static::class,$key];
 	}
 	
 	
@@ -1369,7 +1369,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		if(array_key_exists($tag,static::$config))
 		{
 			if(!is_array($attr))
-			$attr = array($attr);
+			$attr = [$attr];
 			
 			if(!empty(static::$config[$tag]['attr']))
 			$return = Base\Attr::append(static::$config[$tag]['attr'],$attr);
@@ -1411,7 +1411,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// méthode qui permet d'appliquer le code de réponse de la route, tel que spécifié dans static config
 	public static function setResponseCode():void
 	{
-		$response = static::$config['response'] ?? array();
+		$response = static::$config['response'] ?? [];
 		
 		if(!Base\Response::isCodeError() && !empty($response['code']) && is_int($response['code']))
 		Base\Response::setCode($response['code']);

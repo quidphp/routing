@@ -8,16 +8,16 @@ use Quid\Base;
 class RouteRequest extends Main\Root
 {
 	// config
-	public static $config = array(
-		'match'=>array('ssl','ajax','host','method','query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout'), // clé valable pour match
-		'verify'=>array('query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout') // clé valable pour verify
-	);
+	public static $config = [
+		'match'=>['ssl','ajax','host','method','query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout'], // clé valable pour match
+		'verify'=>['query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout'] // clé valable pour verify
+	];
 
 
 	// dynamique
 	protected $route = null; // nom de la classe de la route
 	protected $request = null; // copie ou référence de la requête
-	protected $valid = array(); // garde en mémoire les tests passés, comme match et verify
+	protected $valid = []; // garde en mémoire les tests passés, comme match et verify
 	protected $fallback = null; // garde en mémoire la raison que la route ira en fallback
 	
 	
@@ -47,7 +47,7 @@ class RouteRequest extends Main\Root
 	// méthode protégé
 	protected function reset():self 
 	{
-		$this->valid = array();
+		$this->valid = [];
 		$this->fallback = null;
 		
 		return $this;
@@ -175,7 +175,7 @@ class RouteRequest extends Main\Root
 			{
 				$route = $this->route();
 				$route::timeoutStamp($timedOut);
-				$fallback = array($key,$timedOut);
+				$fallback = [$key,$timedOut];
 			}
 		}
 		
@@ -256,7 +256,7 @@ class RouteRequest extends Main\Root
 		$return = false;
 		$lang = $session->lang();
 		$route = $this->route();
-		$match = $route::$config['match'] ?? array();
+		$match = $route::$config['match'] ?? [];
 		
 		$path = $route::path($lang,true);
 		$emptyPath = $route::path(null,true);
@@ -301,7 +301,7 @@ class RouteRequest extends Main\Root
 	{
 		$return = false;
 		$route = $this->route();
-		$verify = $route::$config['verify'] ?? array();
+		$verify = $route::$config['verify'] ?? [];
 
 		foreach ($verify as $key => $value) 
 		{
@@ -415,7 +415,7 @@ class RouteRequest extends Main\Root
 			if(!empty($host))
 			{
 				if(is_string($value))
-				$value = array($value);
+				$value = [$value];
 				
 				if(is_array($value) && !empty($value) && in_array($host,$value,true))
 				$return = true;
@@ -442,7 +442,7 @@ class RouteRequest extends Main\Root
 			if(!empty($method))
 			{
 				if(is_string($value))
-				$value = array($value);
+				$value = [$value];
 				
 				if(is_array($value) && !empty($value))
 				{
@@ -502,7 +502,7 @@ class RouteRequest extends Main\Root
 			if(!empty($lang))
 			{
 				if(is_string($value))
-				$value = array($value);
+				$value = [$value];
 				
 				if(is_array($value) && !empty($value) && in_array($lang,$value,true))
 				$return = true;
@@ -525,7 +525,7 @@ class RouteRequest extends Main\Root
 		else
 		{
 			if(is_string($value))
-			$value = array($value);
+			$value = [$value];
 			
 			if(is_array($value))
 			{
@@ -556,7 +556,7 @@ class RouteRequest extends Main\Root
 			if(!empty($browserName))
 			{
 				if(is_string($value))
-				$value = array($value);
+				$value = [$value];
 				
 				if(is_array($value) && !empty($value) && Base\Arr::in($browserName,$value,false))
 				$return = true;
@@ -642,7 +642,7 @@ class RouteRequest extends Main\Root
 		else
 		{
 			if(!is_array($value))
-			$value = array($value);
+			$value = [$value];
 			
 			foreach ($value as $method) 
 			{
@@ -786,7 +786,7 @@ class RouteRequest extends Main\Root
 		$return = null;
 		$route = $this->route();
 		$path = $route::path($lang);
-		$option = Base\Arr::plus($option,array('schemeHost'=>true));
+		$option = Base\Arr::plus($option,['schemeHost'=>true]);
 		
 		if(is_string($path))
 		$return = $this->uriPrepare($path,$lang,$option);
@@ -806,7 +806,7 @@ class RouteRequest extends Main\Root
 	{
 		$request = $this->request();
 		$route = $this->route();
-		$option = Base\Arr::plus(array('query'=>true,'schemeHost'=>false),$option);
+		$option = Base\Arr::plus(['query'=>true,'schemeHost'=>false],$option);
 		
 		if(is_string($lang))
 		{
@@ -858,7 +858,7 @@ class RouteRequest extends Main\Root
 		if(is_string($path))
 		{			
 			$schemeHost = $option['schemeHost'] ?? $this->schemeHost(true);
-			$option = Base\Arr::plus($option,array('schemeHost'=>$schemeHost));
+			$option = Base\Arr::plus($option,['schemeHost'=>$schemeHost]);
 			$return = Base\Uri::output($path,$option);
 		}
 		
