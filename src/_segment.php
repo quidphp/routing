@@ -163,7 +163,7 @@ trait _segment
 		
 		foreach (static::paths() as $path) 
 		{
-			if(is_string($path) && strpos($path,"[") !== false)
+			if(is_string($path) && strpos($path,'[') !== false)
 			{
 				$return = true;
 				break;
