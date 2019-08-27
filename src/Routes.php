@@ -15,7 +15,12 @@ use Quid\Base;
 abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 {
 	// trait
-	use Main\_inst; use Main\Map\_classe; use Main\Map\_sort; use Main\Map\_readOnly;
+	use Main\_inst;
+	use Main\Map\_classe;
+	use Main\Map\_sort;
+	use Main\Map\_readOnly;
+	
+	
 	// config
 	public static $config = [
 		'priorityIncrement'=>10, // incrémentation de la priorité lors de la méthode init
