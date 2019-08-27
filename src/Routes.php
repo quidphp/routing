@@ -19,8 +19,8 @@ abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 	use Main\Map\_classe;
 	use Main\Map\_sort;
 	use Main\Map\_readOnly;
-	
-	
+
+
 	// config
 	public static $config = [
 		'priorityIncrement'=>10, // incrémentation de la priorité lors de la méthode init
