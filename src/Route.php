@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // route
+// class for a route that acts as both a View and a Controller
 abstract class Route extends Main\Root implements Main\Contract\Meta
 {
 	// trait

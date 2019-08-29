@@ -11,6 +11,7 @@ namespace Quid\Routing;
 use Quid\Main;
 
 // exception
+// class used for a catchable route exception, the next available route will instead be triggered
 class Exception extends Main\Exception
 {
 	// config

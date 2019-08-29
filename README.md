@@ -16,6 +16,7 @@
 ``` bash
 $ composer require quidphp/routing
 ```
+Once installed, the **Quid\Routing** namespace will be available within your PHP application.
 
 ## Requirement
 **Quid\Routing** requires the following:
@@ -38,12 +39,15 @@ $ composer require quidphp/routing
 - *Coding*: No curly braces are used in a IF statement if the condition can be resolved in only one statement.
 - *Type*: Files, function arguments and return types are strict typed.
 - *Config*: A special $config static property exists in all classes. This property gets recursively merged with the parents' property on initialization.
+- *M-VC*: A route object serves as both a View and a Controller. There should be one route class per route. 
+- *Segment*: A segment within a route path represents a dynamic value. It is wrapped around brackets. A callable that accepts or rejects the value need to be provided.
+- *Templating*: Once the route is triggered, the developer has complete control and can use any HTML rendering technology it desires. Or, simply use the Quid\Base\Html methods to generate the HTML and use traits for reusable page components.
 
 ## Overview
 **Quid\Routing** contains 6 classes and traits. Here is an overview:
-- [Exception](src/Exception.php)
-- [Route](src/Route.php)
-- [RouteRequest](src/RouteRequest.php)
-- [RouteSegmentRequest](src/RouteSegmentRequest.php)
-- [Routes](src/Routes.php)
-- [_segment](src/_segment.php)
+- [Exception](src/Exception.php) | Class used for a catchable route exception, the next available route will instead be triggered
+- [Route](src/Route.php) | Class for a route that acts as both a View and a Controller
+- [RouteRequest](src/RouteRequest.php) | Class that analyzes if a request matches a route
+- [RouteSegmentRequest](src/RouteSegmentRequest.php) | Class that analyzes if a request matches a route with segments (non-static values)
+- [Routes](src/Routes.php) | Class for a collection of many untriggered routes
+- [_segment](src/_segment.php) | Trait that provides logic for a route with segment (non-static value)

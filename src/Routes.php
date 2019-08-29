@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // routes
+// class for a collection of many untriggered routes
 abstract class Routes extends Main\Extender implements Main\Contract\Hierarchy
 {
 	// trait

@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // routeRequest
+// class that analyzes if a request matches a route
 class RouteRequest extends Main\Root
 {
 	// config

@@ -11,6 +11,7 @@ namespace Quid\Routing;
 use Quid\Base;
 
 // _segment
+// trait that provides logic for a route with segment (non-static value)
 trait _segment
 {
 	// routeSegmentRequest
