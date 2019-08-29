@@ -41,3 +41,9 @@ $ composer require quidphp/routing
 
 ## Overview
 **Quid\Routing** contains 6 classes and traits. Here is an overview:
+- [Exception](src/Exception.php)
+- [Route](src/Route.php)
+- [RouteRequest](src/RouteRequest.php)
+- [RouteSegmentRequest](src/RouteSegmentRequest.php)
+- [Routes](src/Routes.php)
+- [_segment](src/_segment.php)
