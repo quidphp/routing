@@ -12,7 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // routeSegmentRequest
-// class that analyzes if a request matches a route with segments (non-static values)
+// class that analyzes if a request matches a route with segment (non-static value)
 class RouteSegmentRequest extends RouteRequest
 {
 	// config
