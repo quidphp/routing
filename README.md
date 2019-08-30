@@ -24,14 +24,16 @@ Once installed, the **Quid\Routing** namespace will be available within your PHP
 
 ## Dependency
 **QuidPHP/Routing** has the following dependency:
-- [Quid\Base](https://github.com/quidphp/base)
-- [Quid\Main](https://github.com/quidphp/main)
+- [quidphp/base](https://github.com/quidphp/base) | Quid\Base - PHP library that provides a large set of low-level static methods
+- [quidphp/main](https://github.com/quidphp/main) | Quid\Main - PHP library that provides a set of base objects and collections 
 
-## Testing
-**QuidPHP/Routing** testsuite can be run by creating a new [Quid\Project](https://github.com/quidphp/project). All tests and assertions are part of the [Quid\Test](https://github.com/quidphp/test) repository.
+All dependencies will be resolved by using the [Composer](https://getcomposer.org) installation process.
 
 ## Comment
-**QuidPHP/Routing** code is commented and all methods are explained. However, the method and property comments are currently written in French.
+**QuidPHP/Routing** code is commented and all methods are explained. However, most of the comments are currently written in French.
+
+## Testing
+**QuidPHP/Routing** testsuite can be run by creating a new [quidphp/project](https://github.com/quidphp/project). All tests and assertions are part of the [quidphp/test](https://github.com/quidphp/test) repository.
 
 ## Convention
 **QuidPHP/Routing** is built on the following conventions:
