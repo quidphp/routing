@@ -46,7 +46,7 @@ Once installed, the **Quid\Routing** namespace will be available within your PHP
 ## Overview
 **QuidPHP/Routing** contains 6 classes and traits. Here is an overview:
 - [Exception](src/Exception.php) | Class used for a catchable route exception, the next available route will instead be triggered
-- [Route](src/Route.php) | Class for a route that acts as both a View and a Controller
+- [Route](src/Route.php) | Abstract class for a route that acts as both a View and a Controller
 - [RouteRequest](src/RouteRequest.php) | Class that analyzes if a request matches a route
 - [RouteSegmentRequest](src/RouteSegmentRequest.php) | Class that analyzes if a request matches a route with segment (non-static value)
 - [Routes](src/Routes.php) | Class for a collection of many untriggered routes
