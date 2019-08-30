@@ -23,7 +23,7 @@ Once installed, the **Quid\Routing** namespace will be available within your PHP
 - PHP 7.2
 
 ## Dependency
-**QuidPHP/Routing** has the following dependency:
+**QuidPHP/Routing** has the following dependencies:
 - [quidphp/base](https://github.com/quidphp/base) | Quid\Base - PHP library that provides a large set of low-level static methods
 - [quidphp/main](https://github.com/quidphp/main) | Quid\Main - PHP library that provides a set of base objects and collections 
 
