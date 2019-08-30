@@ -20,7 +20,7 @@ Once installed, the **Quid\Routing** namespace will be available within your PHP
 
 ## Requirement
 **QuidPHP/Routing** requires the following:
-- PHP 7.2
+- PHP 7.2+
 
 ## Dependency
 **QuidPHP/Routing** has the following dependencies:
