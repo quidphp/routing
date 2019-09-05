@@ -18,7 +18,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Quid\\Routing\\": "src/"
+            "Quid\\Routing\\": "src/",
+			"Quid\\Test\\Routing\\": "test/"
         }
     }
 }

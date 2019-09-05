@@ -32,9 +32,6 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 ## Comment
 **QuidPHP/Routing** code is commented and all methods are explained. However, most of the comments are currently written in French.
 
-## Testing
-**QuidPHP/Routing** testsuite can be run by creating a new [quidphp/project](https://github.com/quidphp/project). All tests and assertions are part of the [quidphp/test](https://github.com/quidphp/test) repository.
-
 ## Convention
 **QuidPHP/Routing** is built on the following conventions:
 - *Traits*: Traits filenames start with an underscore (_).
@@ -53,3 +50,13 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [RouteSegmentRequest](src/RouteSegmentRequest.php) | Class that analyzes if a request matches a route with segment (non-static value)
 - [Routes](src/Routes.php) | Class for a collection of many untriggered routes
 - [_segment](src/_segment.php) | Trait that provides logic for a route with segment (non-static value)
+
+## Testing
+**QuidPHP/Routing** contains 5 test classes:
+- [Exception](test/Exception.php) | Class for testing Quid\Routing\Exception
+- [Route](test/Route.php) | Class for testing Quid\Routing\Route
+- [RouteRequest](test/RouteRequest.php) | Class for testing Quid\Routing\RouteRequest
+- [RouteSegmentRequest](test/RouteSegmentRequest.php) | Class for testing Quid\Routing\RouteSegmentRequest
+- [Routes](test/Routes.php) | Class for testing Quid\Routing\Routes
+
+**QuidPHP/Routing** testsuite can be run by creating a new [quidphp/project](https://github.com/quidphp/project).
