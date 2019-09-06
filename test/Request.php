@@ -4,7 +4,7 @@ declare(strict_types=1);
 /*
  * This file is part of the QuidPHP package.
  * Website: https://quidphp.com
- * License: https://github.com/quidphp/core/blob/master/LICENSE
+ * License: https://github.com/quidphp/routing/blob/master/LICENSE
  */
 
 namespace Quid\Test\Routing;
@@ -26,7 +26,7 @@ class Request extends Base\Test
 		$endSlash = new Routing\Request('/asdok/ok/');
 		$externalPost = new Routing\Request(['uri'=>'/external','method'=>'post','headers'=>['referer'=>'https://google.com']]);
 		$nl = new Routing\Request('browserconfig.xml');
-		
+
 		// manageRedirect
 		assert($badExtension->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
 		assert($externalPost->manageRedirect() === ['type'=>'externalPost','code'=>400,'location'=>null]);
@@ -35,7 +35,7 @@ class Request extends Base\Test
 		assert($redi->manageRedirect($redirection)['type'] === 'redirection');
 		assert($redi->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
 		assert($endSlash->manageRedirect($redirection) === ['type'=>'request','code'=>302,'location'=>'/en/asdok/ok']);
-		
+
 		// match
 
 		// matchOne

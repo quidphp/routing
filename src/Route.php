@@ -143,12 +143,12 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// prépare le titre après le onReplace
 	abstract protected function prepareTitle($return,array $array):array;
 
-	
+
 	// context
 	// retourne le tableau de contexte de la classe
 	abstract public function context(?array $option=null):array;
 
-	
+
 	// host
 	// retourne le host pour la route
 	abstract public static function host():?string;
@@ -168,12 +168,12 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// retourne l'objet routes de boot ou un nom de classe de route contenu dans l'objet
 	abstract public static function routes(bool $active=false,$get=null);
 
-	
+
 	// lang
 	// retourne l'objet lang
 	abstract public static function lang():Main\Lang;
-	
-	
+
+
 	// session
 	// retourne l'objet session
 	abstract public static function session():Main\Session;
@@ -249,11 +249,11 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	{
 		if($type === 'docClose')
 		$return = $this->prepareDocJsInit($return);
-		
+
 		return $return;
 	}
 
-	
+
 	// prepareDocJsInit
 	// ajoute la méthode jsInit si jsInit est true et que ce n'est pas une requête ajax
 	protected function prepareDocJsInit(array $return):array
@@ -262,21 +262,21 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		{
 			$callable = null;
 			$jsInit = static::$config['jsInit'];
-			
+
 			if(static::classIsCallable($jsInit))
 			$callable = $jsInit;
 			else
 			$callable = function() use($jsInit) {
 				return $jsInit;
 			};
-			
+
 			$return['script'] = Base\Arr::append($return['script'],[$callable]);
 		}
 
 		return $return;
 	}
-	
-	
+
+
 	// isTriggered
 	// retourne vrai si la route est présentement triggé
 	public function isTriggered():bool
@@ -284,7 +284,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		return ($this->trigger === true)? true:false;
 	}
 
-	
+
 	// allowed
 	// retourne vrai si le role de la session courante permet d'accéder à la route
 	// se base seulement sur match, pas verify
@@ -293,7 +293,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		$return = false;
 		$value = static::$config['match']['role'] ?? null;
 		$class = static::routeRequestClass();
-		
+
 		if(empty($role))
 		$role = static::session()->role();
 
@@ -309,8 +309,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	{
 		return static::session()->timeout();
 	}
-	
-	
+
+
 	// trigger
 	// lance la route
 	// retourne faux, et passe à la prochaine route
@@ -368,8 +368,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 		return $return;
 	}
-	
-	
+
+
 	// fallback
 	// méthode lancé après before si le test verify a échoué
 	// gère le timeout, captcha, csrf, genuine et failedFileUpload
@@ -819,7 +819,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		return $return;
 	}
 
-	
+
 	// title
 	// retourne le titre de la route triggé
 	public function title($pattern=null,?string $lang=null,?array $option=null):?string
@@ -848,8 +848,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 		return $return;
 	}
-	
-	
+
+
 	// docOpen
 	// génère l'ouverture du document en html
 	public function docOpen(bool $default=true,?string $separator=null):string
@@ -1114,7 +1114,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		return Base\Html::submit($this->title($pattern,$lang),$attr);
 	}
 
-	
+
 	// childs
 	// retourne toutes les enfants de la route courante
 	public static function childs(bool $active=false):Routes
@@ -1125,7 +1125,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 	// make
 	// construit une instance de la route de façon statique
-	public static function make($request=null,bool $overload=false):Route
+	public static function make($request=null,bool $overload=false):self
 	{
 		$class = ($overload === true)? static::getOverloadClass():static::class;
 		$return = new $class($request);
@@ -1137,7 +1137,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// makeOverload
 	// construit une instance de la route de façon statique
 	// overload est true
-	public static function makeOverload($request=null):Route
+	public static function makeOverload($request=null):self
 	{
 		return static::make($request,true);
 	}
@@ -1146,12 +1146,12 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// makeParent
 	// retourne une instance la route parente
 	// envoie une exception s'il n'y a pas de parent valide
-	public static function makeParent($request=null,bool $overload=false):Route
+	public static function makeParent($request=null,bool $overload=false):self
 	{
 		$return = null;
 		$parent = static::parent();
 		$target = current(static::routeBaseClasses());
-		
+
 		if(empty($parent) || !is_subclass_of($parent,$target,true))
 		static::throw('invalidParent');
 
@@ -1163,12 +1163,12 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 	// makeParentOverload
 	// comme makeParent mais overload est à true
-	public static function makeParentOverload($request=null):Route
+	public static function makeParentOverload($request=null):self
 	{
 		return static::makeParent($request,true);
 	}
-	
-	
+
+
 	// isIgnored
 	// retourne vrai si la route est ignoré
 	public static function isIgnored():bool
@@ -1254,8 +1254,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 		return;
 	}
-	
-	
+
+
 	// group
 	// retourne le group de la route, si existant
 	// si notNone est true, ne retourne pas le nom de group si none
@@ -1625,13 +1625,13 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 		return $return;
 	}
-	
-	
+
+
 	// routeBaseClasses
 	// retourne les classes bases de routes (donc abstraite)
 	public static function routeBaseClasses():array
 	{
-		return array(self::class);
+		return [self::class];
 	}
 }
 ?>

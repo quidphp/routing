@@ -4,7 +4,7 @@ declare(strict_types=1);
 /*
  * This file is part of the QuidPHP package.
  * Website: https://quidphp.com
- * License: https://github.com/quidphp/core/blob/master/LICENSE
+ * License: https://github.com/quidphp/routing/blob/master/LICENSE
  */
 
 namespace Quid\Routing;
@@ -17,7 +17,7 @@ class Request extends Main\Request
 	// config
 	public static $config = [];
 
-	
+
 	// manageRedirect
 	// vérifie la requête et manage les redirections possibles
 	// certaines errors vont générer un code http 400 plutôt que 404 (bad request)
@@ -90,8 +90,8 @@ class Request extends Main\Request
 
 		return $return;
 	}
-	
-	
+
+
 	// match
 	// retourne un tableau avec toutes les routes qui matchs avec la requête
 	public function match(Routes $routes,?Main\Session $session=null):?array
