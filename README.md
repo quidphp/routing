@@ -31,7 +31,7 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 
 ## Comment
 **QuidPHP/Routing** code is commented and all methods are explained. However, most of the comments are currently written in French.
- 
+
 ## Convention
 **QuidPHP/Routing** is built on the following conventions:
 - *Traits*: Traits filenames start with an underscore (_).
