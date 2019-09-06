@@ -19,45 +19,23 @@ class Route extends Base\Test
 	{
 		// construct
 
-		// run
-
 		// getBaseReplace
 
 		// prepareTitle
-
-		// title
-
-		// allowed
-
-		// label
-
-		// description
-
+		
+		// context
+		
 		// host
 
 		// schemeHost
 
-		// context
-
-		// routes
-
-		// childs
-
-		// make
-
-		// makeOverload
-
-		// makeParent
-
-		// makeParentOverload
-
-		// session
-
-		// getTimeoutObject
-
 		// type
-
-		// setType
+		
+		// routes
+		
+		// lang
+		
+		// session
 
 		// toString
 
@@ -72,11 +50,19 @@ class Route extends Base\Test
 		// onReplace
 
 		// onPrepareDoc
-
+		
+		// prepareDocJsInit
+		
 		// isTriggered
-
+		
+		// allowed
+		
+		// getTimeoutObject
+		
 		// trigger
-
+		
+		// run
+		
 		// fallback
 
 		// fallbackRouteRedirect
@@ -128,7 +114,13 @@ class Route extends Base\Test
 		// getBodyClass
 
 		// getBodyStyle
-
+		
+		// label
+		
+		// description
+		
+		// title
+		
 		// docOpen
 
 		// docClose
@@ -168,9 +160,19 @@ class Route extends Base\Test
 		// formSubmit
 
 		// submitTitle
-
+		
+		// childs
+		
+		// make
+		
+		// makeOverload
+		
+		// makeParent
+		
+		// makeParentOverload
+		
 		// isIgnored
-
+		
 		// inMenu
 
 		// isActive
@@ -180,7 +182,9 @@ class Route extends Base\Test
 		// inSitemap
 
 		// allowNavigation
-
+		
+		// setType
+		
 		// group
 
 		// name
@@ -236,7 +240,9 @@ class Route extends Base\Test
 		// setResponseCode
 
 		// echoOutput
-
+		
+		// routeBaseClasses
+		
 		// _segment
 
 		return true;

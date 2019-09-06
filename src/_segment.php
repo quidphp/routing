@@ -193,13 +193,29 @@ trait _segment
 		return $return;
 	}
 
+	
+	// routeRequestClass
+	// retourne la classe overload pour routeRequest
+	public static function routeRequestClass():string 
+	{
+		$return = null;
 
+		if(static::isSegmentClass())
+		$return = RouteSegmentRequest::getOverloadClass();
+
+		else
+		$return = RouteRequest::getOverloadClass();
+
+		return $return;
+	}
+	
+	
 	// makeRouteRequest
 	// créer l'objet routeRequest pour la route
 	public static function makeRouteRequest($request=null):RouteRequest
 	{
 		$return = null;
-
+		
 		if(static::isSegmentClass())
 		{
 			$lang = static::session()->lang();

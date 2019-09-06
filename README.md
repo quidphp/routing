@@ -43,8 +43,13 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - *Templating*: Once the route is triggered, the developer has complete control and can use any HTML rendering technology it desires. Or, simply use the [Quid\Base\Html](https://github.com/quidphp/base/blob/master/src/Html.php) methods to generate the HTML and use traits for reusable page components.
 
 ## Overview
-**QuidPHP/Routing** contains 6 classes and traits. Here is an overview:
+**QuidPHP/Routing** contains 11 classes and traits. Here is an overview:
+- [BreakException](src/BreakException.php) | Class for a break exception which breaks the root matching loop
 - [Exception](src/Exception.php) | Class used for a catchable route exception, the next available route will instead be triggered
+- [Nav](src/Nav.php) | Class for storing route navigation-related data
+- [Redirection](src/Redirection.php) | Class managing a URI redirection array
+- [Request](src/Request.php) | Extended class with methods to manage an HTTP request
+- [RequestHistory](src/RequestHistory.php) | Extended class for a collection containing a history of requests
 - [Route](src/Route.php) | Abstract class for a route that acts as both a View and a Controller
 - [RouteRequest](src/RouteRequest.php) | Class that analyzes if a request matches a route
 - [RouteSegmentRequest](src/RouteSegmentRequest.php) | Class that analyzes if a request matches a route with segment (non-static value)
@@ -52,8 +57,13 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [_segment](src/_segment.php) | Trait that provides logic for a route with segment (non-static value)
 
 ## Testing
-**QuidPHP/Routing** contains 5 test classes:
+**QuidPHP/Routing** contains 10 test classes:
+- [BreakException](test/BreakException.php) | Class for testing Quid\Routing\BreakException
 - [Exception](test/Exception.php) | Class for testing Quid\Routing\Exception
+- [Nav](test/Nav.php) | Class for testing Quid\Routing\Nav
+- [Redirection](test/Redirection.php) | Class for testing Quid\Routing\Redirection
+- [Request](test/Request.php) | Class for testing Quid\Routing\Request
+- [RequestHistory](test/RequestHistory.php) | Class for testing Quid\Routing\RequestHistory
 - [Route](test/Route.php) | Class for testing Quid\Routing\Route
 - [RouteRequest](test/RouteRequest.php) | Class for testing Quid\Routing\RouteRequest
 - [RouteSegmentRequest](test/RouteSegmentRequest.php) | Class for testing Quid\Routing\RouteSegmentRequest
