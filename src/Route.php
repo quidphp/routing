@@ -178,12 +178,12 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// retourne l'objet session
 	abstract public static function session():Main\Session;
 
-	
+
 	// services
 	// retourne l'objet services
 	abstract public static function services():Main\Services;
-	
-	
+
+
 	// toString
 	// retourne la valeur de la route sous forme de string
 	public function __toString():string
@@ -254,9 +254,9 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	{
 		if($type === 'docClose')
 		$return = $this->prepareDocJsInit($return);
-		
+
 		$return = $this->prepareDocServices($type,$return);
-		
+
 		return $return;
 	}
 
@@ -283,7 +283,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		return $return;
 	}
 
-	
+
 	// prepareDocServices
 	// méthode utilisé après prepareDoc, lie les tags de services pour docOpen et docClose
 	// si un des éléments est false dans le tableau de config, à ce moment n'append pas le service (ça vaut dire que la route n'a pas de js/css/script)
@@ -304,7 +304,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 					$js = $service->docOpenJs();
 					if(!empty($js))
 					{
-						$append = (is_array($js))? $js:array($key=>$js);
+						$append = (is_array($js))? $js:[$key=>$js];
 						$return['head']['js'] = Base\Arr::append($return['head']['js'] ?? [],$append);
 					}
 				}
@@ -332,8 +332,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 		return $return;
 	}
-	
-	
+
+
 	// isTriggered
 	// retourne vrai si la route est présentement triggé
 	public function isTriggered():bool

@@ -36,9 +36,9 @@ class Route extends Base\Test
 		// lang
 
 		// session
-		
+
 		// services
-		
+
 		// toString
 
 		// cast
@@ -54,9 +54,9 @@ class Route extends Base\Test
 		// onPrepareDoc
 
 		// prepareDocJsInit
-		
+
 		// prepareDocServices
-		
+
 		// isTriggered
 
 		// allowed
