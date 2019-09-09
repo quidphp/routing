@@ -178,7 +178,12 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 	// retourne l'objet session
 	abstract public static function session():Main\Session;
 
-
+	
+	// services
+	// retourne l'objet services
+	abstract public static function services():Main\Services;
+	
+	
 	// toString
 	// retourne la valeur de la route sous forme de string
 	public function __toString():string
@@ -243,13 +248,15 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 
 	// onPrepareDoc
-	// méthode à étendre pour changer le tableau de prepareDoc
+	// pour changer le tableau de prepareDoc, peut être étendu
 	// méthode protégé
 	protected function onPrepareDoc(string $type,array $return):array
 	{
 		if($type === 'docClose')
 		$return = $this->prepareDocJsInit($return);
-
+		
+		$return = $this->prepareDocServices($type,$return);
+		
 		return $return;
 	}
 
@@ -276,7 +283,57 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 		return $return;
 	}
 
+	
+	// prepareDocServices
+	// méthode utilisé après prepareDoc, lie les tags de services pour docOpen et docClose
+	// si un des éléments est false dans le tableau de config, à ce moment n'append pas le service (ça vaut dire que la route n'a pas de js/css/script)
+	// méthode protégé
+	protected function prepareDocServices(string $type,array $return):array
+	{
+		$services = static::services();
 
+		foreach ($services as $service)
+		{
+			$key = $service->getKey();
+
+			if($type === 'docOpen')
+			{
+				$return['head']['js'] = $return['head']['js'] ?? null;
+				if($return['head']['js'] !== false)
+				{
+					$js = $service->docOpenJs();
+					if(!empty($js))
+					{
+						$append = (is_array($js))? $js:array($key=>$js);
+						$return['head']['js'] = Base\Arr::append($return['head']['js'] ?? [],$append);
+					}
+				}
+
+				$return['head']['script'] = $return['head']['script'] ?? null;
+				if($return['head']['script'] !== false)
+				{
+					$script = $service->docOpenScript();
+					if(!empty($script))
+					$return['head']['script'] = Base\Arr::append($return['head']['script'] ?? [],$script);
+				}
+			}
+
+			elseif($type === 'docClose')
+			{
+				$return['script'] = $return['script'] ?? null;
+				if($return['script'] !== false)
+				{
+					$script = $service->docCloseScript();
+					if(!empty($script))
+					$return['script'] = Base\Arr::append($return['script'] ?? [],$script);
+				}
+			}
+		}
+
+		return $return;
+	}
+	
+	
 	// isTriggered
 	// retourne vrai si la route est présentement triggé
 	public function isTriggered():bool
