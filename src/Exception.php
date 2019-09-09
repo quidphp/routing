@@ -14,10 +14,10 @@ use Quid\Main;
 // class used for a catchable route exception, the next available route will instead be triggered
 class Exception extends Main\Exception
 {
-	// config
-	public static $config = [
-		'code'=>34 // code de l'exception
-	];
+    // config
+    public static $config = [
+        'code'=>34 // code de l'exception
+    ];
 }
 
 // config

@@ -15,19 +15,19 @@ use Quid\Base;
 // class for testing Quid\Routing\Nav
 class Nav extends Base\Test
 {
-	// trigger
-	public static function trigger(array $data):bool
-	{
-		// prepare
-		$nav = new Routing\Nav();
+    // trigger
+    public static function trigger(array $data):bool
+    {
+        // prepare
+        $nav = new Routing\Nav();
 
-		// route
+        // route
 
-		// map
-		assert($nav->set('ok','ok') === $nav);
-		assert($nav->get('ok') === 'ok');
+        // map
+        assert($nav->set('ok','ok') === $nav);
+        assert($nav->get('ok') === 'ok');
 
-		return true;
-	}
+        return true;
+    }
 }
 ?>

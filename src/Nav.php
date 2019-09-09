@@ -14,40 +14,40 @@ use Quid\Main;
 // class for storing route navigation-related data
 class Nav extends Main\Map
 {
-	// config
-	public static $config = [];
+    // config
+    public static $config = [];
 
 
-	// map
-	protected static $is = 'string'; // les données de nav doivent être des routes, donc is est string
-	protected static $allow = ['set','unset','empty','serialize']; // méthodes permises
+    // map
+    protected static $is = 'string'; // les données de nav doivent être des routes, donc is est string
+    protected static $allow = ['set','unset','empty','serialize']; // méthodes permises
 
 
-	// route
-	// génère une route à partir de celle gardé dans l'objet
-	public function route($value):?Route
-	{
-		$return = null;
-		$class = $value;
-		$uri = $this->get($value);
+    // route
+    // génère une route à partir de celle gardé dans l'objet
+    public function route($value):?Route
+    {
+        $return = null;
+        $class = $value;
+        $uri = $this->get($value);
 
-		if(!empty($uri))
-		{
-			if(is_array($value))
-			$class = current($value);
+        if(!empty($uri))
+        {
+            if(is_array($value))
+            $class = current($value);
 
-			$request = Request::newOverload($uri);
+            $request = Request::newOverload($uri);
 
-			if(is_string($class))
-			{
-				$route = $class::make($request);
+            if(is_string($class))
+            {
+                $route = $class::make($request);
 
-				if($route->routeRequest()->isRouteRequestCompatible())
-				$return = $route;
-			}
-		}
+                if($route->routeRequest()->isRouteRequestCompatible())
+                $return = $route;
+            }
+        }
 
-		return $return;
-	}
+        return $return;
+    }
 }
 ?>

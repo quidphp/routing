@@ -14,70 +14,70 @@ use Quid\Base;
 // class for testing Quid\Routing\RouteSegmentRequest
 class RouteSegmentRequest extends Base\Test
 {
-	// trigger
-	public static function trigger(array $data):bool
-	{
-		// construct
+    // trigger
+    public static function trigger(array $data):bool
+    {
+        // construct
 
-		// reset
+        // reset
 
-		// isValid
+        // isValid
 
-		// checkValid
+        // checkValid
 
-		// setLangCode
+        // setLangCode
 
-		// langCode
+        // langCode
 
-		// setRoute
+        // setRoute
 
-		// routeSegment
+        // routeSegment
 
-		// setRequest
+        // setRequest
 
-		// parseRequestSegmentFromRequest
+        // parseRequestSegmentFromRequest
 
-		// parseRequestSegmentFromRequestCatchAll
+        // parseRequestSegmentFromRequestCatchAll
 
-		// parseRequestSegmentFromValue
+        // parseRequestSegmentFromValue
 
-		// isRouteCatchAll
+        // isRouteCatchAll
 
-		// isSegmentParsedFromValue
+        // isSegmentParsedFromValue
 
-		// isRouteRequestCompatible
+        // isRouteRequestCompatible
 
-		// requestSegment
+        // requestSegment
 
-		// hasRequestSegment
+        // hasRequestSegment
 
-		// checkRequestSegment
+        // checkRequestSegment
 
-		// changeRequestSegment
+        // changeRequestSegment
 
-		// changeRequestSegments
+        // changeRequestSegments
 
-		// keepRequestSegments
+        // keepRequestSegments
 
-		// makeRequestSegment
+        // makeRequestSegment
 
-		// isValidSegment
+        // isValidSegment
 
-		// checkValidSegment
+        // checkValidSegment
 
-		// validateSegment
+        // validateSegment
 
-		// validateArray
+        // validateArray
 
-		// segment
+        // segment
 
-		// path
+        // path
 
-		// pathCatchAll
+        // pathCatchAll
 
-		// uri
+        // uri
 
-		return true;
-	}
+        return true;
+    }
 }
 ?>

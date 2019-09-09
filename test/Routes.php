@@ -14,60 +14,60 @@ use Quid\Base;
 // class for testing Quid\Routing\Routes
 class Routes extends Base\Test
 {
-	// trigger
-	public static function trigger(array $data):bool
-	{
-		// onPrepareKey
+    // trigger
+    public static function trigger(array $data):bool
+    {
+        // onPrepareKey
 
-		// type
+        // type
 
-		// match
+        // match
 
-		// matchOne
+        // matchOne
 
-		// route
+        // route
 
-		// keyParent
+        // keyParent
 
-		// hierarchy
+        // hierarchy
 
-		// childsRecursive
+        // childsRecursive
 
-		// tops
+        // tops
 
-		// parent
+        // parent
 
-		// top
+        // top
 
-		// parents
+        // parents
 
-		// breadcrumb
+        // breadcrumb
 
-		// siblings
+        // siblings
 
-		// childs
+        // childs
 
-		// withSegment
+        // withSegment
 
-		// withoutSegment
+        // withoutSegment
 
-		// active
+        // active
 
-		// all
+        // all
 
-		// sitemap
+        // sitemap
 
-		// init
+        // init
 
-		// setType
+        // setType
 
-		// setPriority
+        // setPriority
 
-		// setParent
+        // setParent
 
-		// makeBreadcrumbs
+        // makeBreadcrumbs
 
-		return true;
-	}
+        return true;
+    }
 }
 ?>

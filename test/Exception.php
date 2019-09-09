@@ -16,17 +16,17 @@ use Quid\Base;
 // class for testing Quid\Routing\Exception
 class Exception extends Base\Test
 {
-	// trigger
-	public static function trigger(array $data):bool
-	{
-		// construct
-		$e = new Routing\Exception('well');
+    // trigger
+    public static function trigger(array $data):bool
+    {
+        // construct
+        $e = new Routing\Exception('well');
 
-		// exception
-		assert(!$e instanceof Main\Contract\Catchable);
-		assert($e->getCode() === 34);
+        // exception
+        assert(!$e instanceof Main\Contract\Catchable);
+        assert($e->getCode() === 34);
 
-		return true;
-	}
+        return true;
+    }
 }
 ?>

@@ -14,242 +14,242 @@ use Quid\Base;
 // class for testing Quid\Routing\Route
 class Route extends Base\Test
 {
-	// trigger
-	public static function trigger(array $data):bool
-	{
-		// construct
+    // trigger
+    public static function trigger(array $data):bool
+    {
+        // construct
 
-		// getBaseReplace
+        // getBaseReplace
 
-		// prepareTitle
+        // prepareTitle
 
-		// context
+        // context
 
-		// host
+        // host
 
-		// schemeHost
+        // schemeHost
 
-		// type
+        // type
 
-		// routes
+        // routes
 
-		// lang
+        // lang
 
-		// session
+        // session
 
-		// services
+        // services
 
-		// toString
+        // toString
 
-		// cast
+        // cast
 
-		// onMake
+        // onMake
 
-		// onBefore
+        // onBefore
 
-		// onAfter
+        // onAfter
 
-		// onReplace
+        // onReplace
 
-		// onPrepareDoc
+        // onPrepareDoc
 
-		// prepareDocJsInit
+        // prepareDocJsInit
 
-		// prepareDocServices
+        // prepareDocServices
 
-		// isTriggered
+        // isTriggered
 
-		// allowed
+        // allowed
 
-		// getTimeoutObject
+        // getTimeoutObject
 
-		// trigger
+        // trigger
 
-		// run
+        // run
 
-		// fallback
+        // fallback
 
-		// fallbackRouteRedirect
+        // fallbackRouteRedirect
 
-		// setRouteRequest
+        // setRouteRequest
 
-		// routeRequest
+        // routeRequest
 
-		// request
+        // request
 
-		// getFallbackContext
+        // getFallbackContext
 
-		// selectedUri
+        // selectedUri
 
-		// makeTitle
+        // makeTitle
 
-		// init
+        // init
 
-		// isValid
+        // isValid
 
-		// checkValid
+        // checkValid
 
-		// start
+        // start
 
-		// startEcho
+        // startEcho
 
-		// triggerEcho
+        // triggerEcho
 
-		// launch
+        // launch
 
-		// before
+        // before
 
-		// after
+        // after
 
-		// afterRouteRedirect
+        // afterRouteRedirect
 
-		// processRedirect
+        // processRedirect
 
-		// getMetaFromContract
+        // getMetaFromContract
 
-		// getMetaTitle
+        // getMetaTitle
 
-		// getMetaKeywords
+        // getMetaKeywords
 
-		// getMetaDescription
+        // getMetaDescription
 
-		// getMetaImage
+        // getMetaImage
 
-		// getBodyClass
+        // getBodyClass
 
-		// getBodyStyle
+        // getBodyStyle
 
-		// label
+        // label
 
-		// description
+        // description
 
-		// title
+        // title
 
-		// docOpen
+        // docOpen
 
-		// docClose
+        // docClose
 
-		// getReplace
+        // getReplace
 
-		// getOtherMeta
+        // getOtherMeta
 
-		// prepareDoc
+        // prepareDoc
 
-		// hasUri
+        // hasUri
 
-		// uriMethod
+        // uriMethod
 
-		// uri
+        // uri
 
-		// uriOutput
+        // uriOutput
 
-		// uriRelative
+        // uriRelative
 
-		// uriAbsolute
+        // uriAbsolute
 
-		// redirect
+        // redirect
 
-		// isSelected
+        // isSelected
 
-		// a
+        // a
 
-		// aOpen
+        // aOpen
 
-		// aTitle
+        // aTitle
 
-		// aOpenTitle
+        // aOpenTitle
 
-		// formOpen
+        // formOpen
 
-		// formSubmit
+        // formSubmit
 
-		// submitTitle
+        // submitTitle
 
-		// childs
+        // childs
 
-		// make
+        // make
 
-		// makeOverload
+        // makeOverload
 
-		// makeParent
+        // makeParent
 
-		// makeParentOverload
+        // makeParentOverload
 
-		// isIgnored
+        // isIgnored
 
-		// inMenu
+        // inMenu
 
-		// isActive
+        // isActive
 
-		// isGroup
+        // isGroup
 
-		// inSitemap
+        // inSitemap
 
-		// allowNavigation
+        // allowNavigation
 
-		// setType
+        // setType
 
-		// group
+        // group
 
-		// name
+        // name
 
-		// priority
+        // priority
 
-		// setPriority
+        // setPriority
 
-		// parent
+        // parent
 
-		// setParent
+        // setParent
 
-		// hasPath
+        // hasPath
 
-		// paths
+        // paths
 
-		// path
+        // path
 
-		// isSsl
+        // isSsl
 
-		// isAjax
+        // isAjax
 
-		// isMethod
+        // isMethod
 
-		// isRedirectable
+        // isRedirectable
 
-		// hasCheck
+        // hasCheck
 
-		// timeout
+        // timeout
 
-		// prepareTimeout
+        // prepareTimeout
 
-		// makeTimeoutKey
+        // makeTimeoutKey
 
-		// timeoutMethod
+        // timeoutMethod
 
-		// isTimedOut
+        // isTimedOut
 
-		// timeoutGet
+        // timeoutGet
 
-		// timeoutIncrement
+        // timeoutIncrement
 
-		// timeoutBlock
+        // timeoutBlock
 
-		// timeoutReset
+        // timeoutReset
 
-		// timeoutStamp
+        // timeoutStamp
 
-		// tagAttr
+        // tagAttr
 
-		// tagOption
+        // tagOption
 
-		// setResponseCode
+        // setResponseCode
 
-		// echoOutput
+        // echoOutput
 
-		// routeBaseClasses
+        // routeBaseClasses
 
-		// _segment
+        // _segment
 
-		return true;
-	}
+        return true;
+    }
 }
 ?>

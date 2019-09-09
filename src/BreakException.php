@@ -14,10 +14,10 @@ use Quid\Main;
 // class for a break exception which breaks the root matching loop
 class BreakException extends Main\Exception
 {
-	// config
-	public static $config = [
-		'code'=>35 // code de l'exception
-	];
+    // config
+    public static $config = [
+        'code'=>35 // code de l'exception
+    ];
 }
 
 // config

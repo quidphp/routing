@@ -14,100 +14,100 @@ use Quid\Base;
 // class for testing Quid\Routing\RouteRequest
 class RouteRequest extends Base\Test
 {
-	// trigger
-	public static function trigger(array $data):bool
-	{
-		// construct
+    // trigger
+    public static function trigger(array $data):bool
+    {
+        // construct
 
-		// toString
+        // toString
 
-		// reset
+        // reset
 
-		// isValid
+        // isValid
 
-		// checkValid
+        // checkValid
 
-		// isValidMatch
+        // isValidMatch
 
-		// checkValidMatch
+        // checkValidMatch
 
-		// isValidVerify
+        // isValidVerify
 
-		// checkValidVerify
+        // checkValidVerify
 
-		// isRequestInst
+        // isRequestInst
 
-		// valid
+        // valid
 
-		// fallback
+        // fallback
 
-		// setFallback
+        // setFallback
 
-		// route
+        // route
 
-		// setRoute
+        // setRoute
 
-		// request
+        // request
 
-		// setRequest
+        // setRequest
 
-		// validateMatch
+        // validateMatch
 
-		// validateVerify
+        // validateVerify
 
-		// validateArray
+        // validateArray
 
-		// path
+        // path
 
-		// ssl
+        // ssl
 
-		// ajax
+        // ajax
 
-		// host
+        // host
 
-		// method
+        // method
 
-		// header
+        // header
 
-		// lang
+        // lang
 
-		// ip
+        // ip
 
-		// browser
+        // browser
 
-		// query
+        // query
 
-		// post
+        // post
 
-		// genuine
+        // genuine
 
-		// role
+        // role
 
-		// session
+        // session
 
-		// csrf
+        // csrf
 
-		// captcha
+        // captcha
 
-		// timeout
+        // timeout
 
-		// timedOut
+        // timedOut
 
-		// schemeHost
+        // schemeHost
 
-		// uri
+        // uri
 
-		// uriPrepare
+        // uriPrepare
 
-		// uriOutput
+        // uriOutput
 
-		// uriRelative
+        // uriRelative
 
-		// uriAbsolute
+        // uriAbsolute
 
-		// allowed
+        // allowed
 
-		return true;
-	}
+        return true;
+    }
 }
 ?>
