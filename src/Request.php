@@ -11,7 +11,7 @@ namespace Quid\Routing;
 use Quid\Main;
 
 // request
-// extended class with methods to manage an HTTP request
+// extended class with methods to route an HTTP request
 class Request extends Main\Request
 {
     // config

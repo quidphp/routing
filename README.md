@@ -48,7 +48,7 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [Exception](src/Exception.php) | Class used for a catchable route exception, the next available route will instead be triggered
 - [Nav](src/Nav.php) | Class for storing route navigation-related data
 - [Redirection](src/Redirection.php) | Class managing a URI redirection array
-- [Request](src/Request.php) | Extended class with methods to manage an HTTP request
+- [Request](src/Request.php) | Extended class with methods to route an HTTP request
 - [RequestHistory](src/RequestHistory.php) | Extended class for a collection containing a history of requests
 - [Route](src/Route.php) | Abstract class for a route that acts as both a View and a Controller
 - [RouteRequest](src/RouteRequest.php) | Class that analyzes if a request matches a route
