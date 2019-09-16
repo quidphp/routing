@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Routing;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
 
 // redirection
 // class managing a URI redirection array

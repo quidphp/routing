@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Routing;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
 
 // routes
 // class for a collection of many untriggered routes
@@ -77,7 +77,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
             if($routeRequest->isValidMatch($session))
             $return[$key] = $value;
-            
+
             elseif($debug === true && $value::isDebug())
             $value::debugDead();
         }
@@ -111,7 +111,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
                 $return = $value;
                 break;
             }
-            
+
             elseif($debug === true && $value::isDebug())
             $value::debugDead();
         }

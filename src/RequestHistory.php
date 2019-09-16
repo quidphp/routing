@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Routing;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
 
 // requestHistory
 // extended class for a collection containing a history of requests

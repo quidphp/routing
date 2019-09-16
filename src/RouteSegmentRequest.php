@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Routing;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
 
 // routeSegmentRequest
 // class that analyzes if a request matches a route with segment (non-static value)
@@ -557,9 +557,9 @@ class RouteSegmentRequest extends RouteRequest
 
             else
             $v = $callable('validate',$value,$keyValue);
-            
+
             $route::debugStore(static::class,'validateMatch',$key,$value,$callable,$v);
-            
+
             if($v === false)
             {
                 $this->fallback = ['segment',$key];
@@ -640,7 +640,7 @@ class RouteSegmentRequest extends RouteRequest
             {
                 $match = $this->request()->pathMatch();
                 $value = Base\Path::stripStart($value);
-                
+
                 if(Base\Path::sameWithSegments($value,$match))
                 $return = true;
             }

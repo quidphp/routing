@@ -154,11 +154,11 @@ class Route extends Base\Test
         // a
 
         // aOpen
-        
+
         // aLabel
-        
+
         // aOpenLabel
-        
+
         // aTitle
 
         // aOpenTitle
@@ -166,9 +166,9 @@ class Route extends Base\Test
         // formOpen
 
         // formSubmit
-        
+
         // submitLabel
-        
+
         // submitTitle
 
         // childs
@@ -220,9 +220,9 @@ class Route extends Base\Test
         // isMethod
 
         // isRedirectable
-        
+
         // shouldKeepInHistory
-        
+
         // hasCheck
 
         // timeout
@@ -254,13 +254,13 @@ class Route extends Base\Test
         // echoOutput
 
         // routeBaseClasses
-        
+
         // isDebug
-        
+
         // debugStore
-        
+
         // debugDead
-        
+
         // _segment
 
         return true;

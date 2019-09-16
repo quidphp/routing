@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Test\Routing;
-use Quid\Routing;
 use Quid\Base;
+use Quid\Routing;
 
 // request
 // class for testing Quid\Routing\Request
