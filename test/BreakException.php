@@ -8,9 +8,9 @@ declare(strict_types=1);
  */
 
 namespace Quid\Test\Routing;
-use Quid\Routing;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
+use Quid\Routing;
 
 // breakException
 // class for testing Quid\Routing\BreakException

@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Routing;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
 
 // routeSegmentRequest
 // class that analyzes if a request matches a route with segment (non-static value)
