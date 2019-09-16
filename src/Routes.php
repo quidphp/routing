@@ -77,7 +77,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
             if($routeRequest->isValidMatch($session))
             $return[$key] = $value;
-            
+
             elseif($debug === true && $value::isDebug())
             $value::debugDead();
         }
@@ -111,7 +111,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
                 $return = $value;
                 break;
             }
-            
+
             elseif($debug === true && $value::isDebug())
             $value::debugDead();
         }

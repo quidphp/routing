@@ -118,11 +118,11 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         'segment'=>[] // tableau qui permet de remplacer une clé de segment par un autre, utiliser dans methodSegment
     ];
 
-    
+
     // debug
-    public static $debug = array(); // permet de débogger le match des routes
-    
-    
+    public static $debug = []; // permet de débogger le match des routes
+
+
     // dynamique
     protected $routeRequest = null; // variable qui contient l'objet routeRequest
     protected $trigger = false; // garde en mémoire si la route est trigger ou non
@@ -1114,7 +1114,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         return $return;
     }
 
-    
+
     // aLabel
     // génère un a tag pour la route, le label sera affiché
     // possible de spécifier un pattern de label
@@ -1131,8 +1131,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     {
         return $this->aOpen(static::label($pattern,$lang),$attr,$lang,$option);
     }
-    
-    
+
+
     // aTitle
     // génère un a tag pour la route, le title sera affiché
     // possible de spécifier un pattern de title
@@ -1184,7 +1184,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         return $return;
     }
 
-    
+
     // submitLabel
     // fait un tag submit avec label pour soumettre le formulaire
     // méthode statique
@@ -1192,8 +1192,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     {
         return Base\Html::submit(static::label($pattern,$lang),$attr);
     }
-    
-    
+
+
     // submitTitle
     // fait un tag submit avec title pour soumettre le formulaire
     public function submitTitle($pattern=null,$attr=null,?string $lang=null):?string
@@ -1528,15 +1528,15 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         return $return;
     }
 
-    
+
     // shouldKeepInHistory
     // retourne vrai si la route devrait être gardé dasn l'history
     public static function shouldKeepInHistory():bool
     {
         return (!empty(static::$config['history']))? true:false;
     }
-    
-    
+
+
     // hasCheck
     // permet de vérifier si un élément de validation de la route se retrouve dans match ou verify
     public static function hasCheck(string $type):bool
@@ -1728,47 +1728,47 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     {
         return [self::class];
     }
-    
-    
+
+
     // isDebug
     // retourne vrai si la route est en mode débogagge
-    public static function isDebug($value=null):bool 
+    public static function isDebug($value=null):bool
     {
         return (static::$config['debug'] === true || ($value !== null && static::$config['debug'] === $value))? true:false;
     }
-    
-    
+
+
     // debugStore
     // permet de débogger le processus de match
-    public static function debugStore(...$args):void 
+    public static function debugStore(...$args):void
     {
         if(static::isDebug(1))
         {
             $args = Base\Obj::cast($args);
             static::$debug[static::class][] = $args;
         }
-        
+
         return;
     }
-    
-    
+
+
     // debugDead
     // dump les données debug de la route et tue la requête
     // possible aussi de output tout (pas seulement la route courante)
-    public static function debugDead(bool $all=false):void 
+    public static function debugDead(bool $all=false):void
     {
         if($all === true)
         $array = static::$debug;
-        
+
         else
         {
-            $array = static::$debug[static::class] ?? array();
+            $array = static::$debug[static::class] ?? [];
             $array[] = static::class;
             $array = array_reverse($array);
         }
-        
+
         Base\Debug::dead($array);
-        
+
         return;
     }
 }

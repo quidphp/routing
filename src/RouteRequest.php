@@ -275,9 +275,9 @@ class RouteRequest extends Main\Root
 
         elseif((is_string($emptyPath) || $emptyPath === null) && $this->path($emptyPath))
         $go = true;
-        
+
         $route::debugStore(static::class,'validateMatch','go',$path,$emptyPath,$go);
-        
+
         if($go === true)
         {
             foreach ($match as $key => $value)
@@ -286,7 +286,7 @@ class RouteRequest extends Main\Root
                 {
                     $return = ($value === null)? true:$this->$key($value,$session);
                     $route::debugStore(static::class,'validateMatch',$key,$return);
-                    
+
                     if($return === false)
                     {
                         if($exception === true)
@@ -320,7 +320,7 @@ class RouteRequest extends Main\Root
             {
                 $return = ($value === null)? true:$this->$key($value,$session);
                 $route::debugStore(static::class,'validateMatch',$key,$return);
-                
+
                 if($return === false)
                 {
                     $this->setFallback($key,$value,$session);
