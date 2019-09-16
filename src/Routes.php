@@ -66,7 +66,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // match
     // retourne toutes les routes qui match l'objet requête
-    public function match(Main\Request $request,?Main\Session $session=null):array
+    public function match(Main\Request $request,?Main\Session $session=null,bool $debug=false):array
     {
         $return = [];
         $session = ($session instanceof Main\Session)? $session:Main\Session::inst();
@@ -77,6 +77,9 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
             if($routeRequest->isValidMatch($session))
             $return[$key] = $value;
+            
+            elseif($debug === true && $value::isDebug())
+            $value::debugDead();
         }
 
         return $return;
@@ -86,7 +89,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // matchOne
     // retourne la première route qui match l'objet requête
     // possible de reprendre le loop au même endroit en fournissant le nom de la classe after
-    public function matchOne(Main\Request $request,?Main\Session $session=null,?string $after=null):?string
+    public function matchOne(Main\Request $request,?Main\Session $session=null,?string $after=null,bool $debug=false):?string
     {
         $return = null;
         $session = ($session instanceof Main\Session)? $session:Main\Session::inst();
@@ -108,6 +111,9 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
                 $return = $value;
                 break;
             }
+            
+            elseif($debug === true && $value::isDebug())
+            $value::debugDead();
         }
 
         return $return;
@@ -117,10 +123,10 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // route
     // retourne la première route qui match l'objet requête
     // la route est triggé et sera retourné après avoir passé le test de validation
-    public function route(Main\Request $request,?Main\Session $session=null,?string $after=null):?Route
+    public function route(Main\Request $request,?Main\Session $session=null,?string $after=null,bool $debug=false):?Route
     {
         $return = null;
-        $matchOne = $this->matchOne($request,$session,$after);
+        $matchOne = $this->matchOne($request,$session,$after,$debug);
 
         if(!empty($matchOne))
         {

@@ -112,12 +112,17 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         'history'=>true, // la requête est ajouté à l'historique de session
         'ignore'=>false, // si la route est ignoré pour routes
         'catchAll'=>false, // si true, le dernier segment attrape tout le reste du chemin dans le processus de match
+        'debug'=>false, // active ou non le débogagge de match, en lien avec la méthode statique debug
         'defaultSegment'=>'-', // caractère pour un segment avec valeur par défaut
         'replaceSegment'=>'%%%', // pattern utilisé pour faire un remplacement sur un segment, cette valeur passe dans makSegment à tout coup
         'segment'=>[] // tableau qui permet de remplacer une clé de segment par un autre, utiliser dans methodSegment
     ];
 
-
+    
+    // debug
+    public static $debug = array(); // permet de débogger le match des routes
+    
+    
     // dynamique
     protected $routeRequest = null; // variable qui contient l'objet routeRequest
     protected $trigger = false; // garde en mémoire si la route est trigger ou non
@@ -400,7 +405,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
             else
             {
-                $bool === true;
+                $bool = true;
 
                 if($echo === true)
                 static::echoOutput($output);
@@ -724,10 +729,10 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         if(!empty($response['header']) && is_array($response['header']))
         Base\Response::setsHeader($response['header']);
 
-        $isHistory = static::$config['history'] ?? false;
-        if(!empty($isHistory))
+        if(static::shouldKeepInHistory())
         {
-            $method = ($isHistory === 'unique')? 'addUnique':'add';
+            $history = static::$config['history'];
+            $method = ($history === 'unique')? 'addUnique':'add';
             $request = $this->request();
             $history = static::session()->history();
             $history->$method($request);
@@ -883,8 +888,6 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     {
         $return = null;
         $title = $this->makeTitle($lang);
-
-        if(is_object($title))
         $title = Base\Obj::cast($title);
 
         if(is_string($title))
@@ -1111,7 +1114,25 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         return $return;
     }
 
+    
+    // aLabel
+    // génère un a tag pour la route, le label sera affiché
+    // possible de spécifier un pattern de label
+    public function aLabel($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
+    {
+        return $this->a(static::label($pattern,$lang),$attr,$lang,$option);
+    }
 
+
+    // aOpenLabel
+    // ouvre un a tag pour la route, le label sera affiché
+    // possible de spécifier un pattern de label
+    public function aOpenLabel($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
+    {
+        return $this->aOpen(static::label($pattern,$lang),$attr,$lang,$option);
+    }
+    
+    
     // aTitle
     // génère un a tag pour la route, le title sera affiché
     // possible de spécifier un pattern de title
@@ -1163,7 +1184,16 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         return $return;
     }
 
-
+    
+    // submitLabel
+    // fait un tag submit avec label pour soumettre le formulaire
+    // méthode statique
+    public static function submitLabel($pattern=null,$attr=null,?string $lang=null):?string
+    {
+        return Base\Html::submit(static::label($pattern,$lang),$attr);
+    }
+    
+    
     // submitTitle
     // fait un tag submit avec title pour soumettre le formulaire
     public function submitTitle($pattern=null,$attr=null,?string $lang=null):?string
@@ -1498,7 +1528,15 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         return $return;
     }
 
-
+    
+    // shouldKeepInHistory
+    // retourne vrai si la route devrait être gardé dasn l'history
+    public static function shouldKeepInHistory():bool
+    {
+        return (!empty(static::$config['history']))? true:false;
+    }
+    
+    
     // hasCheck
     // permet de vérifier si un élément de validation de la route se retrouve dans match ou verify
     public static function hasCheck(string $type):bool
@@ -1689,6 +1727,49 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     public static function routeBaseClasses():array
     {
         return [self::class];
+    }
+    
+    
+    // isDebug
+    // retourne vrai si la route est en mode débogagge
+    public static function isDebug($value=null):bool 
+    {
+        return (static::$config['debug'] === true || ($value !== null && static::$config['debug'] === $value))? true:false;
+    }
+    
+    
+    // debugStore
+    // permet de débogger le processus de match
+    public static function debugStore(...$args):void 
+    {
+        if(static::isDebug(1))
+        {
+            $args = Base\Obj::cast($args);
+            static::$debug[static::class][] = $args;
+        }
+        
+        return;
+    }
+    
+    
+    // debugDead
+    // dump les données debug de la route et tue la requête
+    // possible aussi de output tout (pas seulement la route courante)
+    public static function debugDead(bool $all=false):void 
+    {
+        if($all === true)
+        $array = static::$debug;
+        
+        else
+        {
+            $array = static::$debug[static::class] ?? array();
+            $array[] = static::class;
+            $array = array_reverse($array);
+        }
+        
+        Base\Debug::dead($array);
+        
+        return;
     }
 }
 ?>
