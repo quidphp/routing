@@ -1,25 +1,23 @@
 {
-	"name": "quidphp/routing",
+    "name": "quidphp/routing",
     "type": "library",
     "description": "PHP library that provides a simple route matching and triggering procedure",
     "keywords": ["quidphp","quid","framework"],
     "homepage": "https://quidphp.com",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Pierre-Philippe Emond",
-            "email": "emondpph@gmail.com"
-        }
-    ],
+    "authors": [{
+        "name": "Pierre-Philippe Emond",
+        "email": "emondpph@gmail.com"
+    }],
     "require": {
         "php": ">=7.3.0",
-		"quidphp/base": "*",
-		"quidphp/main": "*"
+        "quidphp/base": "*",
+        "quidphp/main": "*"
     },
     "autoload": {
         "psr-4": {
             "Quid\\Routing\\": "src/",
-			"Quid\\Test\\Routing\\": "test/"
+            "Quid\\Test\\Routing\\": "test/"
         }
     }
 }
