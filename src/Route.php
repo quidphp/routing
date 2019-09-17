@@ -742,7 +742,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
         $redirect = $this->afterRouteRedirect();
         if(!empty($redirect))
-        $this->processRedirect($redirect,true);
+        $this->processRedirect($redirect,false);
 
         return $this;
     }

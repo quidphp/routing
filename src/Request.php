@@ -50,6 +50,7 @@ class Request extends Main\Request
                 if(!empty($to))
                 {
                     $return['type'] = 'redirection';
+                    $return['code'] = 301;
                     $return['location'] = $to;
                 }
             }
