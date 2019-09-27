@@ -24,7 +24,7 @@ class Exception extends Base\Test
 
         // exception
         assert(!$e instanceof Main\Contract\Catchable);
-        assert($e->getCode() === 34);
+        assert($e->getCode() === 35);
 
         return true;
     }

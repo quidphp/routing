@@ -269,7 +269,7 @@ class RouteRequest extends Main\Root
         $path = $route::path($lang,true);
         $emptyPath = $route::path(null,true);
         $go = false;
-
+        
         if((is_string($path) || $path === null) && $this->path($path))
         $go = true;
 
@@ -319,7 +319,7 @@ class RouteRequest extends Main\Root
             if(is_string($key) && in_array($key,static::$config['verify'],true))
             {
                 $return = ($value === null)? true:$this->$key($value,$session);
-                $route::debugStore(static::class,'validateMatch',$key,$return);
+                $route::debugStore(static::class,'validateVerify',$key,$return);
 
                 if($return === false)
                 {

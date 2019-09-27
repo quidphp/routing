@@ -16,7 +16,7 @@ class BreakException extends Main\Exception
 {
     // config
     public static $config = [
-        'code'=>35 // code de l'exception
+        'code'=>36 // code de l'exception
     ];
 }
 

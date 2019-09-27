@@ -663,7 +663,7 @@ class RouteSegmentRequest extends RouteRequest
         $route = $this->route();
         $routeSegment = $this->routeSegment();
         $countSegment = count($routeSegment);
-
+        
         if($countSegment > 0 && strlen($value))
         {
             $lastSegment = Base\Arr::valueLast($routeSegment);
@@ -672,22 +672,26 @@ class RouteSegmentRequest extends RouteRequest
             if(is_string($lastSegment) && strlen($match) && Base\Str::isEnd("[$lastSegment]",$value))
             {
                 $value = Base\Path::arr($value);
-                $value = Base\Arr::spliceLast($value);
                 $match = Base\Path::arr($match);
-                $match = Base\Arr::gets(array_keys($value),$match);
-
-                if(empty($value) && empty($match))
-                $return = true;
-
-                else
+                
+                if(count($match) >= count($value))
                 {
-                    $value = Base\Path::str($value);
-                    $value = Base\Path::stripWrap($value,false,false);
-                    $match = Base\Path::str($match);
-                    $match = Base\Path::stripWrap($match,false,false);
-
-                    if(Base\Path::sameWithSegments($value,$match))
+                    $value = Base\Arr::spliceLast($value);
+                    $match = Base\Arr::gets(array_keys($value),$match);
+                    
+                    if(empty($value) && empty($match))
                     $return = true;
+
+                    else
+                    {
+                        $value = Base\Path::str($value);
+                        $value = Base\Path::stripWrap($value,false,false);
+                        $match = Base\Path::str($match);
+                        $match = Base\Path::stripWrap($match,false,false);
+                        
+                        if(Base\Path::sameWithSegments($value,$match))
+                        $return = true;
+                    }
                 }
             }
         }

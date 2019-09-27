@@ -761,6 +761,9 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     // méthode protégé
     protected function processRedirect($value,$code=null,bool $kill=true):void
     {
+        if(is_string($value) && is_subclass_of($value,self::class,true))
+        $value = $value::make();
+        
         if(is_string($value))
         Base\Response::redirect($value,$code,$kill);
 

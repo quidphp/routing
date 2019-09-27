@@ -16,7 +16,7 @@ class Exception extends Main\Exception
 {
     // config
     public static $config = [
-        'code'=>34 // code de l'exception
+        'code'=>35 // code de l'exception
     ];
 }
 
