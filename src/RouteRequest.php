@@ -269,7 +269,7 @@ class RouteRequest extends Main\Root
         $path = $route::path($lang,true);
         $emptyPath = $route::path(null,true);
         $go = false;
-        
+
         if((is_string($path) || $path === null) && $this->path($path))
         $go = true;
 

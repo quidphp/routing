@@ -763,7 +763,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     {
         if(is_string($value) && is_subclass_of($value,self::class,true))
         $value = $value::make();
-        
+
         if(is_string($value))
         Base\Response::redirect($value,$code,$kill);
 
