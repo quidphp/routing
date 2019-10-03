@@ -484,7 +484,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         if(!empty($redirect))
         {
             $this->onFallbackRedirect();
-            $this->processRedirect($redirect,false);
+            $this->processRedirect($redirect);
         }
 
         return false;
@@ -742,7 +742,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
         $redirect = $this->afterRouteRedirect();
         if(!empty($redirect))
-        $this->processRedirect($redirect,false);
+        $this->processRedirect($redirect);
 
         return $this;
     }
@@ -758,12 +758,13 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
     // processRedirect
     // gère un redirect, par exemple pour after ou fallback
+    // le code utilisé par défaut est 302
     // méthode protégé
-    protected function processRedirect($value,$code=null,bool $kill=true):void
+    protected function processRedirect($value,$code=true,bool $kill=true):void
     {
         if(is_string($value) && is_subclass_of($value,self::class,true))
         $value = $value::make();
-
+        
         if(is_string($value))
         Base\Response::redirect($value,$code,$kill);
 
@@ -1070,7 +1071,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
     // redirect
     // redirige la réponse courante vers l'uri absolute de la route
-    public function redirect($code=null,$kill=true,?string $lang=null,bool $encode=true,?array $option=null):bool
+    // le code utilisé est 301
+    public function redirect($code=true,$kill=true,?string $lang=null,bool $encode=true,?array $option=null):bool
     {
         return Base\Response::redirect($this->uriAbsolute($lang,$option),$code,$kill,$encode);
     }

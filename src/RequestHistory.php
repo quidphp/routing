@@ -104,6 +104,6 @@ class RequestHistory extends Main\RequestHistory
     }
 }
 
-// config
-RequestHistory::__config();
+// init
+RequestHistory::__init();
 ?>

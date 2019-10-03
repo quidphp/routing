@@ -725,6 +725,6 @@ class RouteSegmentRequest extends RouteRequest
     }
 }
 
-// config
-RouteSegmentRequest::__config();
+// init
+RouteSegmentRequest::__init();
 ?>

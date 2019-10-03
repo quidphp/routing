@@ -544,6 +544,6 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     }
 }
 
-// config
-Routes::__config();
+// init
+Routes::__init();
 ?>

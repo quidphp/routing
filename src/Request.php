@@ -43,13 +43,12 @@ class Request extends Main\Request
         else
         {
             // redirection
-            if(empty($return['type']) && !empty($redirection))
+            if(!empty($redirection))
             {
                 $to = $redirection->get($this);
 
                 if(!empty($to))
                 {
-                    $return['type'] = 'redirection';
                     $return['code'] = 301;
                     $return['location'] = $to;
                 }
@@ -118,6 +117,6 @@ class Request extends Main\Request
     }
 }
 
-// config
-Request::__config();
+// init
+Request::__init();
 ?>

@@ -32,7 +32,8 @@ class Request extends Base\Test
         assert($externalPost->manageRedirect() === ['type'=>'externalPost','code'=>400,'location'=>null]);
         assert($doubleSlash->manageRedirect($redirection) === ['type'=>'unsafe','code'=>302,'location'=>Base\Request::schemeHost()]);
         assert($nl->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
-        assert($redi->manageRedirect($redirection)['type'] === 'redirection');
+        assert($redi->manageRedirect($redirection)['type'] === null);
+        assert($redi->manageRedirect($redirection)['code'] === 301);
         assert($redi->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
         assert($endSlash->manageRedirect($redirection) === ['type'=>'request','code'=>302,'location'=>'/en/asdok/ok']);
 

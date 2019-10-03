@@ -20,6 +20,6 @@ class BreakException extends Main\Exception
     ];
 }
 
-// config
-BreakException::__config();
+// init
+BreakException::__init();
 ?>

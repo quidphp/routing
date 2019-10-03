@@ -139,7 +139,8 @@ class Redirection extends Main\Map
     // trigger
     // redirige vers l'uri valeur si trouvé, sinon retourne null
     // par défaut encode l'uri valeur et tue la réponse immédiatement après
-    public function trigger($key,$code=null,$kill=true,bool $encode=true):void
+    // le code par défaut utilisé est 301
+    public function trigger($key,$code=301,$kill=true,bool $encode=true):void
     {
         $value = $this->get($key);
 
