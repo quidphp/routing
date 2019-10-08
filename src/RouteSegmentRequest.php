@@ -552,7 +552,7 @@ class RouteSegmentRequest extends RouteRequest
             $return = false;
             $callable = $route::callableSegment($key);
             $value = (is_string($value) && $value === $defaultSegment)? null:$value;
-            
+
             $v = $callable('match',$value,$keyValue);
 
             $route::debugStore(static::class,'matchSegment',$key,$value,$callable,$v);

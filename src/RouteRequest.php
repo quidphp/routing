@@ -395,7 +395,7 @@ class RouteRequest extends Main\Root
         return $return;
     }
 
-    
+
     // cli
     // retourne vrai si la requête et la route match cli
     public function cli($value):bool
@@ -413,8 +413,8 @@ class RouteRequest extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // host
     // retourne vrai si la requête et la route match host
     public function host($value):bool

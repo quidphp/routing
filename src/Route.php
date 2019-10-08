@@ -261,17 +261,17 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $return;
     }
 
-    
+
     // arr
     // retourne le tableau de segments pour utiliser via this
     protected function arr():array
     {
         static::checkSegmentClass();
-        
+
         return $this->segments();
     }
-    
-    
+
+
     // offsetSet
     // arrayAccess offsetSet n'est pas permis pour la classe
     public function offsetSet($key,$value):void
@@ -290,8 +290,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         return;
     }
-    
-    
+
+
     // prepareDocJsInit
     // ajoute la méthode jsInit si jsInit est true et que ce n'est pas une requête ajax
     protected function prepareDocJsInit(array $return):array
@@ -722,7 +722,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 $selected[$uri] = true;
                 Base\Attr::addSelectedUri($selected);
             }
-            
+
             $uriAbsolute = static::$config['uriAbsolute'];
             if(is_bool($uriAbsolute))
             Base\Uri::setAllAbsolute($uriAbsolute);
@@ -1789,8 +1789,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         return;
     }
-    
-    
+
+
     // routeSegmentRequest
     // retourne l'objet routeSegmentRequest
     // envoie une exception si la route n'a pas de segment
@@ -1838,14 +1838,14 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $this;
     }
 
-    
+
     // segments
     // retourne le tableau des data de segment
     // si make est false ou segment n'a pas été validé retourne à partir de requestSegment
     // si make est true retourne le résultat de makeRequestSegment
-    public function segments(?bool $make=null):array 
+    public function segments(?bool $make=null):array
     {
-        $return = array();
+        $return = [];
         $routeRequest = $this->routeSegmentRequest();
         $valid = $routeRequest->valid('segment');
 
@@ -1857,11 +1857,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         else
         $return = $routeRequest->segment();
-        
+
         return $return;
     }
-    
-    
+
+
     // segment
     // retourne une valeur de segment via la clé fournie en argument
     // peut aussi retourner un segment via index si un int est fourni
