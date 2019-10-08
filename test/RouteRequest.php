@@ -62,7 +62,9 @@ class RouteRequest extends Base\Test
         // ssl
 
         // ajax
-
+        
+        // cli
+        
         // host
 
         // method

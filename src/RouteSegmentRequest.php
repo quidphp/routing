@@ -551,14 +551,11 @@ class RouteSegmentRequest extends RouteRequest
         {
             $return = false;
             $callable = $route::callableSegment($key);
+            $value = (is_string($value) && $value === $defaultSegment)? null:$value;
+            
+            $v = $callable('match',$value,$keyValue);
 
-            if($value === null || (is_string($value) && $value === $defaultSegment))
-            $v = $callable('validateDefault',null,$keyValue);
-
-            else
-            $v = $callable('validate',$value,$keyValue);
-
-            $route::debugStore(static::class,'validateMatch',$key,$value,$callable,$v);
+            $route::debugStore(static::class,'matchSegment',$key,$value,$callable,$v);
 
             if($v === false)
             {
@@ -724,7 +721,4 @@ class RouteSegmentRequest extends RouteRequest
         return $return;
     }
 }
-
-// init
-RouteSegmentRequest::__init();
 ?>

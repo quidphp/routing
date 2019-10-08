@@ -53,6 +53,12 @@ class Route extends Base\Test
 
         // onPrepareDoc
 
+        // arr
+        
+        // offsetSet
+        
+        // offsetUnset
+        
         // prepareDocJsInit
 
         // prepareDocServices
@@ -68,8 +74,6 @@ class Route extends Base\Test
         // run
 
         // fallback
-
-        // fallbackRouteRedirect
 
         // setRouteRequest
 
@@ -261,8 +265,44 @@ class Route extends Base\Test
 
         // debugDead
 
-        // _segment
-
+        // routeSegmentRequest
+        
+        // initSegment
+        
+        // isValidSegment
+        
+        // checkValidSegment
+        
+        // segments
+        
+        // segment
+        
+        // hasSegment
+        
+        // checkSegment
+        
+        // changeSegment
+        
+        // changeSegments
+        
+        // keepSegments
+        
+        // isSegmentClass
+        
+        // checkSegmentClass
+        
+        // routeRequestClass
+        
+        // makeRouteRequest
+        
+        // allSegment
+        
+        // callableSegment
+        
+        // getDefaultSegment
+        
+        // getReplaceSegment
+        
         return true;
     }
 }

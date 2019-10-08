@@ -16,10 +16,7 @@ use Quid\Main;
 class RouteRequest extends Main\Root
 {
     // config
-    public static $config = [
-        'match'=>['ssl','ajax','host','method','query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout'], // clé valable pour match
-        'verify'=>['query','post','genuine','header','lang','ip','browser','session','role','csrf','captcha','timeout'] // clé valable pour verify
-    ];
+    public static $config = [];
 
 
     // dynamique
@@ -282,22 +279,16 @@ class RouteRequest extends Main\Root
         {
             foreach ($match as $key => $value)
             {
-                if(is_string($key) && in_array($key,static::$config['match'],true))
+                $return = ($value === null)? true:$this->$key($value,$session);
+                $route::debugStore(static::class,'validateMatch',$key,$return);
+
+                if($return === false)
                 {
-                    $return = ($value === null)? true:$this->$key($value,$session);
-                    $route::debugStore(static::class,'validateMatch',$key,$return);
+                    if($exception === true)
+                    static::throw($key,$value);
 
-                    if($return === false)
-                    {
-                        if($exception === true)
-                        static::throw($key,$value);
-
-                        break;
-                    }
+                    break;
                 }
-
-                else
-                static::throw($key);
             }
         }
 
@@ -316,24 +307,18 @@ class RouteRequest extends Main\Root
 
         foreach ($verify as $key => $value)
         {
-            if(is_string($key) && in_array($key,static::$config['verify'],true))
+            $return = ($value === null)? true:$this->$key($value,$session);
+            $route::debugStore(static::class,'validateVerify',$key,$return);
+
+            if($return === false)
             {
-                $return = ($value === null)? true:$this->$key($value,$session);
-                $route::debugStore(static::class,'validateVerify',$key,$return);
+                $this->setFallback($key,$value,$session);
 
-                if($return === false)
-                {
-                    $this->setFallback($key,$value,$session);
+                if($exception === true)
+                static::throw($key,$value);
 
-                    if($exception === true)
-                    static::throw($key,$value);
-
-                    break;
-                }
+                break;
             }
-
-            else
-            static::throw($key);
         }
 
         return $this->valid['verify'] = $return;
@@ -410,7 +395,26 @@ class RouteRequest extends Main\Root
         return $return;
     }
 
+    
+    // cli
+    // retourne vrai si la requête et la route match cli
+    public function cli($value):bool
+    {
+        $return = false;
 
+        if($value === null)
+        $return = true;
+
+        elseif(is_bool($value))
+        {
+            if($value === $this->request()->isCli())
+            $return = true;
+        }
+
+        return $return;
+    }
+    
+    
     // host
     // retourne vrai si la requête et la route match host
     public function host($value):bool

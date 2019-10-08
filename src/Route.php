@@ -13,20 +13,17 @@ use Quid\Main;
 
 // route
 // abstract class for a route that acts as both a View and a Controller
-abstract class Route extends Main\Root implements Main\Contract\Meta
+abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 {
-    // trait
-    use _segment;
-
-
     // config
     public static $config = [
         'path'=>'undefined', // match path de la route, peut y avoir plusieurs, si il y a clé c'est une lang
         'match'=>[ // vérification lancé pour trouver le match
-            'ssl'=>null, // ssl n'a pas d'importance pour le match, unique à match
-            'ajax'=>null, // ajax n'a pas d'importance pour le match, unique à match
-            'host'=>null, // tous les hosts sont acceptés, unique à match
-            'method'=>null, // toutes les méthodes sont acceptées, unique à match
+            'ssl'=>null, // si la requête passe via ssl ou non
+            'ajax'=>null, // si la requête est ajax ou non
+            'cli'=>false, // si la requête est cli ou non
+            'host'=>null, // tous les hosts sont acceptés
+            'method'=>'get', // toutes les méthodes sont acceptées
             'query'=>null, // validation sur contenu de query
             'post'=>null, // validation sur contenu de post
             'genuine'=>null, // validation que le champ genuine est vide
@@ -68,7 +65,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
             'bodyClass'=>[Base\Attr::class,'prepareClass'],
             'bodyStyle'=>[Base\Style::class,'str']],
         'docOpen'=>[ // utilisé pour l'ouverture du document
-            'html'=>['lang'=>'%lang%','data-route'=>'%name%'],
+            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%'],
             'head'=>[
                 'title'=>'%title%',
                 'meta'=>[
@@ -84,10 +81,8 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
                 'script'=>[],
                 'css'=>[],
                 'js'=>[]],
-            'body'=>['%name%','%parent%','%group%','%bodyClass%','style'=>'%bodyStyle%'],
-            'wrapper'=>true],
+            'body'=>['%bodyClass%','style'=>'%bodyStyle%']],
         'docClose'=>[ // utilisé pour la fermeture du document
-            'wrapper'=>true,
             'script'=>[],
             'js'=>[]],
         'a'=>[ // attribut et option pour la tag a
@@ -107,9 +102,10 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         'parent'=>null, // classe parente de la route
         'priority'=>0, // priorité de la route
         'navigation'=>true, // active la navigation via history sur la route
-        'group'=>'none', // groupe spécifique de la route, comme home ou error
+        'group'=>'default', // groupe spécifique de la route, comme home ou error
         'menu'=>null, // détermine si la route fait partie d'un ou plusieurs menus
         'history'=>true, // la requête est ajouté à l'historique de session
+        'uriAbsolute'=>null, // force toutes les uris générés via uri output dans la route à être absolute
         'ignore'=>false, // si la route est ignoré pour routes
         'catchAll'=>false, // si true, le dernier segment attrape tout le reste du chemin dans le processus de match
         'debug'=>false, // active ou non le débogagge de match, en lien avec la méthode statique debug
@@ -233,11 +229,11 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     }
 
 
-    // onFallbackRedirect
-    // méthode appelé lorsqu'il y a une route de redirection lors du fallback
-    // permet par exemple de flashPost
+    // onFallback
+    // méthode appelé lorsqu'il y a un fallback
+    // permet par exemple de flashPost ou retourner une redirection
     // méthode protégé
-    protected function onFallbackRedirect()
+    protected function onFallback($context=null)
     {
         return;
     }
@@ -265,7 +261,37 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         return $return;
     }
 
+    
+    // arr
+    // retourne le tableau de segments pour utiliser via this
+    protected function arr():array
+    {
+        static::checkSegmentClass();
+        
+        return $this->segments();
+    }
+    
+    
+    // offsetSet
+    // arrayAccess offsetSet n'est pas permis pour la classe
+    public function offsetSet($key,$value):void
+    {
+        static::throw('arrayAccess','notAllowed');
 
+        return;
+    }
+
+
+    // offsetUnset
+    // arrayAccess offsetUnset n'est pas permis pour la classe
+    public function offsetUnset($key):void
+    {
+        static::throw('arrayAccess','notAllowed');
+
+        return;
+    }
+    
+    
     // prepareDocJsInit
     // ajoute la méthode jsInit si jsInit est true et que ce n'est pas une requête ajax
     protected function prepareDocJsInit(array $return):array
@@ -480,22 +506,11 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
             $this->request()->setLogData($log);
         }
 
-        $redirect = $this->fallbackRouteRedirect($context);
+        $redirect = $this->onFallback($context);
         if(!empty($redirect))
-        {
-            $this->onFallbackRedirect();
-            $this->processRedirect($redirect);
-        }
+        $this->processRedirect($redirect);
 
         return false;
-    }
-
-
-    // fallbackRouteRedirect
-    // retourne la route à rediriger dans le cas d'un fallback
-    public function fallbackRouteRedirect($context=null)
-    {
-        return;
     }
 
 
@@ -707,6 +722,10 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
                 $selected[$uri] = true;
                 Base\Attr::addSelectedUri($selected);
             }
+            
+            $uriAbsolute = static::$config['uriAbsolute'];
+            if(is_bool($uriAbsolute))
+            Base\Uri::setAllAbsolute($uriAbsolute);
         }
 
         return $return;
@@ -918,7 +937,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     // génère l'ouverture du document en html
     public function docOpen(bool $default=true,?string $separator=null):string
     {
-        return Base\Html::docOpen($this->prepareDoc('docOpen'),$default,$separator);
+        return Base\Html::docOpen($this->prepareDoc('docOpen'),$default,$separator,true);
     }
 
 
@@ -926,7 +945,7 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
     // génère la fermeture du document en html
     public function docClose(bool $default=true,bool $closeBody=true,?string $separator=null):string
     {
-        return Base\Html::docClose($this->prepareDoc('docClose'),$default,$closeBody,$separator);
+        return Base\Html::docClose($this->prepareDoc('docClose'),$default,$closeBody,$separator,true);
     }
 
 
@@ -1349,16 +1368,10 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
 
 
     // group
-    // retourne le group de la route, si existant
-    // si notNone est true, ne retourne pas le nom de group si none
-    public static function group(bool $notNone=false):?string
+    // retourne le group de la route
+    public static function group():string
     {
-        $return = static::$config['group'] ?? null;
-
-        if($notNone === true && static::isGroup('none'))
-        $return = null;
-
-        return $return;
+        return static::$config['group'];
     }
 
 
@@ -1775,6 +1788,282 @@ abstract class Route extends Main\Root implements Main\Contract\Meta
         Base\Debug::dead($array);
 
         return;
+    }
+    
+    
+    // routeSegmentRequest
+    // retourne l'objet routeSegmentRequest
+    // envoie une exception si la route n'a pas de segment
+    public function routeSegmentRequest():RouteSegmentRequest
+    {
+        $return = $this->routeRequest();
+
+        if(!$return instanceof RouteSegmentRequest)
+        static::throw('routeHasNoSegment');
+
+        return $return;
+    }
+
+
+    // initSegment
+    // init seulement les segments de la route
+    // comme isValidSegment mais retourne la route plutôt qu'un booléean
+    public function initSegment(bool $exception=false):self
+    {
+        $this->isValidSegment($exception);
+
+        return $this;
+    }
+
+
+    // isValidSegment
+    // retourne vrai si la requête et les segments de route match
+    public function isValidSegment(bool $exception=false):bool
+    {
+        return $this->routeSegmentRequest()->isValidSegment(static::session(),$exception);
+    }
+
+
+    // checkValidSegment
+    // envoie une exception si la requête et la route ne passent pas le test segment
+    // si valid est false, le test n'est pas lancé et utilise le résultat courant
+    public function checkValidSegment(bool $valid=true):self
+    {
+        if($valid === true)
+        $this->isValidSegment(true);
+
+        else
+        $this->routeSegmentRequest()->checkValidSegment();
+
+        return $this;
+    }
+
+    
+    // segments
+    // retourne le tableau des data de segment
+    // si make est false ou segment n'a pas été validé retourne à partir de requestSegment
+    // si make est true retourne le résultat de makeRequestSegment
+    public function segments(?bool $make=null):array 
+    {
+        $return = array();
+        $routeRequest = $this->routeSegmentRequest();
+        $valid = $routeRequest->valid('segment');
+
+        if($make === true)
+        $return = $routeRequest->makeRequestSegment();
+
+        elseif($make === false || $valid === false)
+        $return = $routeRequest->requestSegment();
+
+        else
+        $return = $routeRequest->segment();
+        
+        return $return;
+    }
+    
+    
+    // segment
+    // retourne une valeur de segment via la clé fournie en argument
+    // peut aussi retourner un segment via index si un int est fourni
+    // envoie aussi une exception si le segment demandé n'existe pas
+    public function segment($key,?bool $make=null)
+    {
+        $return = null;
+        $segments = $this->segments($make);
+
+        if(is_scalar($key))
+        {
+            if(is_string($key) && array_key_exists($key,$segments))
+            $return = $segments[$key];
+
+            elseif(is_int($key) && Base\Arr::indexExists($key,$segments))
+            $return = Base\Arr::index($key,$segments);
+
+            else
+            static::throw('doesNotExist',$key);
+        }
+
+        elseif(is_array($key))
+        {
+            $return = Base\Arr::gets($key,$segments);
+
+            if(count($return) !== count($key))
+            static::throw('doesNotExist');
+        }
+
+        return $return;
+    }
+
+
+    // hasSegment
+    // retourne vrai si l'objet contient le ou les segments de requête données en argument
+    public function hasSegment(string ...$values):bool
+    {
+        return $this->routeSegmentRequest()->hasRequestSegment(...$values);
+    }
+
+
+    // checkSegment
+    // envoie une exception si un des segments de requête n'existent pas
+    public function checkSegment(string ...$values):bool
+    {
+        return $this->routeSegmentRequest()->checkRequestSegment(...$values);
+    }
+
+
+    // changeSegment
+    // permet de changer la valeur d'un des segments de requête de l'objet
+    // un objet changé vide le tableau valid et la propriété segment de routeRequestSegment
+    // l'objet route et routeSegmentRequest sont cloné
+    public function changeSegment(string $key,$value):self
+    {
+        return $this->changeSegments([$key=>$value]);
+    }
+
+
+    // changeSegments
+    // permet de changer la valeur de plusieurs segments de requête de l'objet
+    // un objet changé vide le tableau valid et la propriété segment de routeRequestSegment
+    // l'objet route et routeSegmentRequest sont cloné
+    public function changeSegments(array $values):self
+    {
+        $return = static::make($this);
+        $return->routeSegmentRequest()->changeRequestSegments($values);
+
+        return $return;
+    }
+
+
+    // keepSegments
+    // retourne un nouvel objet route en conservant certains segments et en ramenenant les autres à leurs valeurs par défaut
+    // un objet changé vide le tableau valid et la propriété segment de routeRequestSegment
+    // l'objet route et routeSegmentRequest sont cloné
+    public function keepSegments(string ...$values):self
+    {
+        $return = static::make($this);
+        $return->routeSegmentRequest()->keepRequestSegments(...$values);
+
+        return $return;
+    }
+
+
+    // isSegmentClass
+    // retourne vrai si un chemin contient un segment
+    public static function isSegmentClass():bool
+    {
+        $return = false;
+
+        foreach (static::paths() as $path)
+        {
+            if(is_string($path) && strpos($path,'[') !== false)
+            {
+                $return = true;
+                break;
+            }
+        }
+
+        return $return;
+    }
+
+
+    // checkSegmentClass
+    // envoie une exception si ce n'est pas une classe avec segment
+    public static function checkSegmentClass():bool
+    {
+        $return = static::isSegmentClass();
+
+        if($return === false)
+        static::throw();
+
+        return $return;
+    }
+
+
+    // routeRequestClass
+    // retourne la classe overload pour routeRequest
+    public static function routeRequestClass():string
+    {
+        $return = null;
+
+        if(static::isSegmentClass())
+        $return = RouteSegmentRequest::getOverloadClass();
+
+        else
+        $return = RouteRequest::getOverloadClass();
+
+        return $return;
+    }
+
+
+    // makeRouteRequest
+    // créer l'objet routeRequest pour la route
+    public static function makeRouteRequest($request=null):RouteRequest
+    {
+        $return = null;
+
+        if(static::isSegmentClass())
+        {
+            $lang = static::session()->lang();
+            $return = RouteSegmentRequest::newOverload(static::class,$request,$lang);
+        }
+
+        else
+        $return = RouteRequest::newOverload(static::class,$request);
+
+        return $return;
+    }
+
+
+    // allSegment
+    // retourne tous les combinaisons de segments possible pour la route
+    // par défaut retourne un tableau vide
+    // n'est pas abstraite
+    public static function allSegment()
+    {
+        return [];
+    }
+
+
+    // callableSegment
+    // retourne la callable à utiliser pour le segment
+    // envoie une exception si la callable n'existe pas
+    public static function callableSegment(string $key):callable
+    {
+        $return = null;
+        $segments = static::$config['segment'];
+        $callable = null;
+
+        if(is_array($segments) && array_key_exists($key,$segments))
+        $callable = $segments[$key];
+
+        if(is_string($callable))
+        $callable = [static::class,$callable];
+
+        if(static::classIsCallable($callable))
+        $return = $callable;
+
+        else
+        static::throw('segmentMethodNotFound',$key);
+
+        return $return;
+    }
+
+
+    // getDefaultSegment
+    // retourne le caractère de segment par défaut
+    // pourrait être null, à ce moment pas défaut de segment
+    public static function getDefaultSegment():?string
+    {
+        return static::$config['defaultSegment'] ?? null;
+    }
+
+
+    // getReplaceSegment
+    // retourne le pattern utilisé pour faire un remplacement sur un segment
+    // pourrait être null, à ce moment pas de possibilité de remplace dans makeSegment
+    public static function getReplaceSegment():?string
+    {
+        return static::$config['replaceSegment'] ?? null;
     }
 }
 ?>
