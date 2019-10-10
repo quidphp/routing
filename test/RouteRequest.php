@@ -31,10 +31,6 @@ class RouteRequest extends Base\Test
 
         // checkValidMatch
 
-        // isValidVerify
-
-        // checkValidVerify
-
         // isRequestInst
 
         // valid
@@ -52,8 +48,6 @@ class RouteRequest extends Base\Test
         // setRequest
 
         // validateMatch
-
-        // validateVerify
 
         // validateArray
 

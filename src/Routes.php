@@ -66,34 +66,32 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // match
     // retourne toutes les routes qui match l'objet requête
-    public function match(Main\Request $request,?Main\Session $session=null,bool $debug=false):array
+    public function match(Main\Request $request,bool $fallback=false,bool $debug=false):array
     {
         $return = [];
-        $session = ($session instanceof Main\Session)? $session:Main\Session::inst();
 
         foreach ($this->arr() as $key => $value)
         {
-            $routeRequest = $value::makeRouteRequest($request);
-
-            if($routeRequest->isValidMatch($session))
-            $return[$key] = $value;
-
-            elseif($debug === true && $value::isDebug())
-            $value::debugDead();
+            $route = $value::matchOrFallbackDebug($request,$fallback,$debug);
+            
+            if(!empty($route))
+            $return[$key] = $route;
         }
 
         return $return;
     }
 
 
-    // matchOne
+    // route
     // retourne la première route qui match l'objet requête
     // possible de reprendre le loop au même endroit en fournissant le nom de la classe after
-    public function matchOne(Main\Request $request,?Main\Session $session=null,?string $after=null,bool $debug=false):?string
+    public function route(Main\Request $request,$after=null,bool $fallback=false,bool $debug=false):?Route
     {
         $return = null;
-        $session = ($session instanceof Main\Session)? $session:Main\Session::inst();
-
+        
+        if($after instanceof Route)
+        $after = get_class($after);
+        
         foreach ($this->arr() as $value)
         {
             if(is_string($after))
@@ -103,41 +101,20 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
                 continue;
             }
-
-            $routeRequest = $value::makeRouteRequest($request);
-
-            if($routeRequest->isValidMatch($session))
+            
+            $route = $value::matchOrFallbackDebug($request,$fallback,$debug);
+            
+            if(!empty($route))
             {
-                $return = $value;
+                $return = $route;
                 break;
             }
-
-            elseif($debug === true && $value::isDebug())
-            $value::debugDead();
         }
 
         return $return;
     }
 
-
-    // route
-    // retourne la première route qui match l'objet requête
-    // la route est triggé et sera retourné après avoir passé le test de validation
-    public function route(Main\Request $request,?Main\Session $session=null,?string $after=null,bool $debug=false):?Route
-    {
-        $return = null;
-        $matchOne = $this->matchOne($request,$session,$after,$debug);
-
-        if(!empty($matchOne))
-        {
-            $return = $matchOne::make($request);
-            $return->isValid();
-        }
-
-        return $return;
-    }
-
-
+    
     // keyParent
     // retourne un tableau unidimensionnel avec le nom de la route comme clé et le nom du parent comme valeur
     // si aucun parent, la valeur est null

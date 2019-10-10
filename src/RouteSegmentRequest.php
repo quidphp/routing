@@ -56,18 +56,18 @@ class RouteSegmentRequest extends RouteRequest
 
 
     // isValid
-    // retourne vrai si la route et la requête match, verify et segment
+    // retourne vrai si la route et la requête match et segment
     public function isValid(Main\Session $session,bool $exception=false):bool
     {
-        return ($this->isValidMatch($session,$exception) && $this->isValidVerify($session,$exception) && $this->isValidSegment($session,$exception))? true:false;
+        return ($this->isValidMatch($session,$exception) && $this->isValidSegment($session,$exception))? true:false;
     }
 
 
     // checkValid
-    // envoie une exception si la route et la requête n'ont pas passés les tests match, verify et segment
+    // envoie une exception si la route et la requête n'ont pas passés les tests match et segment
     public function checkValid():bool
     {
-        $return = ($this->valid('match') && $this->valid('verify') && $this->valid('segment'))? true:false;
+        $return = ($this->valid('match') && $this->valid('segment'))? true:false;
 
         if($return === false)
         static::throw();
@@ -554,8 +554,6 @@ class RouteSegmentRequest extends RouteRequest
             $value = (is_string($value) && $value === $defaultSegment)? null:$value;
 
             $v = $callable('match',$value,$keyValue);
-
-            $route::debugStore(static::class,'matchSegment',$key,$value,$callable,$v);
 
             if($v === false)
             {

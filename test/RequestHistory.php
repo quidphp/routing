@@ -42,10 +42,6 @@ class RequestHistory extends Base\Test
         assert(count($rh->match($routes)) === 5);
         assert(is_array($rh->match($routes)[0]));
 
-        // matchOne
-        assert(count($rh->matchOne($routes)) === 5);
-        assert(is_string($rh->matchOne($routes)[0]));
-
         // route
         assert(count($rh->route($routes)) === 5);
         assert($rh->route($routes)[0] instanceof Routing\Route);

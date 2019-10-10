@@ -94,26 +94,17 @@ class Request extends Main\Request
 
     // match
     // retourne un tableau avec toutes les routes qui matchs avec la requête
-    public function match(Routes $routes,?Main\Session $session=null):?array
+    public function match(Routes $routes,bool $fallback=false,bool $debug=false):?array
     {
-        return $routes->match($this,$session);
-    }
-
-
-    // matchOne
-    // retourne la première route qui match avec la requête
-    public function matchOne(Routes $routes,?Main\Session $session=null):?string
-    {
-        return $routes->matchOne($this,$session);
+        return $routes->match($this,$fallback,$debug);
     }
 
 
     // route
     // retourne la première route qui match avec la requête
-    // la route retourné est triggé
-    public function route(Routes $routes,?Main\Session $session=null):?Route
+    public function route(Routes $routes,$after=null,bool $fallback=false,bool $debug=false):?Route
     {
-        return $routes->route($this,$session);
+        return $routes->route($this,$after,$fallback,$debug);
     }
 }
 

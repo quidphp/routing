@@ -36,19 +36,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             'csrf'=>null, // validation que le champ csrf et le même que dans session
             'captcha'=>null, // validation que le champ captcha est le même que dans session
             'timeout'=>null], // défini les timeouts à vérifier
-        'verify'=>[ // vérification lancé après le match
-            'query'=>null, // validation sur contenu de query
-            'post'=>null, // validation sur contenu de post
-            'genuine'=>null, // validation que post contient la clé genuine et que le contenu est vide
-            'header'=>null, // validation sur le tableau des headers
-            'lang'=>null, // toutes les langs sont acceptés
-            'ip'=>null, // tous les ip sont acceptés
-            'browser'=>null, // tous les browsers sont acceptés
-            'session'=>null, // validation sur contenu de session
-            'role'=>null, // validation du code ou de la classe de permission
-            'csrf'=>null, // validation que le champ csrf et le même que dans session
-            'captcha'=>null, // validation que le champ captcha et le même que dans session
-            'timeout'=>null], // défini les timeouts à vérifier
         'response'=>[
             'timeLimit'=>null, // limit de temps pour la route
             'code'=>200, // code de réponse
@@ -113,10 +100,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'replaceSegment'=>'%%%', // pattern utilisé pour faire un remplacement sur un segment, cette valeur passe dans makSegment à tout coup
         'segment'=>[] // tableau qui permet de remplacer une clé de segment par un autre, utiliser dans methodSegment
     ];
-
-
-    // debug
-    public static $debug = []; // permet de débogger le match des routes
 
 
     // dynamique
@@ -222,6 +205,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // onAfter
     // méthode appelé à la fin de la méthode after
+    // possible de spécifier une redirection
     // méthode protégé
     protected function onAfter()
     {
@@ -231,6 +215,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // onFallback
     // méthode appelé lorsqu'il y a un fallback
+    // possible de spécifier une redirection
     // permet par exemple de flashPost ou retourner une redirection
     // méthode protégé
     protected function onFallback($context=null)
@@ -375,7 +360,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // allowed
     // retourne vrai si le role de la session courante permet d'accéder à la route
-    // se base seulement sur match, pas verify
     public static function allowed(?Main\Role $role=null):bool
     {
         $return = false;
@@ -411,11 +395,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // run
+    // launch
     // lance tout le processus de lancement et output de la route
     // retourne un tableau avec bool, continue et output
-    // possible de echo le output si echo est true
-    public function run(bool $echo=false):array
+    // output est toujours sous forme de string
+    public function launch():array
     {
         $return = ['bool'=>false,'continue'=>false,'output'=>null];
         $output = null;
@@ -431,11 +415,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
             else
             {
+                $output = Base\Str::cast($output);
                 $bool = true;
-
-                if($echo === true)
-                static::echoOutput($output);
             }
+            
         }
 
         catch (Exception $e)
@@ -459,11 +442,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // fallback
-    // méthode lancé après before si le test verify a échoué
+    // méthode lancé après before si le match a échoué
     // gère le timeout, captcha, csrf, genuine et failedFileUpload
     // s'il y a redirection utilise le code 302
     // méthode protégé
-    protected function fallback($context=null)
+    protected function fallback($context=null):bool
     {
         $code = null;
         $log = null;
@@ -490,7 +473,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         elseif($this->request()->isFailedFileUpload())
         {
             $code = 400;
-            $log = 'failedFileUpload';
+            $context = 'failedFileUpload';
+            $log = $context;
             $maxFilesize = Base\Ini::uploadMaxFilesize(2);
             $replace = ['maxFilesize'=>$maxFilesize];
             static::sessionCom()->neg('fileUpload/maxFilesize',$replace);
@@ -541,14 +525,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // getFallbackContext
-    // retourne la raison du fallback
-    public function getFallbackContext()
-    {
-        return $this->routeRequest()->fallback();
-    }
-
-
     // selectedUri
     // retourne les uris supplémentaires qui doivent être marqués comme sélectionnés
     public function selectedUri():array
@@ -579,7 +555,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // isValid
-    // retourne vrai si la route et la requête match et verify
+    // retourne vrai si la route et la requête match
     public function isValid(bool $exception=false):bool
     {
         return $this->routeRequest()->isValid(static::session(),$exception);
@@ -587,7 +563,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // checkValid
-    // envoie une exception si la route et la requête ne passent pas les tests match et verify
+    // envoie une exception si la route et la requête ne passent pas les tests match
     // si valid est false, le test n'est pas lancé et utilise le résultat courant
     public function checkValid(bool $valid=true):self
     {
@@ -604,58 +580,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // lance la route
     // retourne le résultat de la route
     public function start()
-    {
-        $return = null;
-
-        if(!$this->isValid())
-        {
-            $fallback = $this->getFallbackContext();
-            $return = $this->fallback($fallback);
-        }
-
-        else
-        $return = $this->launch();
-
-        return $return;
-    }
-
-
-    // startEcho
-    // lance la route
-    // echo le résultat de la route
-    // possible de tuer si kill est true
-    public function startEcho(bool $kill=false)
-    {
-        $return = $this->start();
-        static::echoOutput($return);
-
-        if($kill === true)
-        Base\Response::kill();
-
-        return $return;
-    }
-
-
-    // triggerEcho
-    // trigge la route
-    // echo le résultat de la route
-    // possible de tuer si kill est true
-    public function triggerEcho(bool $kill=false)
-    {
-        $return = $this->trigger();
-        static::echoOutput($return);
-
-        if($kill === true)
-        Base\Response::kill();
-
-        return $return;
-    }
-
-
-    // launch
-    // lance la route, ne fait pas le test isValid
-    // retourne le résultat de la route
-    public function launch()
     {
         $return = null;
         static::prepareTimeout();
@@ -678,7 +602,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             }
 
             else
-            $return = $this->fallback('before');
+            $return = $this->fallback('onBefore');
         }
 
         catch (Main\Contract\Catchable $e)
@@ -686,7 +610,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             $e->onCatched();
             $return = $this->fallback($e);
         }
-
+        
         return $return;
     }
 
@@ -735,7 +659,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // after
     // après la méthode trigger
     // met le code response, le contentType et des headers de response et ajoute la requête à l'historique
-    // après le onAfter, vérifie s'il y a une route de spécifier dans afterRouteRedirect, si oui redirige (avec 301) et tue
+    // gère le onAfter qui peut rediriger
     // méthode protégé
     protected function after():self
     {
@@ -757,21 +681,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             $history->$method($request);
         }
 
-        $this->onAfter();
-
-        $redirect = $this->afterRouteRedirect();
+        $redirect = $this->onAfter();
         if(!empty($redirect))
         $this->processRedirect($redirect);
 
         return $this;
-    }
-
-
-    // afterRouteRedirect
-    // retourne la route à rediriger dans le onAfter
-    public function afterRouteRedirect()
-    {
-        return;
     }
 
 
@@ -1090,7 +1004,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // redirect
     // redirige la réponse courante vers l'uri absolute de la route
-    // le code utilisé est 301
+    // le code utilisé est 302
     public function redirect($code=true,$kill=true,?string $lang=null,bool $encode=true,?array $option=null):bool
     {
         return Base\Response::redirect($this->uriAbsolute($lang,$option),$code,$kill,$encode);
@@ -1556,14 +1470,13 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // hasCheck
-    // permet de vérifier si un élément de validation de la route se retrouve dans match ou verify
+    // permet de vérifier si un élément de validation de la route se retrouve dans match
     public static function hasCheck(string $type):bool
     {
         $return = false;
         $match = static::$config['match'] ?? [];
-        $verify = static::$config['verify'] ?? [];
 
-        if(!empty($match[$type]) || !empty($verify[$type]))
+        if(!empty($match[$type]))
         $return = true;
 
         return $return;
@@ -1724,22 +1637,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // echoOutput
-    // output les données qui sortent d'une route
-    // le output est flush, méthode protégé
-    protected static function echoOutput($value):string
-    {
-        $return = '';
-
-        if(is_object($value) || is_resource($value))
-        static::throw('notAllowed');
-
-        Base\Buffer::startEchoEndFlushAllStart($value);
-
-        return $return;
-    }
-
-
     // routeBaseClasses
     // retourne les classes bases de routes (donc abstraite)
     public static function routeBaseClasses():array
@@ -1747,47 +1644,35 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return [self::class];
     }
 
-
+    
+    // matchOrFallbackDebug
+    // retourne vrai si la route match à la requête
+    // sinon gère fallback et/out debug
+    public static function matchOrFallbackDebug(Main\Request $request,bool $fallback=false,bool $debug=false):?self
+    {
+        $return = null;
+        $route = static::make($request);
+        $debug = ($debug === true && static::isDebug())? true:false;
+        
+        if($route->isValid($debug))
+        $return = $route;
+        
+        elseif($fallback === true)
+        {
+            $context = $route->routeRequest()->fallback();
+            if(!empty($context))
+            $route->fallback($context);
+        }
+        
+        return $return;
+    }
+    
+    
     // isDebug
     // retourne vrai si la route est en mode débogagge
     public static function isDebug($value=null):bool
     {
         return (static::$config['debug'] === true || ($value !== null && static::$config['debug'] === $value))? true:false;
-    }
-
-
-    // debugStore
-    // permet de débogger le processus de match
-    public static function debugStore(...$args):void
-    {
-        if(static::isDebug(1))
-        {
-            $args = Base\Obj::cast($args);
-            static::$debug[static::class][] = $args;
-        }
-
-        return;
-    }
-
-
-    // debugDead
-    // dump les données debug de la route et tue la requête
-    // possible aussi de output tout (pas seulement la route courante)
-    public static function debugDead(bool $all=false):void
-    {
-        if($all === true)
-        $array = static::$debug;
-
-        else
-        {
-            $array = static::$debug[static::class] ?? [];
-            $array[] = static::class;
-            $array = array_reverse($array);
-        }
-
-        Base\Debug::dead($array);
-
-        return;
     }
 
 

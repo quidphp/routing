@@ -22,7 +22,7 @@ class RouteRequest extends Main\Root
     // dynamique
     protected $route = null; // nom de la classe de la route
     protected $request = null; // copie ou référence de la requête
-    protected $valid = []; // garde en mémoire les tests passés, comme match et verify
+    protected $valid = []; // garde en mémoire les tests passés
     protected $fallback = null; // garde en mémoire la raison que la route ira en fallback
 
 
@@ -60,18 +60,18 @@ class RouteRequest extends Main\Root
 
 
     // isValid
-    // retourne vrai si la route et la requête match et verify
+    // retourne vrai si la route et la requête match
     public function isValid(Main\Session $session,bool $exception=false):bool
     {
-        return ($this->isValidMatch($session,$exception) && $this->isValidVerify($session,$exception))? true:false;
+        return ($this->isValidMatch($session,$exception))? true:false;
     }
 
 
     // checkValid
-    // envoie une exception si la route et la requête n'ont pas passés les tests match et verify
+    // envoie une exception si la route et la requête n'ont pas passés les tests match
     public function checkValid():bool
     {
-        $return = ($this->valid('match') && $this->valid('verify'))? true:false;
+        $return = ($this->valid('match'))? true:false;
 
         if($return === false)
         static::throw();
@@ -101,33 +101,6 @@ class RouteRequest extends Main\Root
     public function checkValidMatch():self
     {
         if(!$this->valid('match'))
-        static::throw();
-
-        return $this;
-    }
-
-
-    // isValidVerify
-    // retourne vrai si la route et la requête passe le test verify
-    // si la propriété verify et null, lance verify
-    public function isValidVerify(Main\Session $session,bool $exception=false):bool
-    {
-        $return = false;
-
-        if(!$this->valid('verify'))
-        $this->validateVerify($session,$exception);
-
-        $return = $this->valid('verify');
-
-        return $return;
-    }
-
-
-    // checkValidVerify
-    // envoie une exception si la route et la requête n'ont pas passés le test verify
-    public function checkValidVerify():self
-    {
-        if(!$this->valid('verify'))
         static::throw();
 
         return $this;
@@ -272,56 +245,29 @@ class RouteRequest extends Main\Root
 
         elseif((is_string($emptyPath) || $emptyPath === null) && $this->path($emptyPath))
         $go = true;
-
-        $route::debugStore(static::class,'validateMatch','go',$path,$emptyPath,$go);
-
+        
         if($go === true)
         {
             foreach ($match as $key => $value)
             {
                 $return = ($value === null)? true:$this->$key($value,$session);
-                $route::debugStore(static::class,'validateMatch',$key,$return);
 
                 if($return === false)
                 {
+                    $this->setFallback($key,$value,$session);
+                    
                     if($exception === true)
-                    static::throw($key,$value);
+                    static::throw($route,$key,$value,$return);
 
                     break;
                 }
             }
         }
-
+        
+        elseif($exception === true)
+        static::throw($route,'go',$path,$emptyPath);
+        
         return $this->valid['match'] = $return;
-    }
-
-
-    // validateVerify
-    // lance le processus verify entre la route et la request
-    // si exception est true, lance une exception avec le nom de la clé où le match bloque
-    public function validateVerify(Main\Session $session,bool $exception=false):bool
-    {
-        $return = false;
-        $route = $this->route();
-        $verify = $route::$config['verify'] ?? [];
-
-        foreach ($verify as $key => $value)
-        {
-            $return = ($value === null)? true:$this->$key($value,$session);
-            $route::debugStore(static::class,'validateVerify',$key,$return);
-
-            if($return === false)
-            {
-                $this->setFallback($key,$value,$session);
-
-                if($exception === true)
-                static::throw($key,$value);
-
-                break;
-            }
-        }
-
-        return $this->valid['verify'] = $return;
     }
 
 
@@ -681,7 +627,7 @@ class RouteRequest extends Main\Root
     public function csrf($value,?Main\Session $session=null):bool
     {
         $return = false;
-
+        
         if($value === null || $value === false)
         $return = true;
 
