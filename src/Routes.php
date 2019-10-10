@@ -73,7 +73,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
         foreach ($this->arr() as $key => $value)
         {
             $route = $value::matchOrFallbackDebug($request,$fallback,$debug);
-            
+
             if(!empty($route))
             $return[$key] = $route;
         }
@@ -88,10 +88,10 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     public function route(Main\Request $request,$after=null,bool $fallback=false,bool $debug=false):?Route
     {
         $return = null;
-        
+
         if($after instanceof Route)
         $after = get_class($after);
-        
+
         foreach ($this->arr() as $value)
         {
             if(is_string($after))
@@ -101,9 +101,9 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
                 continue;
             }
-            
+
             $route = $value::matchOrFallbackDebug($request,$fallback,$debug);
-            
+
             if(!empty($route))
             {
                 $return = $route;
@@ -114,7 +114,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
         return $return;
     }
 
-    
+
     // keyParent
     // retourne un tableau unidimensionnel avec le nom de la route comme clé et le nom du parent comme valeur
     // si aucun parent, la valeur est null

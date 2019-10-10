@@ -418,7 +418,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 $output = Base\Str::cast($output);
                 $bool = true;
             }
-            
+
         }
 
         catch (Exception $e)
@@ -610,7 +610,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             $e->onCatched();
             $return = $this->fallback($e);
         }
-        
+
         return $return;
     }
 
@@ -1644,7 +1644,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return [self::class];
     }
 
-    
+
     // matchOrFallbackDebug
     // retourne vrai si la route match à la requête
     // sinon gère fallback et/out debug
@@ -1653,21 +1653,21 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return = null;
         $route = static::make($request);
         $debug = ($debug === true && static::isDebug())? true:false;
-        
+
         if($route->isValid($debug))
         $return = $route;
-        
+
         elseif($fallback === true)
         {
             $context = $route->routeRequest()->fallback();
             if(!empty($context))
             $route->fallback($context);
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // isDebug
     // retourne vrai si la route est en mode débogagge
     public static function isDebug($value=null):bool

@@ -245,7 +245,7 @@ class RouteRequest extends Main\Root
 
         elseif((is_string($emptyPath) || $emptyPath === null) && $this->path($emptyPath))
         $go = true;
-        
+
         if($go === true)
         {
             foreach ($match as $key => $value)
@@ -255,7 +255,7 @@ class RouteRequest extends Main\Root
                 if($return === false)
                 {
                     $this->setFallback($key,$value,$session);
-                    
+
                     if($exception === true)
                     static::throw($route,$key,$value,$return);
 
@@ -263,10 +263,10 @@ class RouteRequest extends Main\Root
                 }
             }
         }
-        
+
         elseif($exception === true)
         static::throw($route,'go',$path,$emptyPath);
-        
+
         return $this->valid['match'] = $return;
     }
 
@@ -627,7 +627,7 @@ class RouteRequest extends Main\Root
     public function csrf($value,?Main\Session $session=null):bool
     {
         $return = false;
-        
+
         if($value === null || $value === false)
         $return = true;
 

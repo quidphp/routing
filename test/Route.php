@@ -246,9 +246,9 @@ class Route extends Base\Test
         // setResponseCode
 
         // routeBaseClasses
-        
+
         // matchOrFallbackDebug
-        
+
         // isDebug
 
         // routeSegmentRequest
