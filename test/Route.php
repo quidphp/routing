@@ -243,7 +243,7 @@ class Route extends Base\Test
 
         // tagOption
 
-        // setResponseCode
+        // prepareResponse
 
         // routeBaseClasses
 

@@ -57,7 +57,7 @@ class Request extends Main\Request
             // unsafe
             if(empty($return['type']) && $isSafe === false)
             {
-                $return['type'] = 'unsafe';
+                $return['type'] = 'requestUnsafe';
 
                 if($isAjax === true)
                 $return['code'] = 400;
@@ -75,7 +75,7 @@ class Request extends Main\Request
             // request
             if(empty($return['type']) && !empty($redirect))
             {
-                $return['type'] = 'request';
+                $return['type'] = 'requestInvalid';
 
                 if($isAjax === true)
                 $return['code'] = 400;

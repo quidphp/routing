@@ -21,7 +21,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'match'=>[ // vérification lancé pour trouver le match
             'ssl'=>null, // si la requête passe via ssl ou non
             'ajax'=>null, // si la requête est ajax ou non
-            'cli'=>false, // si la requête est cli ou non
+            'cli'=>null, // si la requête est cli ou non
             'host'=>null, // tous les hosts sont acceptés
             'method'=>'get', // toutes les méthodes sont acceptées
             'query'=>null, // validation sur contenu de query
@@ -39,7 +39,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'response'=>[
             'timeLimit'=>null, // limit de temps pour la route
             'code'=>200, // code de réponse
-            'contentType'=>'html', // contentType de la réponse
+            'contentType'=>null, // contentType de la réponse
             'header'=>null], // tableau de header à sets à la réponse
         'timeout'=>null, // défini les timeouts à lier à la route trigger
         'query'=>null, // détermine les éléments de query conservés dans la route
@@ -93,6 +93,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'menu'=>null, // détermine si la route fait partie d'un ou plusieurs menus
         'history'=>true, // la requête est ajouté à l'historique de session
         'uriAbsolute'=>null, // force toutes les uris générés via uri output dans la route à être absolute
+        'cliHtmlOverload'=>null, // force les méthodes cli à générer du html, seulement si c'est true et que cli est false
         'ignore'=>false, // si la route est ignoré pour routes
         'catchAll'=>false, // si true, le dernier segment attrape tout le reste du chemin dans le processus de match
         'debug'=>false, // active ou non le débogagge de match, en lien avec la méthode statique debug
@@ -650,6 +651,12 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             $uriAbsolute = static::$config['uriAbsolute'];
             if(is_bool($uriAbsolute))
             Base\Uri::setAllAbsolute($uriAbsolute);
+            
+            $cliHtmlOverload = static::$config['cliHtmlOverload'];
+            if($cliHtmlOverload === true && !Base\Server::isCli())
+            Base\Cli::setHtmlOverload($cliHtmlOverload);
+            
+            static::prepareResponse();
         }
 
         return $return;
@@ -663,15 +670,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // méthode protégé
     protected function after():self
     {
-        $response = static::$config['response'] ?? [];
-        static::setResponseCode();
-
-        if(!empty($response['contentType']) && is_string($response['contentType']))
-        Base\Response::setContentType($response['contentType']);
-
-        if(!empty($response['header']) && is_array($response['header']))
-        Base\Response::setsHeader($response['header']);
-
         if(static::shouldKeepInHistory())
         {
             $history = static::$config['history'];
@@ -1624,14 +1622,21 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // setResponseCode
-    // méthode qui permet d'appliquer le code de réponse de la route, tel que spécifié dans static config
-    public static function setResponseCode():void
+    // prepareResponse
+    // méthode qui permet de préparer la réponse
+    // selon les configurations spécifié dans static config
+    protected static function prepareResponse():void
     {
         $response = static::$config['response'] ?? [];
 
         if(!Base\Response::isCodeError() && !empty($response['code']) && is_int($response['code']))
         Base\Response::setCode($response['code']);
+        
+        if(!empty($response['contentType']) && is_string($response['contentType']))
+        Base\Response::setContentType($response['contentType']);
+
+        if(!empty($response['header']) && is_array($response['header']))
+        Base\Response::setsHeader($response['header']);
 
         return;
     }
