@@ -651,11 +651,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             $uriAbsolute = static::$config['uriAbsolute'];
             if(is_bool($uriAbsolute))
             Base\Uri::setAllAbsolute($uriAbsolute);
-            
+
             $cliHtmlOverload = static::$config['cliHtmlOverload'];
             if($cliHtmlOverload === true && !Base\Server::isCli())
             Base\Cli::setHtmlOverload($cliHtmlOverload);
-            
+
             static::prepareResponse();
         }
 
@@ -1631,7 +1631,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         if(!Base\Response::isCodeError() && !empty($response['code']) && is_int($response['code']))
         Base\Response::setCode($response['code']);
-        
+
         if(!empty($response['contentType']) && is_string($response['contentType']))
         Base\Response::setContentType($response['contentType']);
 
