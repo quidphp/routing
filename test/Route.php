@@ -66,9 +66,9 @@ class Route extends Base\Test
         // isTriggered
 
         // allowed
-        
+
         // hasPath
-        
+
         // getTimeoutObject
 
         // trigger

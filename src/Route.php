@@ -375,7 +375,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $return;
     }
 
-    
+
     // hasPath
     // retourne vrai si la route a un path pour la langue
     public static function hasPath(?string $lang=null):bool
@@ -384,14 +384,14 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $class = static::routeRequestClass();
         $lang = ($lang === null)? static::session()->lang():$lang;
         $path = $class::pathFromRoute(static::class,$lang);
-        
+
         if($path !== null && $path !== false)
         $return = true;
-        
+
         return $return;
     }
-    
-    
+
+
     // getTimeoutObject
     // retourne l'objet timeout
     public static function getTimeoutObject():Main\Timeout

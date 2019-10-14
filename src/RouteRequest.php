@@ -192,7 +192,7 @@ class RouteRequest extends Main\Root
         return $this;
     }
 
-    
+
     // routePath
     // retourne le path de la route
     // utilise la route lié à l'objet
@@ -201,11 +201,11 @@ class RouteRequest extends Main\Root
         $return = null;
         $pathMatch = ($pathMatch === true)? $this->request()->pathMatch():null;
         $return = static::pathFromRoute($this->route(),$lang,$null,$pathMatch);
-        
+
         return $return;
     }
-    
-    
+
+
     // request
     // retourne la requête de l'objet
     public function request():Main\Request
@@ -889,8 +889,8 @@ class RouteRequest extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // pathFromRoute
     // retourne le path de la route
     // si une lang est fourni, retourne le path compatible avec la langue
@@ -902,10 +902,10 @@ class RouteRequest extends Main\Root
 
         if(is_string($lang) && array_key_exists($lang,$paths))
         $paths = (array) $paths[$lang];
-        
+
         if(is_string($pathMatch) && in_array($pathMatch,$paths,true))
         $return = $pathMatch;
-        
+
         else
         {
             foreach ($paths as $key => $value)
@@ -920,7 +920,7 @@ class RouteRequest extends Main\Root
                 }
             }
         }
-        
+
         return $return;
     }
 }

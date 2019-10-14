@@ -76,7 +76,7 @@ class Request extends Main\Request
             if(empty($return['type']) && !empty($redirect))
             {
                 $return['type'] = 'requestInvalid';
-                
+
                 if($isAjax === true)
                 $return['code'] = 400;
 
