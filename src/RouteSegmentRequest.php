@@ -105,7 +105,7 @@ class RouteSegmentRequest extends RouteRequest
             $this->reset();
             $this->route = $route;
             $lang = $this->langCode();
-            $path = $route::path($lang);
+            $path = $this->routePath($lang);
             $segment = null;
 
             if(is_string($path))
@@ -184,12 +184,11 @@ class RouteSegmentRequest extends RouteRequest
         {
             $this->type = 1;
 
-            $route = $this->route();
             $catchAll = $this->isRouteCatchAll();
             $request = $this->request();
             $requestPath = $request->pathMatch();
             $lang = $this->langCode();
-            $routePath = $route::path($lang);
+            $routePath = $this->routePath($lang);
             $requestSegment = Base\Path::getSegments($routePath,$requestPath);
 
             if($catchAll === true && $requestSegment === null)
@@ -212,10 +211,9 @@ class RouteSegmentRequest extends RouteRequest
     protected function parseRequestSegmentFromRequestCatchAll():array
     {
         $return = [];
-        $route = $this->route();
         $routeSegment = $this->routeSegment();
         $langCode = $this->langCode();
-        $path = $route::path($langCode);
+        $path = $this->routePath($langCode);
 
         if(is_string($path) && strlen($path))
         {
@@ -703,8 +701,7 @@ class RouteSegmentRequest extends RouteRequest
     public function uri(string $lang,?array $option=null):?string
     {
         $return = null;
-        $route = $this->route();
-        $path = $route::path($lang);
+        $path = $this->routePath($lang);
         $segment = $this->makeRequestSegment();
 
         $path = Base\Segment::sets(null,$segment,$path);

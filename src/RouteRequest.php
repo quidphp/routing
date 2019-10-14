@@ -192,7 +192,20 @@ class RouteRequest extends Main\Root
         return $this;
     }
 
-
+    
+    // routePath
+    // retourne le path de la route
+    // utilise la route lié à l'objet
+    public function routePath(?string $lang=null,bool $null=false,bool $pathMatch=false)
+    {
+        $return = null;
+        $pathMatch = ($pathMatch === true)? $this->request()->pathMatch():null;
+        $return = static::pathFromRoute($this->route(),$lang,$null,$pathMatch);
+        
+        return $return;
+    }
+    
+    
     // request
     // retourne la requête de l'objet
     public function request():Main\Request
@@ -236,8 +249,8 @@ class RouteRequest extends Main\Root
         $route = $this->route();
         $match = $route::$config['match'] ?? [];
 
-        $path = $route::path($lang,true);
-        $emptyPath = $route::path(null,true);
+        $path = $this->routePath($lang,true,true);
+        $emptyPath = $this->routePath(null,true,true);
         $go = false;
 
         if((is_string($path) || $path === null) && $this->path($path))
@@ -746,8 +759,7 @@ class RouteRequest extends Main\Root
     public function uri(string $lang,?array $option=null):?string
     {
         $return = null;
-        $route = $this->route();
-        $path = $route::path($lang);
+        $path = $this->routePath($lang);
         $option = Base\Arr::plus($option,['schemeHost'=>true]);
 
         if(is_string($path))
@@ -875,6 +887,40 @@ class RouteRequest extends Main\Root
         else
         $return = $role::validate($value);
 
+        return $return;
+    }
+    
+    
+    // pathFromRoute
+    // retourne le path de la route
+    // si une lang est fourni, retourne le path compatible avec la langue
+    // si pathMatch est fourni, on va retourner le chemin exact si existant, mais ne supporte pas les segments
+    public static function pathFromRoute(string $route,?string $lang=null,bool $null=false,?string $pathMatch=null)
+    {
+        $return = false;
+        $paths = $route::paths();
+
+        if(is_string($lang) && array_key_exists($lang,$paths))
+        $paths = (array) $paths[$lang];
+        
+        if(is_string($pathMatch) && in_array($pathMatch,$paths,true))
+        $return = $pathMatch;
+        
+        else
+        {
+            foreach ($paths as $key => $value)
+            {
+                if(is_numeric($key))
+                {
+                    if(is_string($value) || ($value === null && $null === true))
+                    {
+                        $return = $value;
+                        break;
+                    }
+                }
+            }
+        }
+        
         return $return;
     }
 }

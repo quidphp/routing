@@ -42,7 +42,9 @@ class RouteRequest extends Base\Test
         // route
 
         // setRoute
-
+        
+        // routePath
+        
         // request
 
         // setRequest
@@ -102,7 +104,9 @@ class RouteRequest extends Base\Test
         // uriAbsolute
 
         // allowed
-
+        
+        // pathFromRoute
+        
         return true;
     }
 }

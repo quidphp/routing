@@ -85,7 +85,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'jsInit'=>null, // s'il faut init le js en cas de requête non ajax
         'redirectable'=>null, // défini si la route est redirigable
         'sitemap'=>null, // la route fait parti de sitemap
-        'uri'=>['absolute'=>false], // attribut pour output, relative et absolut
+        'uri'=>null, // attribut pour output, relative et absolut
         'parent'=>null, // classe parente de la route
         'priority'=>0, // priorité de la route
         'navigation'=>true, // active la navigation via history sur la route
@@ -375,7 +375,23 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $return;
     }
 
-
+    
+    // hasPath
+    // retourne vrai si la route a un path pour la langue
+    public static function hasPath(?string $lang=null):bool
+    {
+        $return = false;
+        $class = static::routeRequestClass();
+        $lang = ($lang === null)? static::session()->lang():$lang;
+        $path = $class::pathFromRoute(static::class,$lang);
+        
+        if($path !== null && $path !== false)
+        $return = true;
+        
+        return $return;
+    }
+    
+    
     // getTimeoutObject
     // retourne l'objet timeout
     public static function getTimeoutObject():Main\Timeout
@@ -1338,21 +1354,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // hasPath
-    // retourne vrai si la route a un path pour la langue
-    public static function hasPath(?string $lang=null):bool
-    {
-        $return = false;
-        $lang = ($lang === null)? static::session()->lang():$lang;
-        $path = static::path($lang);
-
-        if($path !== null && $path !== false)
-        $return = true;
-
-        return $return;
-    }
-
-
     // paths
     // retourne tous les chemins de la route
     public static function paths():array
@@ -1361,37 +1362,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         if(!is_array($return))
         $return = [$return];
-
-        return $return;
-    }
-
-
-    // path
-    // retourne le path de la route
-    // si une lang est fourni, retourne le path compatible avec la langue
-    public static function path(?string $lang=null,bool $null=false)
-    {
-        $return = false;
-        $found = false;
-        $path = static::paths();
-
-        if(is_string($lang) && array_key_exists($lang,$path))
-        $return = $path[$lang];
-
-        else
-        {
-            foreach ($path as $key => $value)
-            {
-                if(is_numeric($key))
-                {
-                    if(is_string($value) || ($value === null && $null === true))
-                    {
-                        $return = $value;
-                        break;
-                    }
-                }
-            }
-        }
 
         return $return;
     }
@@ -1452,8 +1422,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $isRedirectable = static::$config['redirectable'] ?? null;
         $isSitemap = (static::name() === 'sitemap')? true:false;
 
-        if($isRedirectable !== false && static::isActive($role))
-        $return = (static::isGroup('error') || $isSitemap || static::isMethod('post') || static::isAjax())? false:true;
+        if($isRedirectable !== false && static::isActive($role) && static::hasPath())
+        $return = ($isSitemap || static::isMethod('post') || static::isAjax())? false:true;
 
         return $return;
     }
