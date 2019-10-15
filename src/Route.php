@@ -114,7 +114,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $this->setRouteRequest($request);
         $this->onMake();
-
+        
         return;
     }
 
@@ -1665,17 +1665,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // initSegment
-    // init seulement les segments de la route
-    // comme isValidSegment mais retourne la route plutôt qu'un booléean
-    public function initSegment(bool $exception=false):self
-    {
-        $this->isValidSegment($exception);
-
-        return $this;
-    }
-
-
     // isValidSegment
     // retourne vrai si la requête et les segments de route match
     public function isValidSegment(bool $exception=false):bool
@@ -1701,36 +1690,22 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // segments
     // retourne le tableau des data de segment
-    // si make est false ou segment n'a pas été validé retourne à partir de requestSegment
-    // si make est true retourne le résultat de makeRequestSegment
-    public function segments(?bool $make=null):array
+    // peut envoyer une exception si le segment demandé n'existe pas
+    public function segments(bool $exception=false):array
     {
-        $return = [];
-        $routeRequest = $this->routeSegmentRequest();
-        $valid = $routeRequest->valid('segment');
-
-        if($make === true)
-        $return = $routeRequest->makeRequestSegment();
-
-        elseif($make === false || $valid === false)
-        $return = $routeRequest->requestSegment();
-
-        else
-        $return = $routeRequest->segment();
-
-        return $return;
+        return $this->routeSegmentRequest()->segment(static::session(),$exception);
     }
 
 
     // segment
     // retourne une valeur de segment via la clé fournie en argument
     // peut aussi retourner un segment via index si un int est fourni
-    // envoie aussi une exception si le segment demandé n'existe pas
-    public function segment($key,?bool $make=null)
+    // peut envoyer une exception si le segment demandé n'existe pas
+    public function segment($key,bool $exception=false)
     {
         $return = null;
-        $segments = $this->segments($make);
-
+        $segments = $this->segments($exception);
+        
         if(is_scalar($key))
         {
             if(is_string($key) && array_key_exists($key,$segments))

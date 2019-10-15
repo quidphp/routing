@@ -19,6 +19,7 @@ class Request extends Base\Test
     public static function trigger(array $data):bool
     {
         // prepare
+        $isCli = Base\Server::isCli();
         $lc = new Routing\Request('/sada/ok');
         $redirection = new Routing\Redirection(['/en/james/ok'=>'/lol/ok']);
         $badExtension = new Routing\Request('/james/ok.jpg');
@@ -28,7 +29,8 @@ class Request extends Base\Test
         $externalPost = new Routing\Request(['uri'=>'/external','method'=>'post','headers'=>['referer'=>'https://google.com']]);
         $nl = new Routing\Request('browserconfig.xml');
         $arg = new Routing\Request('-v');
-
+        $argCli = new Routing\Request(array('-v','cli'=>true));
+        
         // manageRedirect
         assert($badExtension->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
         assert($externalPost->manageRedirect() === ['type'=>'externalPost','code'=>400,'location'=>null]);
@@ -38,9 +40,10 @@ class Request extends Base\Test
         assert($redi->manageRedirect($redirection)['code'] === 301);
         assert($redi->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
         assert($endSlash->manageRedirect($redirection) === ['type'=>'requestInvalid','code'=>302,'location'=>'/en/asdok/ok']);
-        assert($arg->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
         assert($lc->manageRedirect() === ['type'=>'requestInvalid','code'=>302,'location'=>'/en/sada/ok']);
-
+        assert($argCli->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
+        assert($arg->manageRedirect() === ['type'=>'requestInvalid','code'=>302,'location'=>Base\Request::schemeHost()]);
+        
         // match
 
         // route

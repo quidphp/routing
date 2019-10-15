@@ -251,8 +251,6 @@ class Route extends Base\Test
 
         // routeSegmentRequest
 
-        // initSegment
-
         // isValidSegment
 
         // checkValidSegment

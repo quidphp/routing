@@ -22,7 +22,7 @@ class Request extends Main\Request
     // vérifie la requête et manage les redirections possibles
     // certaines errors vont générer un code http 400 plutôt que 404 (bad request)
     // retourne un tableau avec les clés type, code et location
-    // gère externalPost, redirection, unsafe et request
+    // gère externalPost, redirection, requestUnsafe et requestInvalid
     public function manageRedirect(?Redirection $redirection=null):array
     {
         $return = ['type'=>null,'code'=>null,'location'=>null];
@@ -32,7 +32,9 @@ class Request extends Main\Request
         $schemeHost = $this->schemeHost();
         $redirect = $this->redirect();
         $hasExtension = $this->hasExtension();
-
+        $argumentNotCli = $this->isPathArgumentNotCli();
+        $requestInvalid = (!empty($redirect) || $argumentNotCli)? true:false;
+        
         // externalPost
         if($isExternalPost === true)
         {
@@ -54,7 +56,7 @@ class Request extends Main\Request
                 }
             }
 
-            // unsafe
+            // requestUnsafe
             if(empty($return['type']) && $isSafe === false)
             {
                 $return['type'] = 'requestUnsafe';
@@ -72,9 +74,11 @@ class Request extends Main\Request
                 }
             }
 
-            // request
-            if(empty($return['type']) && !empty($redirect))
+            // requestInvalid
+            if(empty($return['type']) && $requestInvalid === true)
             {
+                $redirect = (empty($redirect))? $schemeHost:$redirect;
+                
                 $return['type'] = 'requestInvalid';
 
                 if($isAjax === true)

@@ -511,7 +511,7 @@ class RouteSegmentRequest extends RouteRequest
     public function isValidSegment(Main\Session $session,bool $exception=false):bool
     {
         $return = false;
-
+        
         if(!$this->valid('segment'))
         $this->validateSegment($session,$exception);
 
@@ -539,7 +539,7 @@ class RouteSegmentRequest extends RouteRequest
     // validateSegment et validateDefaultSegment bloque seulement si la valeur de retour est false
     public function validateSegment(Main\Session $session,bool $exception=false):bool
     {
-        $return = false;
+        $return = true;
         $route = $this->route();
         $keyValue = $this->requestSegment();
         $defaultSegment = $route::getDefaultSegment();
@@ -547,7 +547,6 @@ class RouteSegmentRequest extends RouteRequest
 
         foreach ($keyValue as $key => $value)
         {
-            $return = false;
             $callable = $route::callableSegment($key);
             $value = (is_string($value) && $value === $defaultSegment)? null:$value;
 
@@ -555,20 +554,16 @@ class RouteSegmentRequest extends RouteRequest
 
             if($v === false)
             {
+                $return = false;
                 $this->fallback = ['segment',$key];
-                $this->segment = [];
+                $this->segment[$key] = false;
 
                 if($exception === true)
                 static::throw($route,$key,$value);
-
-                break;
             }
 
             else
-            {
-                $this->segment[$key] = $v;
-                $return = true;
-            }
+            $this->segment[$key] = $v;
         }
 
         return $this->valid['segment'] = $return;
@@ -604,10 +599,14 @@ class RouteSegmentRequest extends RouteRequest
 
     // segment
     // retourne les segment validés
-    // segment doit avoir été validé avoir succès au préalable
-    public function segment():array
+    public function segment(?Main\Session $session=null,bool $exception=false):array
     {
+        if(!empty($session))
+        $this->isValidSegment($session,$exception);
+        
+        elseif($exception === true)
         $this->checkValidSegment();
+        
         $return = $this->segment;
 
         if(empty($return))
@@ -703,10 +702,10 @@ class RouteSegmentRequest extends RouteRequest
         $return = null;
         $path = $this->routePath($lang);
         $segment = $this->makeRequestSegment();
-
+        
         $path = Base\Segment::sets(null,$segment,$path);
         $option = Base\Arr::plus($option,['schemeHost'=>true]);
-
+        
         if(is_string($path) && strlen($path))
         $return = $this->uriPrepare($path,$lang,$option);
 
