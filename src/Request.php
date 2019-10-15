@@ -34,7 +34,7 @@ class Request extends Main\Request
         $hasExtension = $this->hasExtension();
         $argumentNotCli = $this->isPathArgumentNotCli();
         $requestInvalid = (!empty($redirect) || $argumentNotCli)? true:false;
-        
+
         // externalPost
         if($isExternalPost === true)
         {
@@ -78,7 +78,7 @@ class Request extends Main\Request
             if(empty($return['type']) && $requestInvalid === true)
             {
                 $redirect = (empty($redirect))? $schemeHost:$redirect;
-                
+
                 $return['type'] = 'requestInvalid';
 
                 if($isAjax === true)

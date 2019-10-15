@@ -114,7 +114,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $this->setRouteRequest($request);
         $this->onMake();
-        
+
         return;
     }
 
@@ -1705,7 +1705,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = null;
         $segments = $this->segments($exception);
-        
+
         if(is_scalar($key))
         {
             if(is_string($key) && array_key_exists($key,$segments))

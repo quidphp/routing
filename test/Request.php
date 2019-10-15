@@ -29,8 +29,8 @@ class Request extends Base\Test
         $externalPost = new Routing\Request(['uri'=>'/external','method'=>'post','headers'=>['referer'=>'https://google.com']]);
         $nl = new Routing\Request('browserconfig.xml');
         $arg = new Routing\Request('-v');
-        $argCli = new Routing\Request(array('-v','cli'=>true));
-        
+        $argCli = new Routing\Request(['-v','cli'=>true]);
+
         // manageRedirect
         assert($badExtension->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
         assert($externalPost->manageRedirect() === ['type'=>'externalPost','code'=>400,'location'=>null]);
@@ -43,7 +43,7 @@ class Request extends Base\Test
         assert($lc->manageRedirect() === ['type'=>'requestInvalid','code'=>302,'location'=>'/en/sada/ok']);
         assert($argCli->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
         assert($arg->manageRedirect() === ['type'=>'requestInvalid','code'=>302,'location'=>Base\Request::schemeHost()]);
-        
+
         // match
 
         // route
