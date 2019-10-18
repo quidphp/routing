@@ -58,11 +58,11 @@ class Route extends Base\Test
         // offsetSet
 
         // offsetUnset
-        
+
         // permissionAll
-        
+
         // permissionDefaultRole
-        
+
         // prepareDocJsInit
 
         // prepareDocServices
