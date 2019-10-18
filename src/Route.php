@@ -15,6 +15,10 @@ use Quid\Main;
 // abstract class for a route that acts as both a View and a Controller
 abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 {
+    // trait
+    use Main\_permission;
+    
+    
     // config
     public static $config = [
         'path'=>'undefined', // match path de la route, peut y avoir plusieurs, si il y a clé c'est une lang
@@ -94,12 +98,13 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'history'=>true, // la requête est ajouté à l'historique de session
         'uriAbsolute'=>null, // force toutes les uris générés via uri output dans la route à être absolute
         'cliHtmlOverload'=>null, // force les méthodes cli à générer du html, seulement si c'est true et que cli est false
+        'permission'=>array(), // tableau des permissions
         'ignore'=>false, // si la route est ignoré pour routes
         'catchAll'=>false, // si true, le dernier segment attrape tout le reste du chemin dans le processus de match
         'debug'=>false, // active ou non le débogagge de match, en lien avec la méthode statique debug
         'defaultSegment'=>'-', // caractère pour un segment avec valeur par défaut
         'replaceSegment'=>'%%%', // pattern utilisé pour faire un remplacement sur un segment, cette valeur passe dans makSegment à tout coup
-        'segment'=>[] // tableau qui permet de remplacer une clé de segment par un autre, utiliser dans methodSegment
+        'segment'=>[], // tableau qui permet de remplacer une clé de segment par un autre, utiliser dans methodSegment
     ];
 
 
@@ -278,6 +283,22 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
+    // permissionAll
+    // retourne le tableau de la source des paramètres de rôles
+    protected function &permissionAll():array
+    {
+        return static::$config['permission'];
+    }
+
+
+    // permissionDefaultRole
+    // retourne le rôle courant
+    protected function permissionDefaultRole():Main\Role
+    {
+        return static::session()->role();
+    }
+    
+    
     // prepareDocJsInit
     // ajoute la méthode jsInit si jsInit est true et que ce n'est pas une requête ajax
     protected function prepareDocJsInit(array $return):array
