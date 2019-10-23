@@ -486,9 +486,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // méthode protégé
     protected function fallback($context=null):bool
     {
-        $code = null;
         $log = null;
-
+        $code = null;
+        
         if(is_array($context) && current($context) === 'timeout')
         {
             $log = $context;
@@ -637,6 +637,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
                 if($return !== false)
                 $this->after();
+                
+                else
+                $return = $this->fallback('trigger');
             }
 
             else
@@ -1920,6 +1923,14 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     public static function getReplaceSegment():?string
     {
         return static::$config['replaceSegment'] ?? null;
+    }
+    
+    
+    // getOverloadKeyPrepend
+    // retourne le prepend de la clé à utiliser pour le tableau overload
+    public static function getOverloadKeyPrepend():?string
+    {
+        return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Route':null;
     }
 }
 ?>

@@ -17,7 +17,6 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 {
     // trait
     use Main\_inst;
-    use Main\Map\_classe;
     use Main\Map\_sort;
     use Main\Map\_readOnly;
 

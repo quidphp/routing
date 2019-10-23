@@ -263,16 +263,29 @@ class RouteRequest extends Main\Root
         {
             foreach ($match as $key => $value)
             {
-                $return = ($value === null)? true:$this->$key($value,$session);
-
-                if($return === false)
+                if(is_string($key))
                 {
-                    $this->setFallback($key,$value,$session);
+                    if($value === null)
+                    $return = true;
+                    
+                    elseif(method_exists($this,$key))
+                    $return = $this->$key($value,$session);
+                    
+                    elseif(static::classIsCallable($value))
+                    $return = $value($this,$session);
+                    
+                    else
+                    static::throw('invalidMatchKey',$key);
+                    
+                    if($return === false)
+                    {
+                        $this->setFallback($key,$value,$session);
 
-                    if($exception === true)
-                    static::throw($route,$key,$value,$return);
+                        if($exception === true)
+                        static::throw($route,$key,$value,$return);
 
-                    break;
+                        break;
+                    }
                 }
             }
         }
