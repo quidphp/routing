@@ -488,7 +488,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $log = null;
         $code = null;
-        
+
         if(is_array($context) && current($context) === 'timeout')
         {
             $log = $context;
@@ -637,7 +637,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
                 if($return !== false)
                 $this->after();
-                
+
                 else
                 $return = $this->fallback('trigger');
             }
@@ -1924,8 +1924,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         return static::$config['replaceSegment'] ?? null;
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string

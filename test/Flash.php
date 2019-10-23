@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Quid\Test\Routing;
 use Quid\Base;
-use Quid\Routing;
 
 // flash
 // class for testing Quid\Routing\Flash
