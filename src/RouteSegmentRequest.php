@@ -142,19 +142,8 @@ class RouteSegmentRequest extends RouteRequest
     public function setRequest($request=null):parent
     {
         $this->reset();
-
-        if($request instanceof Route)
-        {
-            $routeRequest = $request->routeRequest();
-            $this->valid = $routeRequest->valid();
-            $this->requestSegment = $routeRequest->requestSegment();
-            $this->request = $request->request();
-
-            if($this->valid('segment'))
-            $this->segment = $routeRequest->segment();
-        }
-
-        elseif($request instanceof Main\Request)
+        
+        if($request instanceof Main\Request)
         {
             $this->request = $request;
             $this->parseRequestSegmentFromRequest();

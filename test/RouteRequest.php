@@ -20,7 +20,9 @@ class RouteRequest extends Base\Test
         // construct
 
         // toString
-
+        
+        // clone
+        
         // reset
 
         // isValid

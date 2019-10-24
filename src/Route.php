@@ -189,7 +189,17 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $this->uri();
     }
 
-
+    
+    // clone
+    // clone l'objet route et l'objet routeRequest
+    public function __clone() 
+    {
+        $this->routeRequest = clone $this->routeRequest;
+        
+        return;
+    }
+    
+    
     // onMake
     // permet d'avoir un callback lors de la construction de la route
     // méthode protégé
@@ -456,7 +466,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 $output = Base\Str::cast($output);
                 $bool = true;
             }
-
         }
 
         catch (Exception $e)
@@ -470,7 +479,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             Base\Response::serverError();
             $e->onCatched();
         }
-
+        
         $return['bool'] = $bool;
         $return['continue'] = $continue;
         $return['output'] = $output;
@@ -1786,7 +1795,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // l'objet route et routeSegmentRequest sont cloné
     public function changeSegments(array $values):self
     {
-        $return = static::make($this);
+        $return = $this->clone();
         $return->routeSegmentRequest()->changeRequestSegments($values);
 
         return $return;
@@ -1799,7 +1808,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // l'objet route et routeSegmentRequest sont cloné
     public function keepSegments(string ...$values):self
     {
-        $return = static::make($this);
+        $return = $this->clone();
         $return->routeSegmentRequest()->keepRequestSegments(...$values);
 
         return $return;
