@@ -142,7 +142,7 @@ class RouteSegmentRequest extends RouteRequest
     public function setRequest($request=null):parent
     {
         $this->reset();
-        
+
         if($request instanceof Main\Request)
         {
             $this->request = $request;

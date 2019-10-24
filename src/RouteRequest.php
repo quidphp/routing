@@ -46,15 +46,15 @@ class RouteRequest extends Main\Root
         return static::route();
     }
 
-    
+
     // clone
     // clone est permis
-    public function __clone() 
+    public function __clone()
     {
         return;
     }
-    
-    
+
+
     // reset
     // reset les vérifications de l'objet à l'état initial
     // méthode protégé
@@ -229,7 +229,7 @@ class RouteRequest extends Main\Root
     public function setRequest($request=null):self
     {
         $this->reset();
-        
+
         if(is_string($request) || is_array($request))
         $request = Main\Request::newOverload($request);
 

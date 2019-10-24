@@ -189,17 +189,17 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $this->uri();
     }
 
-    
+
     // clone
     // clone l'objet route et l'objet routeRequest
-    public function __clone() 
+    public function __clone()
     {
         $this->routeRequest = clone $this->routeRequest;
-        
+
         return;
     }
-    
-    
+
+
     // onMake
     // permet d'avoir un callback lors de la construction de la route
     // méthode protégé
@@ -479,7 +479,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             Base\Response::serverError();
             $e->onCatched();
         }
-        
+
         $return['bool'] = $bool;
         $return['continue'] = $continue;
         $return['output'] = $output;
