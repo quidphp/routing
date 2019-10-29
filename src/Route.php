@@ -1144,7 +1144,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return = null;
         $uri = $this->uri($lang,$option);
         $attr = static::tagAttr('form',$attr);
-
+        
         if(empty($attr['method']))
         {
             $method = static::$config['match']['method'] ?? static::$config['form']['method'] ?? null;
@@ -1599,10 +1599,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         else
         static::throw('tagNotDefined');
 
-        if($tag === 'a' && empty(static::allowNavigation()))
+        if(!static::allowNavigation())
         {
             $return = (array) $return;
-            $return[] = 'http';
+            $return['data-navigation'] = false;
         }
 
         return $return;
