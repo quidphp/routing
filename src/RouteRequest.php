@@ -190,7 +190,7 @@ class RouteRequest extends Main\Root
     {
         $this->reset();
         $this->route = $route::classFqcn();
-        
+
         return $this;
     }
 
@@ -632,7 +632,7 @@ class RouteRequest extends Main\Root
         {
             if(!is_array($value))
             $value = [$value];
-            
+
             foreach ($value as $method)
             {
                 $return = false;

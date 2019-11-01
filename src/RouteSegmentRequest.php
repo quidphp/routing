@@ -696,8 +696,8 @@ class RouteSegmentRequest extends RouteRequest
 
         return $return;
     }
-    
-    
+
+
     // routeCallableSegment
     // retourne la callable à utiliser pour le segment
     // envoie une exception si la callable n'existe pas
@@ -719,7 +719,7 @@ class RouteSegmentRequest extends RouteRequest
 
         else
         static::throw('segmentMethodNotFound',$key);
-        
+
         return $return;
     }
 }

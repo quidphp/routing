@@ -489,7 +489,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $log = null;
         $code = null;
-        
+
         if(is_array($context) && current($context) === 'timeout')
         {
             $log = $context;
@@ -552,7 +552,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         else
         $routeRequest = RouteRequest::newOverload($this,$request);
-        
+
         $this->routeRequest = $routeRequest;
 
         return;
@@ -565,10 +565,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public function routeRequest(bool $segment=false):RouteRequest
     {
         $return = $this->routeRequest;
-        
+
         if($segment === true && !$return instanceof RouteSegmentRequest)
         static::throw('routeHasNoSegment');
-        
+
         return $return;
     }
 
@@ -687,7 +687,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if($return !== false)
         {
             $session = static::session();
-            $response = $this->getAttr('response') ?? array();
+            $response = $this->getAttr('response') ?? [];
 
             if(array_key_exists('timeLimit',$response) && is_int($response['timeLimit']))
             Base\Response::timeLimit($response['timeLimit']);
@@ -1147,7 +1147,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         if(empty($attr['method']))
         {
-            $method = $this->getAttr(array('match','method')) ?? $this->getAttr(array('form','method'));
+            $method = $this->getAttr(['match','method']) ?? $this->getAttr(['form','method']);
             if(!empty($method))
             $attr['method'] = $method;
         }
@@ -1186,14 +1186,14 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return Base\Html::submit($this->title($pattern,$lang),$attr);
     }
 
-    
+
     // tagAttr
     // retourne un tableau contenant les attributs à utiliser pour une tag
     final public function tagAttr(string $tag,$attr=null):?array
     {
         $return = null;
         $tagConfig = $this->getAttr($tag);
-        
+
         if($tagConfig !== null)
         {
             if(!is_array($attr))
@@ -1225,7 +1225,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = null;
         $tagConfig = $this->getAttr($tag);
-        
+
         if($tagConfig !== null)
         $return = (!empty($tagConfig['option']))? Base\Arr::plus($tagConfig['option'],$option):$option;
 
@@ -1241,7 +1241,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // selon les configurations spécifié dans static config
     final protected function prepareResponse():void
     {
-        $response = $this->getAttr('response') ?? array();
+        $response = $this->getAttr('response') ?? [];
 
         if(!Base\Response::isCodeError() && !empty($response['code']) && is_int($response['code']))
         Base\Response::setCode($response['code']);
@@ -1254,8 +1254,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         return;
     }
-    
-    
+
+
     // childs
     // retourne toutes les enfants de la route courante
     public static function childs(bool $active=false):Routes

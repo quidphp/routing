@@ -180,9 +180,9 @@ class Redirection extends Main\Map
 
         else
         static::throw('requireArray');
-        
+
         $this->checkAfter();
-        
+
         return;
     }
 }
