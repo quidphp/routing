@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace Quid\Routing;
 
-// _route
+// _attrRoute
 // trait that provides methods to work with routes in the attributes property
-trait _route
+trait _attrRoute
 {
     // routeAttr
     // retourne le tableau des routes, ou un nom de route, de classe ou une callable de route non triggé
@@ -19,7 +19,7 @@ trait _route
     public function routeAttr($key=null)
     {
         $return = null;
-        $route = $this->attr('route');
+        $route = $this->getAttr('route');
 
         if(is_string($key) || is_numeric($key))
         {

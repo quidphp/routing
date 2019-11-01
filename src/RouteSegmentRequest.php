@@ -32,7 +32,7 @@ class RouteSegmentRequest extends RouteRequest
     // construit l'objet routeRequest et lance le processus de match
     // si request est vide prend la requête courante
     // le code de lang doit être inclus pour aller chercher les path dans route
-    public function __construct(string $route,$request=null,string $lang)
+    public function __construct(Route $route,$request=null,string $lang)
     {
         $this->setLangCode($lang);
         $this->setRoute($route);
@@ -45,13 +45,13 @@ class RouteSegmentRequest extends RouteRequest
     // reset
     // reset les vérifications de l'objet à l'état initial
     // méthode protégé
-    protected function reset():parent
+    protected function reset():void
     {
         parent::reset();
         $this->segment = null;
         $this->make = null;
 
-        return $this;
+        return;
     }
 
 
@@ -78,11 +78,11 @@ class RouteSegmentRequest extends RouteRequest
 
     // setLangCode
     // conserve en mémoire la langue de la session
-    protected function setLangCode(string $lang):self
+    protected function setLangCode(string $lang):void
     {
         $this->langCode = $lang;
 
-        return $this;
+        return;
     }
 
 
@@ -98,28 +98,21 @@ class RouteSegmentRequest extends RouteRequest
     // change le nom de classe de la route
     // la classe doit être une sous-classe de routeSegment
     // lance la méthode reset
-    public function setRoute(string $route):parent
+    public function setRoute(Route $route):parent
     {
-        if(is_subclass_of($route,Route::class,true))
-        {
-            $this->reset();
-            $this->route = $route;
-            $lang = $this->langCode();
-            $path = $this->routePath($lang);
-            $segment = null;
+        parent::setRoute($route);
+        $lang = $this->langCode();
+        $path = $this->routePath($lang);
+        $segment = null;
 
-            if(is_string($path))
-            $segment = Base\Segment::get(null,$path);
+        if(is_string($path))
+        $segment = Base\Segment::get(null,$path);
 
-            if(is_array($segment) && !empty($segment))
-            $this->routeSegment = $segment;
-
-            else
-            static::throw('invalidSegment',$route);
-        }
+        if(is_array($segment) && !empty($segment))
+        $this->routeSegment = $segment;
 
         else
-        static::throw($route,'mustExtend',Route::class);
+        static::throw('invalidSegment',$this->route);
 
         return $this;
     }
@@ -165,7 +158,7 @@ class RouteSegmentRequest extends RouteRequest
     // parseRequestSegmentFromRequest
     // parse les segments à partir de la requête
     // méthode protégé
-    protected function parseRequestSegmentFromRequest():self
+    protected function parseRequestSegmentFromRequest():void
     {
         $routeSegment = $this->routeSegment();
 
@@ -190,7 +183,7 @@ class RouteSegmentRequest extends RouteRequest
         else
         static::throw('invalidRouteSegment');
 
-        return $this;
+        return;
     }
 
 
@@ -246,7 +239,7 @@ class RouteSegmentRequest extends RouteRequest
     // parse les segments de requête à partir de la valeur donnée en argument
     // pour la valeur donnée en argument, possible de donner un tableau via clé ou index
     // méthode protégé
-    protected function parseRequestSegmentFromValue($value=null):self
+    protected function parseRequestSegmentFromValue($value=null):void
     {
         $routeSegment = $this->routeSegment();
 
@@ -278,7 +271,7 @@ class RouteSegmentRequest extends RouteRequest
         else
         static::throw('invalidRouteSegment');
 
-        return $this;
+        return;
     }
 
 
@@ -461,7 +454,7 @@ class RouteSegmentRequest extends RouteRequest
 
                 else
                 {
-                    $callable = $route::callableSegment($key);
+                    $callable = $this->routeCallableSegment($key);
                     $v = $callable('make',$value,$requestSegment);
 
                     if($v === false && is_string($defaultSegment))
@@ -536,7 +529,7 @@ class RouteSegmentRequest extends RouteRequest
 
         foreach ($keyValue as $key => $value)
         {
-            $callable = $route::callableSegment($key);
+            $callable = $this->routeCallableSegment($key);
             $value = (is_string($value) && $value === $defaultSegment)? null:$value;
 
             $v = $callable('match',$value,$keyValue);
@@ -701,6 +694,32 @@ class RouteSegmentRequest extends RouteRequest
         else
         static::throw('segmentReplaceFailed');
 
+        return $return;
+    }
+    
+    
+    // routeCallableSegment
+    // retourne la callable à utiliser pour le segment
+    // envoie une exception si la callable n'existe pas
+    protected function routeCallableSegment(string $key):callable
+    {
+        $return = null;
+        $route = $this->route();
+        $segments = $route::$config['segment'] ?? null;
+        $callable = null;
+
+        if(is_array($segments) && array_key_exists($key,$segments))
+        $callable = $segments[$key];
+
+        if(is_string($callable))
+        $callable = [$route,$callable];
+
+        if(static::classIsCallable($callable))
+        $return = $callable;
+
+        else
+        static::throw('segmentMethodNotFound',$key);
+        
         return $return;
     }
 }

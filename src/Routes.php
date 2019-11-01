@@ -463,7 +463,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // donne une priorité pour les routes qui n'ent ont pas et sort par défaut
     public function setPriority():self
     {
-        $increment = static::$config['priorityIncrement'];
+        $increment = $this->getAttr('priorityIncrement');
         $i = $increment;
         foreach ($this->arr() as $key => $value)
         {

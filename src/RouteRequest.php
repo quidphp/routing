@@ -30,7 +30,7 @@ class RouteRequest extends Main\Root
     // construit l'objet routeRequest et lance le processus de match
     // si request est vide prend la requête courante
     // session doit être inclu pour faire les de role, session et csrf
-    public function __construct(string $route,$request=null)
+    public function __construct(Route $route,$request=null)
     {
         $this->setRoute($route);
         $this->setRequest($request);
@@ -58,12 +58,12 @@ class RouteRequest extends Main\Root
     // reset
     // reset les vérifications de l'objet à l'état initial
     // méthode protégé
-    protected function reset():self
+    protected function reset():void
     {
         $this->valid = [];
         $this->fallback = null;
 
-        return $this;
+        return;
     }
 
 
@@ -150,7 +150,7 @@ class RouteRequest extends Main\Root
     // change la valeur de la propriété fallback de l'objet
     // met un tableau si la clé est timeout et value est string
     // méthode protégé
-    protected function setFallback(string $key,$value,Main\Session $session):self
+    protected function setFallback(string $key,$value,Main\Session $session):void
     {
         if($key === 'timeout')
         {
@@ -170,7 +170,7 @@ class RouteRequest extends Main\Root
 
         $this->fallback = $fallback;
 
-        return $this;
+        return;
     }
 
 
@@ -186,17 +186,11 @@ class RouteRequest extends Main\Root
     // change le nom de classe de la route
     // la classe doit être une sous-classe de route
     // lance la méthode reset
-    public function setRoute(string $route):self
+    public function setRoute(Route $route):self
     {
-        if(is_subclass_of($route,Route::class,true))
-        {
-            $this->reset();
-            $this->route = $route;
-        }
-
-        else
-        static::throw();
-
+        $this->reset();
+        $this->route = $route::classFqcn();
+        
         return $this;
     }
 
@@ -638,7 +632,7 @@ class RouteRequest extends Main\Root
         {
             if(!is_array($value))
             $value = [$value];
-
+            
             foreach ($value as $method)
             {
                 $return = false;
@@ -905,7 +899,7 @@ class RouteRequest extends Main\Root
         $return = true;
 
         else
-        $return = $role::validate($value);
+        $return = $role->validate($value);
 
         return $return;
     }

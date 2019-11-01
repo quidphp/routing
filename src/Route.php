@@ -16,7 +16,7 @@ use Quid\Main;
 abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 {
     // trait
-    use Main\_permission;
+    use Main\_attrPermission;
 
 
     // config
@@ -117,6 +117,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // construit l'objet route
     public function __construct($request=null)
     {
+        $this->makeAttr(null);
         $this->setRouteRequest($request);
         $this->onMake();
 
@@ -267,15 +268,13 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne le tableau de segments pour utiliser via this
     protected function arr():array
     {
-        static::checkSegmentClass();
-
         return $this->segments();
     }
 
 
     // offsetSet
     // arrayAccess offsetSet n'est pas permis pour la classe
-    public function offsetSet($key,$value):void
+    final public function offsetSet($key,$value):void
     {
         static::throw('arrayAccess','notAllowed');
 
@@ -285,7 +284,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // offsetUnset
     // arrayAccess offsetUnset n'est pas permis pour la classe
-    public function offsetUnset($key):void
+    final public function offsetUnset($key):void
     {
         static::throw('arrayAccess','notAllowed');
 
@@ -293,19 +292,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // permissionAll
-    // retourne le tableau de la source des paramètres de rôles
-    protected function &permissionAll():array
+    // attrPermissionRolesObject
+    // retourne les rôles courants
+    final protected function attrPermissionRolesObject():Main\Roles
     {
-        return static::$config['permission'];
-    }
-
-
-    // permissionDefaultRole
-    // retourne le rôle courant
-    protected function permissionDefaultRole():Main\Role
-    {
-        return static::session()->role();
+        return static::session()->roles(true);
     }
 
 
@@ -313,10 +304,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // ajoute la méthode jsInit si jsInit est true et que ce n'est pas une requête ajax
     protected function prepareDocJsInit(array $return):array
     {
-        if(!empty(static::$config['jsInit']) && $this->request()->isAjax() === false)
+        $jsInit = $this->getAttr('jsInit');
+
+        if(!empty($jsInit) && $this->request()->isAjax() === false)
         {
             $callable = null;
-            $jsInit = static::$config['jsInit'];
 
             if(static::classIsCallable($jsInit))
             $callable = $jsInit;
@@ -384,7 +376,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isTriggered
     // retourne vrai si la route est présentement triggé
-    public function isTriggered():bool
+    final public function isTriggered():bool
     {
         return ($this->trigger === true)? true:false;
     }
@@ -447,7 +439,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // lance tout le processus de lancement et output de la route
     // retourne un tableau avec bool, continue et output
     // output est toujours sous forme de string
-    public function launch():array
+    final public function launch():array
     {
         $return = ['bool'=>false,'continue'=>false,'output'=>null];
         $output = null;
@@ -493,11 +485,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // gère le timeout, captcha, csrf, genuine et failedFileUpload
     // s'il y a redirection utilise le code 302
     // méthode protégé
-    protected function fallback($context=null):bool
+    final protected function fallback($context=null):bool
     {
         $log = null;
         $code = null;
-
+        
         if(is_array($context) && current($context) === 'timeout')
         {
             $log = $context;
@@ -548,25 +540,42 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // setRouteRequest
     // change la routeRequest de l'objet
     // méthode protégé
-    protected function setRouteRequest($request=null):self
+    final protected function setRouteRequest($request=null):void
     {
-        $this->routeRequest = static::makeRouteRequest($request);
+        $return = null;
 
-        return $this;
+        if(static::isSegmentClass())
+        {
+            $lang = static::session()->lang();
+            $routeRequest = RouteSegmentRequest::newOverload($this,$request,$lang);
+        }
+
+        else
+        $routeRequest = RouteRequest::newOverload($this,$request);
+        
+        $this->routeRequest = $routeRequest;
+
+        return;
     }
 
 
     // routeRequest
     // retourne l'objet routeRequest
-    public function routeRequest():RouteRequest
+    // si segment est true, envooe une exception si ce n'est pas un routeSegmentRequest
+    final public function routeRequest(bool $segment=false):RouteRequest
     {
-        return $this->routeRequest;
+        $return = $this->routeRequest;
+        
+        if($segment === true && !$return instanceof RouteSegmentRequest)
+        static::throw('routeHasNoSegment');
+        
+        return $return;
     }
 
 
     // request
     // retourne l'objet request de routeRequest
-    public function request():Main\Request
+    final public function request():Main\Request
     {
         return $this->routeRequest()->request();
     }
@@ -593,7 +602,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // init
     // lance isValid sur la route, retourne l'objet route
     // comme isValid mais retourne la route plutôt qu'un booléean
-    public function init(bool $exception=false):self
+    final public function init(bool $exception=false):self
     {
         $this->isValid($exception);
 
@@ -603,7 +612,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isValid
     // retourne vrai si la route et la requête match
-    public function isValid(bool $exception=false):bool
+    final public function isValid(bool $exception=false):bool
     {
         return $this->routeRequest()->isValid(static::session(),$exception);
     }
@@ -612,7 +621,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // checkValid
     // envoie une exception si la route et la requête ne passent pas les tests match
     // si valid est false, le test n'est pas lancé et utilise le résultat courant
-    public function checkValid(bool $valid=true):self
+    final public function checkValid(bool $valid=true):self
     {
         if($valid === true)
         $this->isValid(true);
@@ -626,7 +635,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // start
     // lance la route
     // retourne le résultat de la route
-    public function start()
+    final public function start()
     {
         $return = null;
         static::prepareTimeout();
@@ -671,14 +680,14 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // refresh le csrf si il a été validé
     // met la uri selected
     // méthode protégé
-    protected function before()
+    final protected function before()
     {
         $return = $this->onBefore();
 
         if($return !== false)
         {
             $session = static::session();
-            $response = static::$config['response'] ?? [];
+            $response = $this->getAttr('response') ?? array();
 
             if(array_key_exists('timeLimit',$response) && is_int($response['timeLimit']))
             Base\Response::timeLimit($response['timeLimit']);
@@ -697,15 +706,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 Base\Attr::addSelectedUri($selected);
             }
 
-            $uriAbsolute = static::$config['uriAbsolute'];
+            $uriAbsolute = $this->getAttr('uriAbsolute');
             if(is_bool($uriAbsolute))
             Base\Uri::setAllAbsolute($uriAbsolute);
 
-            $cliHtmlOverload = static::$config['cliHtmlOverload'];
+            $cliHtmlOverload = $this->getAttr('cliHtmlOverload');
             if($cliHtmlOverload === true && !Base\Server::isCli())
             Base\Cli::setHtmlOverload($cliHtmlOverload);
 
-            static::prepareResponse();
+            $this->prepareResponse();
         }
 
         return $return;
@@ -717,11 +726,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // met le code response, le contentType et des headers de response et ajoute la requête à l'historique
     // gère le onAfter qui peut rediriger
     // méthode protégé
-    protected function after():self
+    final protected function after():void
     {
         if(static::shouldKeepInHistory())
         {
-            $history = static::$config['history'];
+            $history = $this->getAttr('history');
             $method = ($history === 'unique')? 'addUnique':'add';
             $request = $this->request();
             $history = static::session()->history();
@@ -732,7 +741,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if(!empty($redirect))
         $this->processRedirect($redirect);
 
-        return $this;
+        return;
     }
 
 
@@ -740,7 +749,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // gère un redirect, par exemple pour after ou fallback
     // le code utilisé par défaut est 302
     // méthode protégé
-    protected function processRedirect($value,$code=true,bool $kill=true):void
+    final protected function processRedirect($value,$code=true,bool $kill=true):void
     {
         if(is_string($value) && is_subclass_of($value,self::class,true))
         $value = $value::make();
@@ -752,7 +761,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         Base\Response::redirectReferer(true,true,$code,$kill);
 
         elseif($value instanceof self)
-        $value->redirect($code,$kill);
+        Base\Response::redirect($value->uriAbsolute(),$code,$kill);
 
         return;
     }
@@ -926,7 +935,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         $return = Base\Obj::cast($return);
 
-        $replace = static::$config['replace'] ?? null;
+        $replace = $this->getAttr('replace');
         if(!empty($replace))
         {
             foreach ($return as $key => $value)
@@ -958,7 +967,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         if(in_array($type,['docOpen','docClose'],true))
         {
-            $doc = static::$config[$type] ?? null;
+            $doc = $this->getAttr($type);
 
             if(is_array($doc))
             {
@@ -1006,7 +1015,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = '';
         $lang = ($lang === null)? static::session()->lang():$lang;
-        $option = Base\Arr::plus($option,static::$config['uri'] ?? null);
+        $option = Base\Arr::plus($option,$this->getAttr('uri'));
         $return = $this->routeRequest()->$method($lang,$option);
 
         if(!is_string($return))
@@ -1018,7 +1027,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // uri
     // retourne l'uri pour l'objet route
-    public function uri(?string $lang=null,?array $option=null):string
+    final public function uri(?string $lang=null,?array $option=null):string
     {
         return $this->uriMethod('uri',$lang,$option);
     }
@@ -1027,7 +1036,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // uriOutput
     // retourne l'uri formatté pour l'objet route
     // l'uri peut être relative ou absolut dépendamment des options
-    public function uriOutput(?string $lang=null,?array $option=null):string
+    final public function uriOutput(?string $lang=null,?array $option=null):string
     {
         return $this->uriMethod('uriOutput',$lang,$option);
     }
@@ -1035,7 +1044,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // uriRelative
     // retourne l'uri relative pour l'objet route
-    public function uriRelative(?string $lang=null,?array $option=null):string
+    final public function uriRelative(?string $lang=null,?array $option=null):string
     {
         return $this->uriMethod('uriRelative',$lang,$option);
     }
@@ -1043,18 +1052,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // uriAbsolute
     // retourne l'uri absolut pour l'objet route
-    public function uriAbsolute(?string $lang=null,?array $option=null):string
+    final public function uriAbsolute(?string $lang=null,?array $option=null):string
     {
         return $this->uriMethod('uriAbsolute',$lang,$option);
-    }
-
-
-    // redirect
-    // redirige la réponse courante vers l'uri absolute de la route
-    // le code utilisé est 302
-    public function redirect($code=true,$kill=true,?string $lang=null,bool $encode=true,?array $option=null):bool
-    {
-        return Base\Response::redirect($this->uriAbsolute($lang,$option),$code,$kill,$encode);
     }
 
 
@@ -1076,11 +1076,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // génère un a tag pour la route
     // possible de spécifier des attr et option par défaut pour a dans static config
     // les options sont pour base/html a
-    public function a($title=null,$attr=null,?string $lang=null,?array $option=null):?string
+    final public function a($title=null,$attr=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $uri = $this->uri($lang,$option);
-        $return = Base\Html::a($uri,$title,static::tagAttr('a',$attr),static::tagOption('a',$option));
+        $return = Base\Html::a($uri,$title,$this->tagAttr('a',$attr),$this->tagOption('a',$option));
 
         return $return;
     }
@@ -1090,11 +1090,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // ouvre un a tag pour la route
     // possible de spécifier des attr et option par défaut pour a dans static config
     // les options sont pour base/html a
-    public function aOpen($title=null,$attr=null,?string $lang=null,?array $option=null):?string
+    final public function aOpen($title=null,$attr=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $uri = $this->uri($lang,$option);
-        $return = Base\Html::aOpen($uri,$title,static::tagAttr('a',$attr),static::tagOption('a',$option));
+        $return = Base\Html::aOpen($uri,$title,$this->tagAttr('a',$attr),$this->tagOption('a',$option));
 
         return $return;
     }
@@ -1103,7 +1103,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // aLabel
     // génère un a tag pour la route, le label sera affiché
     // possible de spécifier un pattern de label
-    public function aLabel($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
+    final public function aLabel($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
     {
         return $this->a(static::label($pattern,$lang),$attr,$lang,$option);
     }
@@ -1112,7 +1112,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // aOpenLabel
     // ouvre un a tag pour la route, le label sera affiché
     // possible de spécifier un pattern de label
-    public function aOpenLabel($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
+    final public function aOpenLabel($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
     {
         return $this->aOpen(static::label($pattern,$lang),$attr,$lang,$option);
     }
@@ -1121,7 +1121,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // aTitle
     // génère un a tag pour la route, le title sera affiché
     // possible de spécifier un pattern de title
-    public function aTitle($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
+    final public function aTitle($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
     {
         return $this->a($this->title($pattern,$lang),$attr,$lang,$option);
     }
@@ -1130,7 +1130,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // aOpenTitle
     // ouvre un a tag pour la route, le title sera affiché
     // possible de spécifier un pattern de title
-    public function aOpenTitle($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
+    final public function aOpenTitle($pattern=null,$attr=null,?string $lang=null,?array $option=null):?string
     {
         return $this->aOpen($this->title($pattern,$lang),$attr,$lang,$option);
     }
@@ -1139,20 +1139,20 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // formOpen
     // ouvre un form tag pour la route
     // les options sont pour base/html formOpen
-    public function formOpen($attr=null,?string $lang=null,?array $option=null):?string
+    final public function formOpen($attr=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $uri = $this->uri($lang,$option);
-        $attr = static::tagAttr('form',$attr);
+        $attr = $this->tagAttr('form',$attr);
 
         if(empty($attr['method']))
         {
-            $method = static::$config['match']['method'] ?? static::$config['form']['method'] ?? null;
+            $method = $this->getAttr(array('match','method')) ?? $this->getAttr(array('form','method'));
             if(!empty($method))
             $attr['method'] = $method;
         }
 
-        $return = Base\Html::formOpen($uri,$attr,static::tagOption('form',$option));
+        $return = Base\Html::formOpen($uri,$attr,$this->tagOption('form',$option));
 
         return $return;
     }
@@ -1160,7 +1160,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // formSubmit
     // ouvre et ferme un formulaire avec un bouton submit sans label ou titre
-    public function formSubmit($title=null,$submitAttr=null,$attr=null,?string $lang=null,?array $option=null):?string
+    final public function formSubmit($title=null,$submitAttr=null,$attr=null,?string $lang=null,?array $option=null):?string
     {
         $return = $this->formOpen($attr,$lang,$option);
         $return .= Base\Html::submit($title,$submitAttr);
@@ -1173,7 +1173,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // submitLabel
     // fait un tag submit avec label pour soumettre le formulaire
     // méthode statique
-    public static function submitLabel($pattern=null,$attr=null,?string $lang=null):?string
+    final public static function submitLabel($pattern=null,$attr=null,?string $lang=null):?string
     {
         return Base\Html::submit(static::label($pattern,$lang),$attr);
     }
@@ -1181,12 +1181,81 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // submitTitle
     // fait un tag submit avec title pour soumettre le formulaire
-    public function submitTitle($pattern=null,$attr=null,?string $lang=null):?string
+    final public function submitTitle($pattern=null,$attr=null,?string $lang=null):?string
     {
         return Base\Html::submit($this->title($pattern,$lang),$attr);
     }
 
+    
+    // tagAttr
+    // retourne un tableau contenant les attributs à utiliser pour une tag
+    final public function tagAttr(string $tag,$attr=null):?array
+    {
+        $return = null;
+        $tagConfig = $this->getAttr($tag);
+        
+        if($tagConfig !== null)
+        {
+            if(!is_array($attr))
+            $attr = [$attr];
 
+            if(!empty($tagConfig['attr']))
+            $return = Base\Attr::append($tagConfig['attr'],$attr);
+
+            else
+            $return = $attr;
+        }
+
+        else
+        static::throw('tagNotDefined');
+
+        if(!static::allowNavigation())
+        {
+            $return = (array) $return;
+            $return['data-navigation'] = false;
+        }
+
+        return $return;
+    }
+
+
+    // tagOption
+    // retourne un tableau contenant les options à utiliser pour une tag
+    final public function tagOption(string $tag,?array $option=null):?array
+    {
+        $return = null;
+        $tagConfig = $this->getAttr($tag);
+        
+        if($tagConfig !== null)
+        $return = (!empty($tagConfig['option']))? Base\Arr::plus($tagConfig['option'],$option):$option;
+
+        else
+        static::throw('tagNotDefined');
+
+        return $return;
+    }
+
+
+    // prepareResponse
+    // méthode qui permet de préparer la réponse
+    // selon les configurations spécifié dans static config
+    final protected function prepareResponse():void
+    {
+        $response = $this->getAttr('response') ?? array();
+
+        if(!Base\Response::isCodeError() && !empty($response['code']) && is_int($response['code']))
+        Base\Response::setCode($response['code']);
+
+        if(!empty($response['contentType']) && is_string($response['contentType']))
+        Base\Response::setContentType($response['contentType']);
+
+        if(!empty($response['header']) && is_array($response['header']))
+        Base\Response::setsHeader($response['header']);
+
+        return;
+    }
+    
+    
     // childs
     // retourne toutes les enfants de la route courante
     public static function childs(bool $active=false):Routes
@@ -1578,73 +1647,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // tagAttr
-    // retourne un tableau contenant les attributs à utiliser pour une tag
-    public static function tagAttr(string $tag,$attr=null):?array
-    {
-        $return = null;
-
-        if(array_key_exists($tag,static::$config))
-        {
-            if(!is_array($attr))
-            $attr = [$attr];
-
-            if(!empty(static::$config[$tag]['attr']))
-            $return = Base\Attr::append(static::$config[$tag]['attr'],$attr);
-
-            else
-            $return = $attr;
-        }
-
-        else
-        static::throw('tagNotDefined');
-
-        if(!static::allowNavigation())
-        {
-            $return = (array) $return;
-            $return['data-navigation'] = false;
-        }
-
-        return $return;
-    }
-
-
-    // tagOption
-    // retourne un tableau contenant les options à utiliser pour une tag
-    public static function tagOption(string $tag,?array $option=null):?array
-    {
-        $return = null;
-
-        if(array_key_exists($tag,static::$config))
-        $return = (!empty(static::$config[$tag]['option']))? Base\Arr::plus(static::$config[$tag]['option'],$option):$option;
-
-        else
-        static::throw('tagNotDefined');
-
-        return $return;
-    }
-
-
-    // prepareResponse
-    // méthode qui permet de préparer la réponse
-    // selon les configurations spécifié dans static config
-    protected static function prepareResponse():void
-    {
-        $response = static::$config['response'] ?? [];
-
-        if(!Base\Response::isCodeError() && !empty($response['code']) && is_int($response['code']))
-        Base\Response::setCode($response['code']);
-
-        if(!empty($response['contentType']) && is_string($response['contentType']))
-        Base\Response::setContentType($response['contentType']);
-
-        if(!empty($response['header']) && is_array($response['header']))
-        Base\Response::setsHeader($response['header']);
-
-        return;
-    }
-
-
     // routeBaseClasses
     // retourne les classes bases de routes (donc abstraite)
     public static function routeBaseClasses():array
@@ -1656,7 +1658,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // matchOrFallbackDebug
     // retourne vrai si la route match à la requête
     // sinon gère fallback et/out debug
-    public static function matchOrFallbackDebug(Main\Request $request,bool $fallback=false,bool $debug=false):?self
+    final public static function matchOrFallbackDebug(Main\Request $request,bool $fallback=false,bool $debug=false):?self
     {
         $return = null;
         $route = static::make($request);
@@ -1678,44 +1680,30 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isDebug
     // retourne vrai si la route est en mode débogagge
-    public static function isDebug($value=null):bool
+    final public static function isDebug($value=null):bool
     {
         return (static::$config['debug'] === true || ($value !== null && static::$config['debug'] === $value))? true:false;
     }
 
 
-    // routeSegmentRequest
-    // retourne l'objet routeSegmentRequest
-    // envoie une exception si la route n'a pas de segment
-    public function routeSegmentRequest():RouteSegmentRequest
-    {
-        $return = $this->routeRequest();
-
-        if(!$return instanceof RouteSegmentRequest)
-        static::throw('routeHasNoSegment');
-
-        return $return;
-    }
-
-
     // isValidSegment
     // retourne vrai si la requête et les segments de route match
-    public function isValidSegment(bool $exception=false):bool
+    final public function isValidSegment(bool $exception=false):bool
     {
-        return $this->routeSegmentRequest()->isValidSegment(static::session(),$exception);
+        return $this->routeRequest(true)->isValidSegment(static::session(),$exception);
     }
 
 
     // checkValidSegment
     // envoie une exception si la requête et la route ne passent pas le test segment
     // si valid est false, le test n'est pas lancé et utilise le résultat courant
-    public function checkValidSegment(bool $valid=true):self
+    final public function checkValidSegment(bool $valid=true):self
     {
         if($valid === true)
         $this->isValidSegment(true);
 
         else
-        $this->routeSegmentRequest()->checkValidSegment();
+        $this->routeRequest(true)->checkValidSegment();
 
         return $this;
     }
@@ -1724,9 +1712,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // segments
     // retourne le tableau des data de segment
     // peut envoyer une exception si le segment demandé n'existe pas
-    public function segments(bool $exception=false):array
+    final public function segments(bool $exception=false):array
     {
-        return $this->routeSegmentRequest()->segment(static::session(),$exception);
+        return $this->routeRequest(true)->segment(static::session(),$exception);
     }
 
 
@@ -1734,7 +1722,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne une valeur de segment via la clé fournie en argument
     // peut aussi retourner un segment via index si un int est fourni
     // peut envoyer une exception si le segment demandé n'existe pas
-    public function segment($key,bool $exception=false)
+    final public function segment($key,bool $exception=false)
     {
         $return = null;
         $segments = $this->segments($exception);
@@ -1765,17 +1753,17 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // hasSegment
     // retourne vrai si l'objet contient le ou les segments de requête données en argument
-    public function hasSegment(string ...$values):bool
+    final public function hasSegment(string ...$values):bool
     {
-        return $this->routeSegmentRequest()->hasRequestSegment(...$values);
+        return $this->routeRequest(true)->hasRequestSegment(...$values);
     }
 
 
     // checkSegment
     // envoie une exception si un des segments de requête n'existent pas
-    public function checkSegment(string ...$values):bool
+    final public function checkSegment(string ...$values):bool
     {
-        return $this->routeSegmentRequest()->checkRequestSegment(...$values);
+        return $this->routeRequest(true)->checkRequestSegment(...$values);
     }
 
 
@@ -1783,7 +1771,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // permet de changer la valeur d'un des segments de requête de l'objet
     // un objet changé vide le tableau valid et la propriété segment de routeRequestSegment
     // l'objet route et routeSegmentRequest sont cloné
-    public function changeSegment(string $key,$value):self
+    final public function changeSegment(string $key,$value):self
     {
         return $this->changeSegments([$key=>$value]);
     }
@@ -1793,10 +1781,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // permet de changer la valeur de plusieurs segments de requête de l'objet
     // un objet changé vide le tableau valid et la propriété segment de routeRequestSegment
     // l'objet route et routeSegmentRequest sont cloné
-    public function changeSegments(array $values):self
+    final public function changeSegments(array $values):self
     {
         $return = $this->clone();
-        $return->routeSegmentRequest()->changeRequestSegments($values);
+        $return->routeRequest(true)->changeRequestSegments($values);
 
         return $return;
     }
@@ -1806,10 +1794,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne un nouvel objet route en conservant certains segments et en ramenenant les autres à leurs valeurs par défaut
     // un objet changé vide le tableau valid et la propriété segment de routeRequestSegment
     // l'objet route et routeSegmentRequest sont cloné
-    public function keepSegments(string ...$values):self
+    final public function keepSegments(string ...$values):self
     {
         $return = $this->clone();
-        $return->routeSegmentRequest()->keepRequestSegments(...$values);
+        $return->routeRequest(true)->keepRequestSegments(...$values);
 
         return $return;
     }
@@ -1817,7 +1805,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isSegmentClass
     // retourne vrai si un chemin contient un segment
-    public static function isSegmentClass():bool
+    final public static function isSegmentClass():bool
     {
         $return = false;
 
@@ -1834,22 +1822,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // checkSegmentClass
-    // envoie une exception si ce n'est pas une classe avec segment
-    public static function checkSegmentClass():bool
-    {
-        $return = static::isSegmentClass();
-
-        if($return === false)
-        static::throw();
-
-        return $return;
-    }
-
-
     // routeRequestClass
     // retourne la classe overload pour routeRequest
-    public static function routeRequestClass():string
+    final public static function routeRequestClass():string
     {
         $return = null;
 
@@ -1858,25 +1833,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         else
         $return = RouteRequest::getOverloadClass();
-
-        return $return;
-    }
-
-
-    // makeRouteRequest
-    // créer l'objet routeRequest pour la route
-    public static function makeRouteRequest($request=null):RouteRequest
-    {
-        $return = null;
-
-        if(static::isSegmentClass())
-        {
-            $lang = static::session()->lang();
-            $return = RouteSegmentRequest::newOverload(static::class,$request,$lang);
-        }
-
-        else
-        $return = RouteRequest::newOverload(static::class,$request);
 
         return $return;
     }
@@ -1892,35 +1848,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // callableSegment
-    // retourne la callable à utiliser pour le segment
-    // envoie une exception si la callable n'existe pas
-    public static function callableSegment(string $key):callable
-    {
-        $return = null;
-        $segments = static::$config['segment'];
-        $callable = null;
-
-        if(is_array($segments) && array_key_exists($key,$segments))
-        $callable = $segments[$key];
-
-        if(is_string($callable))
-        $callable = [static::class,$callable];
-
-        if(static::classIsCallable($callable))
-        $return = $callable;
-
-        else
-        static::throw('segmentMethodNotFound',$key);
-
-        return $return;
-    }
-
-
     // getDefaultSegment
     // retourne le caractère de segment par défaut
     // pourrait être null, à ce moment pas défaut de segment
-    public static function getDefaultSegment():?string
+    final public static function getDefaultSegment():?string
     {
         return static::$config['defaultSegment'] ?? null;
     }
@@ -1929,7 +1860,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // getReplaceSegment
     // retourne le pattern utilisé pour faire un remplacement sur un segment
     // pourrait être null, à ce moment pas de possibilité de remplace dans makeSegment
-    public static function getReplaceSegment():?string
+    final public static function getReplaceSegment():?string
     {
         return static::$config['replaceSegment'] ?? null;
     }
@@ -1937,7 +1868,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
-    public static function getOverloadKeyPrepend():?string
+    final public static function getOverloadKeyPrepend():?string
     {
         return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Route':null;
     }

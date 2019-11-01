@@ -168,17 +168,22 @@ class Redirection extends Main\Map
     // remplace le contenu de l'objet de redirection par un tableau
     // possible de remplacer par une autre instance de map
     // méthode protégé
-    protected function makeOverwrite($value):parent
+    protected function makeOverwrite($value):void
     {
         $value = $this->onPrepareReplace($value);
 
-        if(is_array($value) && $this->checkBefore(false,...array_values($value)))
-        $this->sets($value);
+        if(is_array($value))
+        {
+            $this->checkBefore(false,...array_values($value));
+            $this->sets($value);
+        }
 
         else
         static::throw('requireArray');
-
-        return $this->checkAfter();
+        
+        $this->checkAfter();
+        
+        return;
     }
 }
 ?>
