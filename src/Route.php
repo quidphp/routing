@@ -98,7 +98,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'history'=>true, // la requête est ajouté à l'historique de session
         'uriAbsolute'=>null, // force toutes les uris générés via uri output dans la route à être absolute
         'cliHtmlOverload'=>null, // force les méthodes cli à générer du html, seulement si c'est true et que cli est false
-        'permission'=>[], // tableau des permissions
+        'permission'=>[ // tableau des permissions
+            '*'=>array('access'=>true)], // accorde accès à tout
         'ignore'=>false, // si la route est ignoré pour routes
         'catchAll'=>false, // si true, le dernier segment attrape tout le reste du chemin dans le processus de match
         'debug'=>false, // active ou non le débogagge de match, en lien avec la méthode statique debug
@@ -263,7 +264,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $return;
     }
 
-
+    
+    // onRolePermission
+    // callback avant chaque appel à permission can, vérifie que la table à la permission access
+    protected function onRolePermission($key,array $array):bool
+    {
+        return (array_key_exists('access',$array) && $array['access'] === true)? true:false;
+    }
+    
+    
     // arr
     // retourne le tableau de segments pour utiliser via this
     protected function arr():array
@@ -692,10 +701,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             if(array_key_exists('timeLimit',$response) && is_int($response['timeLimit']))
             Base\Response::timeLimit($response['timeLimit']);
 
-            if(static::hasCheck('csrf'))
+            if(static::hasMatch('csrf'))
             $session->refreshCsrf();
 
-            if(static::hasCheck('captcha'))
+            if(static::hasMatch('captcha'))
             $session->emptyCaptcha();
 
             if($this->hasUri())
@@ -1469,15 +1478,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // isSsl
-    // retourne la valeur ssl de match
-    // peut retourner null
-    public static function isSsl():?bool
-    {
-        return static::$config['match']['ssl'] ?? null;
-    }
-
-
     // isAjax
     // retourne la valeur ajax de match
     // peut retourner null
@@ -1539,9 +1539,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // hasCheck
+    // hasMatch
     // permet de vérifier si un élément de validation de la route se retrouve dans match
-    public static function hasCheck(string $type):bool
+    public static function hasMatch(string $type):bool
     {
         $return = false;
         $match = static::$config['match'] ?? [];

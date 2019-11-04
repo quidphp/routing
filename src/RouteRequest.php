@@ -604,7 +604,7 @@ class RouteRequest extends Main\Root
         $return = true;
 
         else
-        $return = $this->request()->hasEmptyGenuine();
+        $return = $this->request()->hasValidGenuine();
 
         return $return;
     }

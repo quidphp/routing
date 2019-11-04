@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Quid\Routing;
 use Quid\Main;
+use Quid\Base;
 
 // request
 // extended class with methods to route an HTTP request
@@ -17,7 +18,21 @@ class Request extends Main\Request
     // config
     public static $config = [];
 
-
+    
+    // construct
+    // construit un objet request
+    // permet de mettre un objet route en argument
+    public function __construct($value=null,?array $attr=null)
+    {
+        if($value instanceof Route)
+        $value = static::fromRoute($value);
+        
+        parent::__construct($value,$attr);
+        
+        return;
+    }
+    
+    
     // manageRedirect
     // vérifie la requête et manage les redirections possibles
     // certaines errors vont générer un code http 400 plutôt que 404 (bad request)
@@ -109,6 +124,64 @@ class Request extends Main\Request
     public function route(Routes $routes,$after=null,bool $fallback=false,bool $debug=false):?Route
     {
         return $routes->route($this,$after,$fallback,$debug);
+    }
+    
+    
+    // fromRoute
+    // retourne un tableau de départ request à partir d'un objet route
+    public static function fromRoute(Route $route):array 
+    {
+        $return = array();
+        $return['uri'] = $route->uriAbsolute();
+        $return['ajax'] = $route::isAjax() ?? false;
+        
+        if($route::isMethod('post'))
+        {
+            $session = $route::session();
+            $return['method'] = 'post';
+            $postMatch = $route::$config['match']['post'] ?? null;
+            $post = array();
+            
+            if($route::hasMatch('csrf'))
+            {
+                $name = $session->getCsrfName();
+                $post[$name] = $session->csrf();
+            }
+            
+            if($route::hasMatch('genuine'))
+            {
+                $name = Base\Html::getGenuineName();
+                $post[$name] = '';
+                
+                $name = Base\Html::getGenuineName(2);
+                $post[$name] = 1;
+            }
+            
+            if($route::hasMatch('captcha'))
+            {
+                $name = $session->getCaptchaName();
+                $post[$name] = $session->captcha();
+            }
+            
+            if(is_array($postMatch) && !empty($postMatch))
+            {
+                foreach ($postMatch as $key => $value) 
+                {
+                    if(is_string($key))
+                    $post[$key] = $value;
+                    
+                    elseif(is_string($value))
+                    $post[$value] = '';
+                }
+            }
+            
+            $return['post'] = $post;
+        }
+        
+        else
+        $return['method'] = 'get';
+        
+        return $return;
     }
 }
 

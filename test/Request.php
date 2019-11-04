@@ -30,7 +30,9 @@ class Request extends Base\Test
         $nl = new Routing\Request('browserconfig.xml');
         $arg = new Routing\Request('-v');
         $argCli = new Routing\Request(['-v','cli'=>true]);
-
+        
+        // construct
+        
         // manageRedirect
         assert($badExtension->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
         assert($externalPost->manageRedirect() === ['type'=>'externalPost','code'=>400,'location'=>null]);
@@ -47,7 +49,9 @@ class Request extends Base\Test
         // match
 
         // route
-
+        
+        // fromRoute
+        
         return true;
     }
 }
