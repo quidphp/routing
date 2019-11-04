@@ -99,7 +99,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'uriAbsolute'=>null, // force toutes les uris générés via uri output dans la route à être absolute
         'cliHtmlOverload'=>null, // force les méthodes cli à générer du html, seulement si c'est true et que cli est false
         'permission'=>[ // tableau des permissions
-            '*'=>array('access'=>true)], // accorde accès à tout
+            '*'=>['access'=>true]], // accorde accès à tout
         'ignore'=>false, // si la route est ignoré pour routes
         'catchAll'=>false, // si true, le dernier segment attrape tout le reste du chemin dans le processus de match
         'debug'=>false, // active ou non le débogagge de match, en lien avec la méthode statique debug
@@ -264,15 +264,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $return;
     }
 
-    
+
     // onRolePermission
     // callback avant chaque appel à permission can, vérifie que la table à la permission access
     protected function onRolePermission($key,array $array):bool
     {
         return (array_key_exists('access',$array) && $array['access'] === true)? true:false;
     }
-    
-    
+
+
     // arr
     // retourne le tableau de segments pour utiliser via this
     protected function arr():array
