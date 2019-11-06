@@ -34,7 +34,7 @@ class RequestHistory extends Base\Test
         assert($rh->add($request2) === $rh);
 
         // previousRoute
-        assert(!empty($rh->previousRoute($routes)));
+        assert(empty($rh->previousRoute($routes)));
 
         // previousRedirect
 

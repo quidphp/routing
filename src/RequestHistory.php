@@ -20,14 +20,19 @@ class RequestHistory extends Main\RequestHistory
 
 
     // previousRoute
-    // retourne la route de la requête précédente
+    // retourne la route de la requête précédente ou un fallback
     public function previousRoute(Routes $routes,$fallback=null,bool $hasExtra=true):?Route
     {
         $return = null;
         $previous = $this->previousRequest($hasExtra);
 
         if(!empty($previous))
-        $return = $previous->route($routes);
+        {
+            $return = $previous->route($routes);
+
+            if(!empty($return) && !$return->isRedirectable())
+            $return = null;
+        }
 
         if(empty($return) && !empty($fallback))
         {

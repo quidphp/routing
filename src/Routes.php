@@ -24,9 +24,8 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // config
     public static $config = [
         'priorityIncrement'=>10, // incrémentation de la priorité lors de la méthode init
-        'option'=>[
-            'methodIgnore'=>'isIgnored',
-            'subClass'=>Route::class]
+        'methodIgnore'=>'isIgnored',
+        'subClass'=>Route::class
     ];
 
 
