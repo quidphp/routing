@@ -16,7 +16,7 @@ use Quid\Routing;
 class Redirection extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $request = new Routing\Request('/jamesReq');

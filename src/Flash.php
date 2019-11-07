@@ -22,7 +22,7 @@ class Flash extends Main\Flash
     // onPrepareKey
     // préparation d'une clé pour flash
     // gestion de l'objet route
-    protected function onPrepareKey($return)
+    final protected function onPrepareKey($return)
     {
         if($return instanceof Route)
         {

@@ -31,8 +31,7 @@ class Redirection extends Main\Map
     // onPrepareKey
     // prépare une clé
     // les uri sont conservés dans l'objet en absolut, sans le scheme, et en version non encodés
-    // méthode protégé
-    protected function onPrepareKey($return)
+    final protected function onPrepareKey($return)
     {
         if($return instanceof Request)
         $return = $return->absolute(['encode'=>false]);
@@ -50,8 +49,7 @@ class Redirection extends Main\Map
     // onPrepareValue
     // prépare une valeur
     // les uri sont conservés dans l'objet en absolute et en version non encodés
-    // méthode protégé
-    protected function onPrepareValue($return)
+    final protected function onPrepareValue($return)
     {
         if($return instanceof Request)
         $return = $return->absolute(['encode'=>false]);
@@ -66,7 +64,7 @@ class Redirection extends Main\Map
     // onPrepareReplace
     // méthode appelé avec le contenu des méthodes de remplacement comme overwrite
     // ajoute le scheme au clé si le replace est un objet redirection
-    protected function onPrepareReplace($return)
+    final protected function onPrepareReplace($return)
     {
         if($return instanceof self)
         {
@@ -86,7 +84,7 @@ class Redirection extends Main\Map
 
     // exists
     // retourne vrai si toutes les uri ont une redirection
-    public function exists(...$keys):bool
+    final public function exists(...$keys):bool
     {
         $return = false;
 
@@ -105,7 +103,7 @@ class Redirection extends Main\Map
     // get
     // trouve la redirection de l'uri
     // support pour les uri avec un *, tel que défini dans base/uri
-    public function get($key)
+    final public function get($key)
     {
         $return = null;
         $key = $this->onPrepareKey($key);
@@ -120,7 +118,7 @@ class Redirection extends Main\Map
     // gets
     // trouve la redirection des uris
     // support pour les uri avec un *, tel que défini dans base/uri
-    public function gets(...$keys):array
+    final public function gets(...$keys):array
     {
         $return = [];
 
@@ -140,7 +138,7 @@ class Redirection extends Main\Map
     // redirige vers l'uri valeur si trouvé, sinon retourne null
     // par défaut encode l'uri valeur et tue la réponse immédiatement après
     // le code par défaut utilisé est 301
-    public function trigger($key,$code=301,$kill=true,bool $encode=true):void
+    final public function trigger($key,$code=301,$kill=true,bool $encode=true):void
     {
         $value = $this->get($key);
 
@@ -153,7 +151,7 @@ class Redirection extends Main\Map
 
     // set
     // ajoute une nouvelle entrée dans le tableau de redirection
-    public function set($key,$value):parent
+    final public function set($key,$value):parent
     {
         $value = $this->onPrepareValue($value);
 
@@ -167,8 +165,7 @@ class Redirection extends Main\Map
     // makeOverwrite
     // remplace le contenu de l'objet de redirection par un tableau
     // possible de remplacer par une autre instance de map
-    // méthode protégé
-    protected function makeOverwrite($value):void
+    final protected function makeOverwrite($value):void
     {
         $value = $this->onPrepareReplace($value);
 

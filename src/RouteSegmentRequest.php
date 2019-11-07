@@ -32,7 +32,7 @@ class RouteSegmentRequest extends RouteRequest
     // construit l'objet routeRequest et lance le processus de match
     // si request est vide prend la requête courante
     // le code de lang doit être inclus pour aller chercher les path dans route
-    public function __construct(Route $route,$request=null,string $lang)
+    final public function __construct(Route $route,$request=null,string $lang)
     {
         $this->setLangCode($lang);
         $this->setRoute($route);
@@ -44,8 +44,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // reset
     // reset les vérifications de l'objet à l'état initial
-    // méthode protégé
-    protected function reset():void
+    final protected function reset():void
     {
         parent::reset();
         $this->segment = null;
@@ -57,7 +56,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // isValid
     // retourne vrai si la route et la requête match et segment
-    public function isValid(Main\Session $session,bool $exception=false):bool
+    final public function isValid(Main\Session $session,bool $exception=false):bool
     {
         return ($this->isValidMatch($session,$exception) && $this->isValidSegment($session,$exception))? true:false;
     }
@@ -65,7 +64,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // checkValid
     // envoie une exception si la route et la requête n'ont pas passés les tests match et segment
-    public function checkValid():bool
+    final public function checkValid():bool
     {
         $return = ($this->valid('match') && $this->valid('segment'))? true:false;
 
@@ -78,7 +77,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // setLangCode
     // conserve en mémoire la langue de la session
-    protected function setLangCode(string $lang):void
+    final protected function setLangCode(string $lang):void
     {
         $this->langCode = $lang;
 
@@ -88,7 +87,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // langCode
     // retourne la langue de la session
-    public function langCode():string
+    final public function langCode():string
     {
         return $this->langCode;
     }
@@ -98,7 +97,7 @@ class RouteSegmentRequest extends RouteRequest
     // change le nom de classe de la route
     // la classe doit être une sous-classe de routeSegment
     // lance la méthode reset
-    public function setRoute(Route $route):parent
+    final public function setRoute(Route $route):parent
     {
         parent::setRoute($route);
         $lang = $this->langCode();
@@ -120,7 +119,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // routeSegment
     // retourne le tableau des segments du chemin
-    public function routeSegment():array
+    final public function routeSegment():array
     {
         return $this->routeSegment;
     }
@@ -132,7 +131,7 @@ class RouteSegmentRequest extends RouteRequest
     // si request est objet request, utilise la requête
     // sinon c'est une valeur, utilise la requête courante et envoie à parseRequestSegmentFromValue
     // lance la méthode reset
-    public function setRequest($request=null):parent
+    final public function setRequest($request=null):parent
     {
         $this->reset();
 
@@ -157,8 +156,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // parseRequestSegmentFromRequest
     // parse les segments à partir de la requête
-    // méthode protégé
-    protected function parseRequestSegmentFromRequest():void
+    final protected function parseRequestSegmentFromRequest():void
     {
         $routeSegment = $this->routeSegment();
 
@@ -190,7 +188,7 @@ class RouteSegmentRequest extends RouteRequest
     // parseRequestSegmentFromRequestCatchAll
     // parse les segments à partir de la requête
     // support pour catchAll avec un seul segment, sinon exception
-    protected function parseRequestSegmentFromRequestCatchAll():array
+    final protected function parseRequestSegmentFromRequestCatchAll():array
     {
         $return = [];
         $routeSegment = $this->routeSegment();
@@ -238,8 +236,7 @@ class RouteSegmentRequest extends RouteRequest
     // parseRequestSegmentFromValue
     // parse les segments de requête à partir de la valeur donnée en argument
     // pour la valeur donnée en argument, possible de donner un tableau via clé ou index
-    // méthode protégé
-    protected function parseRequestSegmentFromValue($value=null):void
+    final protected function parseRequestSegmentFromValue($value=null):void
     {
         $routeSegment = $this->routeSegment();
 
@@ -277,7 +274,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // isRouteCatchAll
     // retourne vrai si la route est catchAll
-    public function isRouteCatchAll():bool
+    final public function isRouteCatchAll():bool
     {
         $return = false;
         $route = $this->route();
@@ -293,7 +290,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // isSegmentParsedFromValue
     // retourne vrai si les segments ont été parsed à partir d'une valeur, et que la request est celle de inst
-    public function isSegmentParsedFromValue():bool
+    final public function isSegmentParsedFromValue():bool
     {
         return ($this->type === 2)? true:false;
     }
@@ -302,7 +299,7 @@ class RouteSegmentRequest extends RouteRequest
     // isRouteRequestCompatible
     // retourne vrai si les segments de route et request sont compatibles
     // si la route est catch all, retourne toujours true
-    public function isRouteRequestCompatible():bool
+    final public function isRouteRequestCompatible():bool
     {
         $return = false;
 
@@ -325,7 +322,7 @@ class RouteSegmentRequest extends RouteRequest
     // requestSegment
     // retourne retourne les segments de la requête, sous une forme keyValue
     // envoie une exception si la propriété requestSegment est toujours null ou si elle ne match pas avec les segments de la route
-    public function requestSegment():array
+    final public function requestSegment():array
     {
         $return = null;
 
@@ -341,7 +338,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // hasRequestSegment
     // retourne vrai si l'objet contient le ou les segments de requête données en argument
-    public function hasRequestSegment(string ...$values):bool
+    final public function hasRequestSegment(string ...$values):bool
     {
         $return = false;
         $segment = $this->requestSegment();
@@ -360,7 +357,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // checkRequestSegment
     // envoie une exception si un des segments de requête n'existent pas
-    public function checkRequestSegment(string ...$values):bool
+    final public function checkRequestSegment(string ...$values):bool
     {
         $return = $this->hasRequestSegment(...$values);
 
@@ -374,7 +371,7 @@ class RouteSegmentRequest extends RouteRequest
     // changeRequestSegment
     // permet de changer la valeur d'un des segments de requête de la classe
     // un objet changé vide le tableau valid et la propriété segment
-    public function changeRequestSegment(string $key,$value):self
+    final public function changeRequestSegment(string $key,$value):self
     {
         return $this->changeRequestSegments([$key=>$value]);
     }
@@ -385,7 +382,7 @@ class RouteSegmentRequest extends RouteRequest
     // un objet changé vide le tableau valid et la propriété segment
     // valeur false est remplacé par defautSegment
     // valeur true est remplacé par replaceSegment
-    public function changeRequestSegments(array $values):self
+    final public function changeRequestSegments(array $values):self
     {
         $this->checkRequestSegment(...array_keys($values));
         $this->reset();
@@ -412,7 +409,7 @@ class RouteSegmentRequest extends RouteRequest
     // keepRequestSegments
     // garde les segments de requêtes spécifiés, les autres sont mis à null
     // un objet changé vide le tableau valid et la propriété segment
-    public function keepRequestSegments(string ...$values):self
+    final public function keepRequestSegments(string ...$values):self
     {
         $this->checkRequestSegment(...$values);
         $this->reset();
@@ -433,7 +430,7 @@ class RouteSegmentRequest extends RouteRequest
     // si la méthode makeSegment retourne true, utilise replaceSegment si disponible
     // retourne un tableau, utilisé par la méthode uri
     // le résultat de cette méthode est gardé en cache dans la propriété makeRequestSegment
-    public function makeRequestSegment():array
+    final public function makeRequestSegment():array
     {
         $return = $this->make;
 
@@ -490,7 +487,7 @@ class RouteSegmentRequest extends RouteRequest
     // isValidSegment
     // retourne vrai si la route et la requête passe le test segment
     // si la propriété segment et null, lance segment
-    public function isValidSegment(Main\Session $session,bool $exception=false):bool
+    final public function isValidSegment(Main\Session $session,bool $exception=false):bool
     {
         $return = false;
 
@@ -505,7 +502,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // checkValidSegment
     // envoie une exception si la route et la requête ne passe pas le test segment
-    public function checkValidSegment():self
+    final public function checkValidSegment():self
     {
         if(!$this->valid('segment'))
         static::throw();
@@ -519,7 +516,7 @@ class RouteSegmentRequest extends RouteRequest
     // peut appeler validateDefaultSegment si la la valeur est null ou defaultSegment, sinon appele validateSegment
     // si exception est true, lance une exception avec le nom de la clé où le match bloque
     // validateSegment et validateDefaultSegment bloque seulement si la valeur de retour est false
-    public function validateSegment(Main\Session $session,bool $exception=false):bool
+    final public function validateSegment(Main\Session $session,bool $exception=false):bool
     {
         $return = true;
         $route = $this->route();
@@ -557,8 +554,7 @@ class RouteSegmentRequest extends RouteRequest
     // utiliser pour valider headers, query et post
     // les segments sont remplacés à partir de requestSegment
     // supporte un tableau multidimensionnel
-    // méthode protégé
-    protected function validateArray($value,array $array):bool
+    final protected function validateArray($value,array $array):bool
     {
         $return = false;
 
@@ -581,7 +577,7 @@ class RouteSegmentRequest extends RouteRequest
 
     // segment
     // retourne les segment validés
-    public function segment(?Main\Session $session=null,bool $exception=false):array
+    final public function segment(?Main\Session $session=null,bool $exception=false):array
     {
         if(!empty($session))
         $this->isValidSegment($session,$exception);
@@ -601,7 +597,7 @@ class RouteSegmentRequest extends RouteRequest
     // path
     // retourne vrai si la requête et la route match le path, en tenant compte des segments
     // si la route est catch all, envoie à pathCatchAll
-    public function path(?string $value):bool
+    final public function path(?string $value):bool
     {
         $return = false;
 
@@ -631,7 +627,7 @@ class RouteSegmentRequest extends RouteRequest
     // retourne vrai si la requête et la route match le path, en tenant compte des segments et que la route est catchAll
     // le chemin doit finir par le dernier segment de la route
     // tout le reste du chemin, sauf le dernier segment, doit valider
-    protected function pathCatchAll(string $value):bool
+    final protected function pathCatchAll(string $value):bool
     {
         $return = false;
         $route = $this->route();
@@ -679,7 +675,7 @@ class RouteSegmentRequest extends RouteRequest
     // la variable lang est obligatoire et filtre le tableau de chemin avec seulement les paths compatibles pour la langue
     // si une valeur est objet après makeSegment passe dans cast
     // envoie une exception si une valeur de segment n'est pas string ou numérique
-    public function uri(string $lang,?array $option=null):?string
+    final public function uri(string $lang,?array $option=null):?string
     {
         $return = null;
         $path = $this->routePath($lang);
@@ -701,7 +697,7 @@ class RouteSegmentRequest extends RouteRequest
     // routeCallableSegment
     // retourne la callable à utiliser pour le segment
     // envoie une exception si la callable n'existe pas
-    protected function routeCallableSegment(string $key):callable
+    final protected function routeCallableSegment(string $key):callable
     {
         $return = null;
         $route = $this->route();

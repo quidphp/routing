@@ -16,7 +16,7 @@ use Quid\Routing;
 class Nav extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $nav = new Routing\Nav();

@@ -21,7 +21,7 @@ class RequestHistory extends Main\RequestHistory
 
     // previousRoute
     // retourne la route de la requête précédente ou un fallback
-    public function previousRoute(Routes $routes,$fallback=null,bool $hasExtra=true):?Route
+    final public function previousRoute(Routes $routes,$fallback=null,bool $hasExtra=true):?Route
     {
         $return = null;
         $previous = $this->previousRequest($hasExtra);
@@ -50,7 +50,7 @@ class RequestHistory extends Main\RequestHistory
     // previousRedirect
     // permet de rediriger vers la dernière entrée ou un objet route spécifié en premier argument
     // possible de mettre une classe de route ou un objet route à utiliser comme fallback
-    public function previousRedirect(Routes $routes,$fallback=null,bool $hasExtra=true,?array $option=null):bool
+    final public function previousRedirect(Routes $routes,$fallback=null,bool $hasExtra=true,?array $option=null):bool
     {
         $return = false;
         $option = Base\Arr::plus(['encode'=>true,'code'=>true,'kill'=>true],$option);
@@ -65,7 +65,7 @@ class RequestHistory extends Main\RequestHistory
 
     // match
     // pour chaque request, retourne un tableau avec toutes les routes qui matchs avec la requête
-    public function match(Routes $routes):array
+    final public function match(Routes $routes):array
     {
         $return = [];
 
@@ -80,7 +80,7 @@ class RequestHistory extends Main\RequestHistory
 
     // route
     // pour chaque request, retourne la première route qui match avec la requête
-    public function route(Routes $routes):array
+    final public function route(Routes $routes):array
     {
         $return = [];
 

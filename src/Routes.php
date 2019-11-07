@@ -18,7 +18,6 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // trait
     use Main\_inst;
     use Main\Map\_sort;
-    use Main\Map\_readOnly;
 
 
     // config
@@ -36,7 +35,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // onPrepareKey
     // prepare une clé pour les méthodes qui soumette une clé
-    protected function onPrepareKey($return)
+    final protected function onPrepareKey($return)
     {
         if((is_string($return) && class_exists($return,false)) || is_object($return))
         {
@@ -50,7 +49,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // type
     // retourne le type des routes
-    public function type():?string
+    final public function type():?string
     {
         $return = null;
         $first = $this->first();
@@ -64,7 +63,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // match
     // retourne toutes les routes qui match l'objet requête
-    public function match(Main\Request $request,bool $fallback=false,bool $debug=false):array
+    final public function match(Main\Request $request,bool $fallback=false,bool $debug=false):array
     {
         $return = [];
 
@@ -83,7 +82,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // route
     // retourne la première route qui match l'objet requête
     // possible de reprendre le loop au même endroit en fournissant le nom de la classe after
-    public function route(Main\Request $request,$after=null,bool $fallback=false,bool $debug=false):?Route
+    final public function route(Main\Request $request,$after=null,bool $fallback=false,bool $debug=false):?Route
     {
         $return = null;
 
@@ -116,15 +115,16 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // keyParent
     // retourne un tableau unidimensionnel avec le nom de la route comme clé et le nom du parent comme valeur
     // si aucun parent, la valeur est null
-    public function keyParent():array
+    final public function keyParent():array
     {
         $return = [];
 
         foreach ($this->arr() as $value)
         {
-            $return[$value] = $value::parent();
+            $parent = $value::parent(true);
+            $return[$value] = $parent;
         }
-
+        
         return $return;
     }
 
@@ -132,7 +132,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // hierarchy
     // retourne le tableau de la hiérarchie des éléments de l'objet
     // si existe est false, les parents de route non existantes sont conservés
-    public function hierarchy(bool $exists=true):array
+    final public function hierarchy(bool $exists=true):array
     {
         return Base\Arrs::hierarchy($this->keyParent(),$exists);
     }
@@ -141,7 +141,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // childsRecursive
     // retourne un tableau avec tous les enfants de l'élément de façon récursive
     // si existe est false, les parents de route non existantes sont conservés
-    public function childsRecursive($value,bool $exists=true):?array
+    final public function childsRecursive($value,bool $exists=true):?array
     {
         $return = null;
         $value = $this->get($value);
@@ -161,7 +161,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // tops
     // retourne un objet des éléments n'ayant pas de parent
     // ne retourne pas les routes non existantes
-    public function tops():self
+    final public function tops():self
     {
         $return = new static();
 
@@ -178,13 +178,13 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // parent
     // retourne l'objet d'un élément parent ou null
     // ne retourne pas les routes non existantes
-    public function parent($value):?string
+    final public function parent($value):?string
     {
         $return = null;
 
         if(!empty($value))
         {
-            $parent = $value::parent();
+            $parent = $value::parent(true);
             if(is_string($parent))
             $return = $this->get($parent);
         }
@@ -196,7 +196,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // top
     // retourne le plus haut parent d'un élément ou null
     // ne retourne pas les routes non existantes
-    public function top($value):?string
+    final public function top($value):?string
     {
         $return = null;
         $value = $this->get($value);
@@ -221,7 +221,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // parents
     // retourne un objet avec tous les parents de l'élément
     // ne retourne pas les routes non existantes
-    public function parents($value):self
+    final public function parents($value):self
     {
         $return = new static();
         $value = $this->get($value);
@@ -242,7 +242,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // breadcrumb
     // retourne un objet inversé de tous les parents de l'élément et l'objet courant
     // ne retourne pas les routes non existantes
-    public function breadcrumb($value):self
+    final public function breadcrumb($value):self
     {
         $return = $this->parents($value);
 
@@ -260,7 +260,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // siblings
     // retourne un objet des éléments ayant le même parent que la valeur donnée
     // ne retourne pas les routes non existantes
-    public function siblings($value):self
+    final public function siblings($value):self
     {
         $return = new static();
         $value = $this->get($value);
@@ -283,7 +283,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // childs
     // retourne un objet avec les enfants de l'élément donné en argument
     // ne retourne pas les routes non existantes
-    public function childs($value):self
+    final public function childs($value):self
     {
         $return = new static();
         $value = $this->get($value);
@@ -303,7 +303,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // withSegment
     // retourne un objet avec toutes les routes avec segment
-    public function withSegment():self
+    final public function withSegment():self
     {
         $return = new static();
 
@@ -319,7 +319,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // withoutSegment
     // retourne un objet avec toutes les routes sans segment
-    public function withoutSegment():self
+    final public function withoutSegment():self
     {
         $return = new static();
 
@@ -336,7 +336,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // active
     // retourne un objet avec toutes les routes actives
     // route non ignoré et dont la permission d'accès est compatible avec la permission
-    public function active():self
+    final public function active():self
     {
         $return = new static();
 
@@ -353,7 +353,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // all
     // retourne toutes les routes triggés
     // toutes les différentes versions de segment sont aussi triggés pour routeSegment
-    public function all():array
+    final public function all():array
     {
         $return = [];
 
@@ -383,7 +383,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // retourne un tableau avec les uris absoluts de toutes les routes
     // ceci inclut les uris des routes avec segment
     // possible de retourner plusieurs langues
-    public function sitemap($langs,?array $option=null):array
+    final public function sitemap($langs,?array $option=null):array
     {
         $return = [];
 
@@ -433,7 +433,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // init
     // init l'objet routes, envoie dans setType, setPriority et setParent
     // aussi sort par défaut
-    public function init(string $type):self
+    final public function init(string $type):self
     {
         $this->setType($type,true);
         $this->setPriority();
@@ -447,7 +447,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // setType
     // applique le type aux différentes routes de l'objet
     // possibilité de dig (et d'appliquer aux prents)
-    public function setType(string $type,bool $dig=false):self
+    final public function setType(string $type,bool $dig=false):self
     {
         foreach ($this->arr() as $key => $value)
         {
@@ -460,7 +460,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // setPriority
     // donne une priorité pour les routes qui n'ent ont pas et sort par défaut
-    public function setPriority():self
+    final public function setPriority():self
     {
         $increment = $this->getAttr('priorityIncrement');
         $i = $increment;
@@ -481,7 +481,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // setParent
     // trouve et change les parents par défaut, seulement pour les routes qui n'ont pas de parent
-    public function setParent():self
+    final public function setParent():self
     {
         $keys = $this->keys();
         foreach (Base\Arr::camelCaseParent($keys) as $key => $value)
@@ -502,7 +502,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
     // makeBreadcrumbs
     // génère une chaîne breadcrumbs à partir d'un separator et d'une série de route triggé
-    public static function makeBreadcrumbs(string $separator,$pattern=null,Route ...$routes):string
+    final public static function makeBreadcrumbs(string $separator,$pattern=null,Route ...$routes):string
     {
         $return = '';
         $array = [];

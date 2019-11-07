@@ -17,7 +17,7 @@ use Quid\Routing;
 class BreakException extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // construct
         $e = new Routing\BreakException('well');

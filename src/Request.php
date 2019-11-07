@@ -22,7 +22,7 @@ class Request extends Main\Request
     // construct
     // construit un objet request
     // permet de mettre un objet route en argument
-    public function __construct($value=null,?array $attr=null)
+    final public function __construct($value=null,?array $attr=null)
     {
         if($value instanceof Route)
         $value = static::fromRoute($value);
@@ -38,7 +38,7 @@ class Request extends Main\Request
     // certaines errors vont générer un code http 400 plutôt que 404 (bad request)
     // retourne un tableau avec les clés type, code et location
     // gère externalPost, redirection, requestUnsafe et requestInvalid
-    public function manageRedirect(?Redirection $redirection=null):array
+    final public function manageRedirect(?Redirection $redirection=null):array
     {
         $return = ['type'=>null,'code'=>null,'location'=>null];
         $isAjax = $this->isAjax();
@@ -113,7 +113,7 @@ class Request extends Main\Request
 
     // match
     // retourne un tableau avec toutes les routes qui matchs avec la requête
-    public function match(Routes $routes,bool $fallback=false,bool $debug=false):?array
+    final public function match(Routes $routes,bool $fallback=false,bool $debug=false):?array
     {
         return $routes->match($this,$fallback,$debug);
     }
@@ -121,7 +121,7 @@ class Request extends Main\Request
 
     // route
     // retourne la première route qui match avec la requête
-    public function route(Routes $routes,$after=null,bool $fallback=false,bool $debug=false):?Route
+    final public function route(Routes $routes,$after=null,bool $fallback=false,bool $debug=false):?Route
     {
         return $routes->route($this,$after,$fallback,$debug);
     }
@@ -129,7 +129,7 @@ class Request extends Main\Request
 
     // fromRoute
     // retourne un tableau de départ request à partir d'un objet route
-    public static function fromRoute(Route $route):array
+    final public static function fromRoute(Route $route):array
     {
         $return = [];
         $return['uri'] = $route->uriAbsolute();

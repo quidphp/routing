@@ -16,7 +16,7 @@ use Quid\Routing;
 class Request extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $isCli = Base\Server::isCli();

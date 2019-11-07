@@ -116,7 +116,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // construct
     // construit l'objet route
-    public function __construct($request=null)
+    final public function __construct($request=null)
     {
         $this->makeAttr(null);
         $this->setRouteRequest($request);
@@ -178,7 +178,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // toString
     // retourne la valeur de la route sous forme de string
-    public function __toString():string
+    final public function __toString():string
     {
         return static::name();
     }
@@ -186,7 +186,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // cast
     // retourne la valeur cast
-    public function _cast():string
+    final public function _cast():string
     {
         return $this->uri();
     }
@@ -194,7 +194,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // clone
     // clone l'objet route et l'objet routeRequest
-    public function __clone()
+    final public function __clone()
     {
         $this->routeRequest = clone $this->routeRequest;
 
@@ -204,7 +204,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // onMake
     // permet d'avoir un callback lors de la construction de la route
-    // méthode protégé
     protected function onMake():void
     {
         return;
@@ -214,17 +213,16 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // onBefore
     // méthode appelé au début de la méthode before
     // possible d'arrêter la route si onBefore retourne faux
-    // méthode protégé
+    // par défaut renvoie à canTrigger
     protected function onBefore()
     {
-        return;
+        return $this->canTrigger();
     }
 
 
     // onAfter
     // méthode appelé à la fin de la méthode after
     // possible de spécifier une redirection
-    // méthode protégé
     protected function onAfter()
     {
         return;
@@ -235,7 +233,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // méthode appelé lorsqu'il y a un fallback
     // possible de spécifier une redirection
     // permet par exemple de flashPost ou retourner une redirection
-    // méthode protégé
     protected function onFallback($context=null)
     {
         return;
@@ -244,7 +241,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // onReplace
     // méthode à étendre pour changer le tableau de remplacement pour une route
-    // méthode protégé
     protected function onReplace(array $return):array
     {
         return $return;
@@ -253,8 +249,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // onPrepareDoc
     // pour changer le tableau de prepareDoc, peut être étendu
-    // méthode protégé
-    protected function onPrepareDoc(string $type,array $return):array
+    final protected function onPrepareDoc(string $type,array $return):array
     {
         if($type === 'docClose')
         $return = $this->prepareDocJsInit($return);
@@ -267,7 +262,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // onRolePermission
     // callback avant chaque appel à permission can, vérifie que la table à la permission access
-    protected function onRolePermission($key,array $array):bool
+    final protected function onRolePermission($key,array $array):bool
     {
         return (array_key_exists('access',$array) && $array['access'] === true)? true:false;
     }
@@ -275,7 +270,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // arr
     // retourne le tableau de segments pour utiliser via this
-    protected function arr():array
+    final protected function arr():array
     {
         return $this->segments();
     }
@@ -311,7 +306,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // prepareDocJsInit
     // ajoute la méthode jsInit si jsInit est true et que ce n'est pas une requête ajax
-    protected function prepareDocJsInit(array $return):array
+    final protected function prepareDocJsInit(array $return):array
     {
         $jsInit = $this->getAttr('jsInit');
 
@@ -336,8 +331,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // prepareDocServices
     // méthode utilisé après prepareDoc, lie les tags de services pour docOpen et docClose
     // si un des éléments est false dans le tableau de config, à ce moment n'append pas le service (ça vaut dire que la route n'a pas de js/css/script)
-    // méthode protégé
-    protected function prepareDocServices(string $type,array $return):array
+    final protected function prepareDocServices(string $type,array $return):array
     {
         $services = static::services();
 
@@ -393,7 +387,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // allowed
     // retourne vrai si le role de la session courante permet d'accéder à la route
-    public static function allowed(?Main\Role $role=null):bool
+    final public static function allowed(?Main\Role $role=null):bool
     {
         $return = false;
         $value = static::$config['match']['role'] ?? null;
@@ -410,7 +404,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // hasPath
     // retourne vrai si la route a un path pour la langue
-    public static function hasPath(?string $lang=null):bool
+    final public static function hasPath(?string $lang=null):bool
     {
         $return = false;
         $class = static::routeRequestClass();
@@ -426,12 +420,21 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getTimeoutObject
     // retourne l'objet timeout
-    public static function getTimeoutObject():Main\Timeout
+    final public static function getTimeoutObject():Main\Timeout
     {
         return static::session()->timeout();
     }
 
-
+    
+    // canTrigger
+    // retourne vrai si la route peut être triggé
+    // méthode doit resté public
+    public function canTrigger():bool 
+    {
+        return true;
+    }
+    
+    
     // trigger
     // lance la route
     // retourne faux, et passe à la prochaine route
@@ -471,14 +474,14 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         catch (Exception $e)
         {
-            $e->onCatched();
+            $e->catched();
             $continue = true;
         }
 
         catch (BreakException $e)
         {
             Base\Response::serverError();
-            $e->onCatched();
+            $e->catched();
         }
 
         $return['bool'] = $bool;
@@ -493,7 +496,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // méthode lancé après before si le match a échoué
     // gère le timeout, captcha, csrf, genuine et failedFileUpload
     // s'il y a redirection utilise le code 302
-    // méthode protégé
     final protected function fallback($context=null):bool
     {
         $log = null;
@@ -548,7 +550,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // setRouteRequest
     // change la routeRequest de l'objet
-    // méthode protégé
     final protected function setRouteRequest($request=null):void
     {
         $return = null;
@@ -675,7 +676,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         catch (Main\Contract\Catchable $e)
         {
-            $e->onCatched();
+            $e->catched();
             $return = $this->fallback($e);
         }
 
@@ -688,7 +689,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // appele onBefore, possible d'arrêter la route si onBefore retourne faux
     // refresh le csrf si il a été validé
     // met la uri selected
-    // méthode protégé
     final protected function before()
     {
         $return = $this->onBefore();
@@ -734,7 +734,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // après la méthode trigger
     // met le code response, le contentType et des headers de response et ajoute la requête à l'historique
     // gère le onAfter qui peut rediriger
-    // méthode protégé
     final protected function after():void
     {
         if(static::shouldKeepInHistory())
@@ -757,7 +756,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // processRedirect
     // gère un redirect, par exemple pour after ou fallback
     // le code utilisé par défaut est 302
-    // méthode protégé
     final protected function processRedirect($value,$code=true,bool $kill=true):void
     {
         if(is_string($value) && is_subclass_of($value,self::class,true))
@@ -778,8 +776,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaFromContract
     // retourne un tableau avec les méta données pour un objet ayant l'interface meta
-    // méthode protégé
-    protected function getMetaFromContract(Main\Contract\Meta $meta,array $return):array
+    final protected function getMetaFromContract(Main\Contract\Meta $meta,array $return):array
     {
         $array = [];
 
@@ -802,7 +799,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaTitle
     // retourne les données pour le metaTitle
-    public function getMetaTitle($value=null)
+    final public function getMetaTitle($value=null)
     {
         return;
     }
@@ -810,7 +807,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaKeywords
     // retourne les données pour le metaKeywords
-    public function getMetaKeywords($value=null)
+    final public function getMetaKeywords($value=null)
     {
         return;
     }
@@ -818,7 +815,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaDescription
     // retourne les données pour la metaDescription
-    public function getMetaDescription($value=null)
+    final public function getMetaDescription($value=null)
     {
         return;
     }
@@ -826,7 +823,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaImage
     // retourne les données pour la metaImage
-    public function getMetaImage($value=null)
+    final public function getMetaImage($value=null)
     {
         return;
     }
@@ -834,7 +831,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getBodyClass
     // retourne les données pour la classe de body
-    public function getBodyClass($value=null)
+    final public function getBodyClass($value=null)
     {
         return;
     }
@@ -842,7 +839,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getBodyStyle
     // retourne les données pour le style de body
-    public function getBodyStyle($value=null)
+    final public function getBodyStyle($value=null)
     {
         return;
     }
@@ -850,7 +847,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // label
     // retourne le label de la route non triggé
-    public static function label($pattern=null,?string $lang=null,?array $option=null):?string
+    final public static function label($pattern=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $obj = static::lang();
@@ -868,7 +865,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // description
     // retourne la description de la route non triggé
-    public static function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
+    final public static function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $obj = static::lang();
@@ -886,7 +883,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // title
     // retourne le titre de la route triggé
-    public function title($pattern=null,?string $lang=null,?array $option=null):?string
+    final public function title($pattern=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $title = $this->makeTitle($lang);
@@ -914,7 +911,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // docOpen
     // génère l'ouverture du document en html
-    public function docOpen(bool $default=true,?string $separator=null):string
+    final public function docOpen(bool $default=true,?string $separator=null):string
     {
         return Base\Html::docOpen($this->prepareDoc('docOpen'),$default,$separator,true);
     }
@@ -922,7 +919,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // docClose
     // génère la fermeture du document en html
-    public function docClose(bool $default=true,bool $closeBody=true,?string $separator=null):string
+    final public function docClose(bool $default=true,bool $closeBody=true,?string $separator=null):string
     {
         return Base\Html::docClose($this->prepareDoc('docClose'),$default,$closeBody,$separator,true);
     }
@@ -930,7 +927,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getReplace
     // retourne le tableau de remplacement utilisé par docOpen et docClose
-    public function getReplace():array
+    final public function getReplace():array
     {
         $return = $this->getBaseReplace();
         $return = $this->getMetaFromContract($this,$return);
@@ -969,8 +966,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // prepareDoc
     // méthode utilisé par docOpen et docClose
-    // méthode protégé
-    protected function prepareDoc(string $type):array
+    final protected function prepareDoc(string $type):array
     {
         $return = [];
 
@@ -1003,7 +999,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // hasUri
     // retourne vrai si la route peut générer une uri pour la langue
-    public function hasUri(?string $lang=null,?array $option=null):bool
+    final public function hasUri(?string $lang=null,?array $option=null):bool
     {
         $return = false;
         $lang = ($lang === null)? static::session()->lang():$lang;
@@ -1019,8 +1015,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // uriMethod
     // la variable lang filtre le tableau de chemin avec seulement les paths compatibles pour la langue, si null prend la langue de session
     // une exception est envoyé si retour n'est pas string
-    // méthode protégé
-    protected function uriMethod(string $method,?string $lang=null,?array $option=null):string
+    final protected function uriMethod(string $method,?string $lang=null,?array $option=null):string
     {
         $return = '';
         $lang = ($lang === null)? static::session()->lang():$lang;
@@ -1069,7 +1064,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isSelected
     // retourne vrai si l'uri de la route est sélectionné, tel que défini dans base/attr
-    public function isSelected(?string $lang=null,?array $option=null):bool
+    final public function isSelected(?string $lang=null,?array $option=null):bool
     {
         $return = false;
         $uri = $this->uri($lang,$option);
@@ -1267,7 +1262,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // childs
     // retourne toutes les enfants de la route courante
-    public static function childs(bool $active=false):Routes
+    final public static function childs(bool $active=false):Routes
     {
         return static::routes($active)->childs(static::class);
     }
@@ -1275,7 +1270,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // make
     // construit une instance de la route de façon statique
-    public static function make($request=null,bool $overload=false):self
+    final public static function make($request=null,bool $overload=false):self
     {
         $class = ($overload === true)? static::getOverloadClass():static::class;
         $return = new $class($request);
@@ -1287,7 +1282,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // makeOverload
     // construit une instance de la route de façon statique
     // overload est true
-    public static function makeOverload($request=null):self
+    final public static function makeOverload($request=null):self
     {
         return static::make($request,true);
     }
@@ -1296,7 +1291,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // makeParent
     // retourne une instance la route parente
     // envoie une exception s'il n'y a pas de parent valide
-    public static function makeParent($request=null,bool $overload=false):self
+    final public static function makeParent($request=null,bool $overload=false):self
     {
         $return = null;
         $parent = static::parent();
@@ -1313,7 +1308,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // makeParentOverload
     // comme makeParent mais overload est à true
-    public static function makeParentOverload($request=null):self
+    final public static function makeParentOverload($request=null):self
     {
         return static::makeParent($request,true);
     }
@@ -1321,7 +1316,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isIgnored
     // retourne vrai si la route est ignoré
-    public static function isIgnored():bool
+    final public static function isIgnored():bool
     {
         return ((static::$config['ignore'] ?? null) === true)? true:false;
     }
@@ -1329,7 +1324,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // inMenu
     // retourne vrai si la route fait partie d'un menu donné en argument
-    public static function inMenu(string $value):bool
+    final public static function inMenu(string $value):bool
     {
         $return = false;
         $menus = (array) (static::$config['menu'] ?? null);
@@ -1343,7 +1338,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isActive
     // retourne vrai si la route est active, elle n'est pas ignoré et le role possède la permission d'accès
-    public static function isActive(?Main\Role $role=null):bool
+    final public static function isActive(?Main\Role $role=null):bool
     {
         return (!static::isIgnored() && static::allowed($role))? true:false;
     }
@@ -1351,7 +1346,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isGroup
     // retourne vrai si le groupe est celui spécifié
-    public static function isGroup($value):bool
+    final public static function isGroup($value):bool
     {
         return ($value === static::group())? true:false;
     }
@@ -1359,7 +1354,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // inSitemap
     // retourne vrai si la route fait partie de sitemap
-    public static function inSitemap(?Role $role=null):bool
+    final public static function inSitemap(?Role $role=null):bool
     {
         $return = static::$config['sitemap'] ?? null;
 
@@ -1378,7 +1373,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // allowNavigation
     // retourne vrai si la route permet la navigation
-    public static function allowNavigation():bool
+    final public static function allowNavigation():bool
     {
         $return = static::$config['navigation'] ?? null;
 
@@ -1391,7 +1386,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // setType
     // change le type de la route
-    public static function setType(string $value,bool $dig=false):void
+    final public static function setType(string $value,bool $dig=false):void
     {
         static::$config['type'] = $value;
 
@@ -1408,7 +1403,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // group
     // retourne le group de la route
-    public static function group():string
+    final public static function group():string
     {
         return static::$config['group'];
     }
@@ -1417,7 +1412,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // name
     // retourne le nom de la route
     // est toujours le nom de la classe avec la première lettre lower case
-    public static function name():string
+    final public static function name():string
     {
         return static::className(true);
     }
@@ -1425,7 +1420,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // priority
     // retourne la priorité de la reoute
-    public static function priority():int
+    final public static function priority():int
     {
         return static::$config['priority'] ?? 0;
     }
@@ -1433,7 +1428,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // setPriority
     // change la priorité de la route
-    public static function setPriority(int $value):void
+    final public static function setPriority(int $value):void
     {
         static::$config['priority'] = $value;
 
@@ -1443,15 +1438,21 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // parent
     // retourne la classe parente de la route
-    public static function parent():?string
+    // possible de retourner la classe overload
+    final public static function parent(bool $overload=false):?string
     {
-        return static::$config['parent'] ?? null;
+        $return = static::$config['parent'] ?? null;
+        
+        if(is_string($return))
+        $return = $return::getOverloadClass();
+        
+        return $return;
     }
 
-
+    
     // setParent
     // change le parent de la route
-    public static function setParent(string $value):void
+    final public static function setParent(string $value):void
     {
         $target = current(static::routeBaseClasses());
 
@@ -1467,7 +1468,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // paths
     // retourne tous les chemins de la route
-    public static function paths():array
+    final public static function paths():array
     {
         $return = static::$config['path'] ?? null;
 
@@ -1481,7 +1482,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // isAjax
     // retourne la valeur ajax de match
     // peut retourner null
-    public static function isAjax():?bool
+    final public static function isAjax():?bool
     {
         return static::$config['match']['ajax'] ?? null;
     }
@@ -1489,7 +1490,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isMethod
     // retourne vrai si la route utilise la méthode donné en argument
-    public static function isMethod($value):bool
+    final public static function isMethod($value):bool
     {
         $return = false;
         $method = static::$config['match']['method'] ?? null;
@@ -1518,7 +1519,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // isRedirectable
     // retourne vrai si la route est redirigable
     // c'est à dire pas ignore, ni post, ni ajax, ni error, ni sitemap
-    public static function isRedirectable(?Main\Role $role=null):bool
+    final public static function isRedirectable(?Main\Role $role=null):bool
     {
         $return = false;
         $isRedirectable = static::$config['redirectable'] ?? null;
@@ -1533,7 +1534,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // shouldKeepInHistory
     // retourne vrai si la route devrait être gardé dasn l'history
-    public static function shouldKeepInHistory():bool
+    final public static function shouldKeepInHistory():bool
     {
         return (!empty(static::$config['history']))? true:false;
     }
@@ -1541,7 +1542,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // hasMatch
     // permet de vérifier si un élément de validation de la route se retrouve dans match
-    public static function hasMatch(string $type):bool
+    final public static function hasMatch(string $type):bool
     {
         $return = false;
         $match = static::$config['match'] ?? [];
@@ -1555,7 +1556,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // timeout
     // retourne le tableau de timeout pour la route
-    public static function timeout():array
+    final public static function timeout():array
     {
         return static::$config['timeout'] ?? [];
     }
@@ -1563,7 +1564,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // prepareTimeout
     // ajoute les timeout définis dans la route dans l'objet timeout de la session
-    public static function prepareTimeout():Main\Timeout
+    final public static function prepareTimeout():Main\Timeout
     {
         $return = static::getTimeoutObject();
         $timeout = static::timeout();
@@ -1581,7 +1582,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // makeTimeoutKey
     // génère la clé à utiliser pour l'objet timeout
     // tableau avec nom de la classe + clé
-    protected static function makeTimeoutKey(string $key):array
+    final protected static function makeTimeoutKey(string $key):array
     {
         return [static::class,$key];
     }
@@ -1589,7 +1590,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // timeoutMethod
     // méthode protégé, fait appel à une méthode l'objet timeout
-    protected static function timeoutMethod(string $method,$key)
+    final protected static function timeoutMethod(string $method,$key)
     {
         $timeout = static::getTimeoutObject();
         $key = static::makeTimeoutKey($key);
@@ -1601,7 +1602,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // isTimedOut
     // retourne vrai si l'entrée est timedOut
-    public static function isTimedOut($key):bool
+    final public static function isTimedOut($key):bool
     {
         return static::timeoutMethod('isTimedOut',$key);
     }
@@ -1609,7 +1610,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // timeoutGet
     // retourne le count d'une entrée dans l'objet de timeout
-    public static function timeoutGet($key):?int
+    final public static function timeoutGet($key):?int
     {
         return static::timeoutMethod('getCount',$key);
     }
@@ -1617,7 +1618,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // timeoutIncrement
     // increment le count de l'entrée dans l'objet timeout
-    public static function timeoutIncrement($key):Main\Timeout
+    final public static function timeoutIncrement($key):Main\Timeout
     {
         return static::timeoutMethod('increment',$key);
     }
@@ -1625,7 +1626,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // timeoutBlock
     // met le maximum comme count de l'entrée dans l'objet timeout
-    public static function timeoutBlock($key):Main\Timeout
+    final public static function timeoutBlock($key):Main\Timeout
     {
         return static::timeoutMethod('block',$key);
     }
@@ -1633,7 +1634,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // timeoutReset
     // reset le count de l'entrée dans l'objet timeout
-    public static function timeoutReset($key):Main\Timeout
+    final public static function timeoutReset($key):Main\Timeout
     {
         return static::timeoutMethod('resetCount',$key);
     }
@@ -1641,7 +1642,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // timeoutStamp
     // met le timestamp actuel à une entrée dans l'objet timeout
-    public static function timeoutStamp($key):Main\Timeout
+    final public static function timeoutStamp($key):Main\Timeout
     {
         return static::timeoutMethod('setTimestamp',$key);
     }

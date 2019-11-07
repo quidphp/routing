@@ -25,7 +25,7 @@ class Nav extends Main\Map
 
     // route
     // génère une route à partir de celle gardé dans l'objet
-    public function route($value):?Route
+    final public function route($value):?Route
     {
         $return = null;
         $class = $value;

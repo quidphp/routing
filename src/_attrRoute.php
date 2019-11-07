@@ -16,7 +16,7 @@ trait _attrRoute
     // routeAttr
     // retourne le tableau des routes, ou un nom de route, de classe ou une callable de route non triggé
     // pour retourner une version triggé, utiliser la méthode route
-    public function routeAttr($key=null)
+    final public function routeAttr($key=null)
     {
         $return = null;
         $route = $this->getAttr('route');
@@ -48,7 +48,7 @@ trait _attrRoute
     // routeClassSafe
     // retourne le classe de la route, pas l'objet instantié
     // possible d'overload la classe de la route
-    public function routeClassSafe($key=null,bool $overload=false):?string
+    final public function routeClassSafe($key=null,bool $overload=false):?string
     {
         $return = null;
         $key = (is_string($key) || is_numeric($key))? $key:0;
@@ -68,7 +68,7 @@ trait _attrRoute
     // retourne le classe de la route, pas l'objet instantié
     // envoie une exception si pas une string
     // possible d'overload la classe de la route
-    public function routeClass($key=null,bool $overload=false):string
+    final public function routeClass($key=null,bool $overload=false):string
     {
         $return = $this->routeClassSafe($key,$overload);
 
@@ -83,7 +83,7 @@ trait _attrRoute
     // créer un des objets routes en lien avec l'objet
     // une clé peut être fourni, sinon utilise la clé 0 par défaut
     // peut retourner route ou null
-    public function routeSafe($key=null,$segment=null):?Route
+    final public function routeSafe($key=null,$segment=null):?Route
     {
         $return = null;
         $key = (is_string($key) || is_numeric($key))? $key:0;
@@ -103,7 +103,7 @@ trait _attrRoute
 
     // route
     // comme routeSafe mais doit absolument retourner une route
-    public function route($key=null,$segment=null):Route
+    final public function route($key=null,$segment=null):Route
     {
         $return = $this->routeSafe($key,$segment);
 
@@ -118,8 +118,7 @@ trait _attrRoute
     // construit la route a créer
     // accepte une callable ou un nom de route ou de classe étendant route
     // peut faire une préparation sur la route avant le make
-    // méthode protégé
-    protected function makeRoute($key=null,$route,$segment=null):?Route
+    final protected function makeRoute($key=null,$route,$segment=null):?Route
     {
         $return = null;
         $class = $route;
@@ -148,7 +147,7 @@ trait _attrRoute
     // shouldPrepareRoute
     // retourne vrai si la route doit être préparé
     // est utilisé dans la méthode route
-    protected function shouldPrepareRoute($key,string $route):bool
+    final protected function shouldPrepareRoute($key,string $route):bool
     {
         return false;
     }
@@ -157,7 +156,7 @@ trait _attrRoute
     // routePrepareConfig
     // permet de préparer une les config d'une route
     // est utilisé dans la méthode route
-    protected function routePrepareConfig($key,string $route):void
+    final protected function routePrepareConfig($key,string $route):void
     {
         return;
     }

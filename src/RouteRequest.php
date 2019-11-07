@@ -41,7 +41,7 @@ class RouteRequest extends Main\Root
 
     // toString
     // retourne le nom de la route
-    public function __toString():string
+    final public function __toString():string
     {
         return static::route();
     }
@@ -49,7 +49,7 @@ class RouteRequest extends Main\Root
 
     // clone
     // clone est permis
-    public function __clone()
+    final public function __clone()
     {
         return;
     }
@@ -57,7 +57,6 @@ class RouteRequest extends Main\Root
 
     // reset
     // reset les vérifications de l'objet à l'état initial
-    // méthode protégé
     protected function reset():void
     {
         $this->valid = [];
@@ -91,7 +90,7 @@ class RouteRequest extends Main\Root
     // isValidMatch
     // retourne vrai si la route et la requête match
     // si la propriété match et null, lance match
-    public function isValidMatch(Main\Session $session,bool $exception=false):bool
+    final public function isValidMatch(Main\Session $session,bool $exception=false):bool
     {
         $return = false;
 
@@ -106,7 +105,7 @@ class RouteRequest extends Main\Root
 
     // checkValidMatch
     // envoie une exception si la route et la requête n'ont pas passés le test match
-    public function checkValidMatch():self
+    final public function checkValidMatch():self
     {
         if(!$this->valid('match'))
         static::throw();
@@ -117,7 +116,7 @@ class RouteRequest extends Main\Root
 
     // isRequestInst
     // retourne vrai si la requête de l'objet routeRequest et la requête courante, storé dans core/request inst
-    public function isRequestInst():bool
+    final public function isRequestInst():bool
     {
         return ($this->request() === Main\Request::instSafe())? true:false;
     }
@@ -126,7 +125,7 @@ class RouteRequest extends Main\Root
     // valid
     // retourne la propriété valid, qui contient les tests passés par l'objet
     // possible de retourner seulement le résultat d'un test
-    public function valid(?string $key=null)
+    final public function valid(?string $key=null)
     {
         $return = $this->valid;
 
@@ -140,7 +139,7 @@ class RouteRequest extends Main\Root
     // fallback
     // retourne la raison du fallback
     // peut être null, une string ou un array
-    public function fallback()
+    final public function fallback()
     {
         return $this->fallback;
     }
@@ -149,8 +148,7 @@ class RouteRequest extends Main\Root
     // setFallback
     // change la valeur de la propriété fallback de l'objet
     // met un tableau si la clé est timeout et value est string
-    // méthode protégé
-    protected function setFallback(string $key,$value,Main\Session $session):void
+    final protected function setFallback(string $key,$value,Main\Session $session):void
     {
         if($key === 'timeout')
         {
@@ -176,7 +174,7 @@ class RouteRequest extends Main\Root
 
     // route
     // retourne le nom de classe de la route
-    public function route():string
+    final public function route():string
     {
         return $this->route;
     }
@@ -198,7 +196,7 @@ class RouteRequest extends Main\Root
     // routePath
     // retourne le path de la route
     // utilise la route lié à l'objet
-    public function routePath(?string $lang=null,bool $null=false,bool $pathMatch=false)
+    final public function routePath(?string $lang=null,bool $null=false,bool $pathMatch=false)
     {
         $return = null;
         $pathMatch = ($pathMatch === true)? $this->request()->pathMatch():null;
@@ -210,7 +208,7 @@ class RouteRequest extends Main\Root
 
     // request
     // retourne la requête de l'objet
-    public function request():Main\Request
+    final public function request():Main\Request
     {
         return $this->request;
     }
@@ -243,7 +241,7 @@ class RouteRequest extends Main\Root
     // validateMatch
     // lance le processus de match entre la route et la request
     // si exception est true, lance une exception avec le nom de la clé où le match bloque
-    public function validateMatch(Main\Session $session,bool $exception=false):bool
+    final public function validateMatch(Main\Session $session,bool $exception=false):bool
     {
         $return = false;
         $lang = $session->lang();
@@ -301,7 +299,6 @@ class RouteRequest extends Main\Root
     // validateArray
     // validate une valeur dans un array
     // utiliser pour valider headers, query et post
-    // méthode protégé, peut être étendu
     protected function validateArray($value,array $array):bool
     {
         return Base\Validate::arr($value,$array);
@@ -333,7 +330,7 @@ class RouteRequest extends Main\Root
 
     // ssl
     // retourne vrai si la requête et la route match ssl
-    public function ssl($value):bool
+    final public function ssl($value):bool
     {
         $return = false;
 
@@ -352,7 +349,7 @@ class RouteRequest extends Main\Root
 
     // ajax
     // retourne vrai si la requête et la route match ajax
-    public function ajax($value):bool
+    final public function ajax($value):bool
     {
         $return = false;
 
@@ -371,7 +368,7 @@ class RouteRequest extends Main\Root
 
     // cli
     // retourne vrai si la requête et la route match cli
-    public function cli($value):bool
+    final public function cli($value):bool
     {
         $return = false;
 
@@ -390,7 +387,7 @@ class RouteRequest extends Main\Root
 
     // host
     // retourne vrai si la requête et la route match host
-    public function host($value):bool
+    final public function host($value):bool
     {
         $return = false;
 
@@ -417,7 +414,7 @@ class RouteRequest extends Main\Root
 
     // method
     // retourne vrai si la requête et la route match method
-    public function method($value):bool
+    final public function method($value):bool
     {
         $return = false;
 
@@ -450,7 +447,7 @@ class RouteRequest extends Main\Root
     // header
     // retourne vrai si la requête et la route match header de requête
     // insensible à la case
-    public function header($value):bool
+    final public function header($value):bool
     {
         $return = false;
 
@@ -477,7 +474,7 @@ class RouteRequest extends Main\Root
 
     // lang
     // retourne vrai si la requête et la route match method
-    public function lang($value):bool
+    final public function lang($value):bool
     {
         $return = false;
 
@@ -504,7 +501,7 @@ class RouteRequest extends Main\Root
 
     // ip
     // retourne vrai si la requête et la route match ip
-    public function ip($value):bool
+    final public function ip($value):bool
     {
         $return = false;
 
@@ -531,7 +528,7 @@ class RouteRequest extends Main\Root
 
     // browser
     // retourne vrai si la requête et la route match browser
-    public function browser($value):bool
+    final public function browser($value):bool
     {
         $return = false;
 
@@ -558,7 +555,7 @@ class RouteRequest extends Main\Root
 
     // query
     // retourne vrai si la requête et la route match query
-    public function query($value):bool
+    final public function query($value):bool
     {
         $return = false;
 
@@ -577,7 +574,7 @@ class RouteRequest extends Main\Root
 
     // post
     // retourne vrai si la requête et la route match post
-    public function post($value):bool
+    final public function post($value):bool
     {
         $return = false;
 
@@ -596,7 +593,7 @@ class RouteRequest extends Main\Root
 
     // genuine
     // retourne vrai si le post de la requête contient la clé genuine et que le contenu est vide
-    public function genuine($value):bool
+    final public function genuine($value):bool
     {
         $return = false;
 
@@ -612,7 +609,7 @@ class RouteRequest extends Main\Root
 
     // role
     // retourne vrai si la route et le rôle de la session match
-    public function role($value,Main\Session $session):bool
+    final public function role($value,Main\Session $session):bool
     {
         return static::allowed($value,$session->role());
     }
@@ -621,7 +618,7 @@ class RouteRequest extends Main\Root
     // session
     // retourne vrai si la route et la session match
     // la validation se fait en utilisation des noms de méthode sur l'objet de session
-    public function session($value,Main\Session $session):bool
+    final public function session($value,Main\Session $session):bool
     {
         $return = false;
 
@@ -651,7 +648,7 @@ class RouteRequest extends Main\Root
 
     // csrf
     // retourne vrai si la chaîne csrf de la requête et de la session match
-    public function csrf($value,?Main\Session $session=null):bool
+    final public function csrf($value,?Main\Session $session=null):bool
     {
         $return = false;
 
@@ -672,7 +669,7 @@ class RouteRequest extends Main\Root
 
     // captcha
     // retourne vrai si la chaîne captcha de la requête et de la session match
-    public function captcha($value,?Main\Session $session=null):bool
+    final public function captcha($value,?Main\Session $session=null):bool
     {
         $return = false;
 
@@ -695,7 +692,7 @@ class RouteRequest extends Main\Root
     // retourne vrai si tous les timeouts définis sont valides (et non pas en timeout)
     // un nom de timeout non existant n'est pas timedOut, donc retourne true
     // si timeout est true, prend tous les timeouts définis
-    public function timeout($value,?Main\Session $session=null):bool
+    final public function timeout($value,?Main\Session $session=null):bool
     {
         $return = false;
 
@@ -717,8 +714,7 @@ class RouteRequest extends Main\Root
     // timedOut
     // retourne le nom du timeout qui est timedOut
     // si timeout est true, prend tous les timeouts définis
-    // méthode protégé
-    protected function timedOut($value,Main\Session $session):?string
+    final protected function timedOut($value,Main\Session $session):?string
     {
         $return = null;
         $route = $this->route();
@@ -750,7 +746,7 @@ class RouteRequest extends Main\Root
     // schemeHost
     // retourne le schemeHost pour la routeRequest
     // si different est true, retourne seulement le schemeHost si différent de la requête de l'objet
-    public function schemeHost(bool $different=false):?string
+    final public function schemeHost(bool $different=false):?string
     {
         $return = $this->route()::schemeHost();
 
@@ -789,8 +785,7 @@ class RouteRequest extends Main\Root
     // permet d'ajouter les query à conserver, tel que défini dans route/query si option query est true
     // ou si option query est un array, ajoute la query à l'array
     // si schemeHost est true, ajoute le schemeHost de la route si différent de la requête de l'objet
-    // méthode protégé
-    protected function uriPrepare(string $return,?string $lang=null,?array $option=null)
+    final protected function uriPrepare(string $return,?string $lang=null,?array $option=null)
     {
         $request = $this->request();
         $route = $this->route();
@@ -838,7 +833,7 @@ class RouteRequest extends Main\Root
     // génère une uri via la méthode base/uri output
     // l'uri généré peut être relative ou absolut
     // le schemeHost utilisé est celui de la route de l'objet
-    public function uriOutput(string $lang,?array $option=null):?string
+    final public function uriOutput(string $lang,?array $option=null):?string
     {
         $return = null;
         $path = $this->uri($lang,$option);
@@ -857,7 +852,7 @@ class RouteRequest extends Main\Root
     // uriRelative
     // génère une uri via la méthode base/uri relative
     // l'uri est toujours relative
-    public function uriRelative(string $lang,?array $option=null):?string
+    final public function uriRelative(string $lang,?array $option=null):?string
     {
         $return = null;
         $path = $this->uri($lang,$option);
@@ -873,7 +868,7 @@ class RouteRequest extends Main\Root
     // génère une uri via la méthode base/uri absolute
     // l'uri est toujours absolut
     // le schemeHost utilisé est celui de la route de l'objet
-    public function uriAbsolute(string $lang,?array $option=null):?string
+    final public function uriAbsolute(string $lang,?array $option=null):?string
     {
         $return = null;
         $path = $this->uri($lang,$option);
@@ -891,7 +886,7 @@ class RouteRequest extends Main\Root
     // allowed
     // retourne vrai si la route et le rôle match
     // renvoie à role/validate
-    public static function allowed($value,Main\Role $role):bool
+    final public static function allowed($value,Main\Role $role):bool
     {
         $return = false;
 
@@ -909,7 +904,7 @@ class RouteRequest extends Main\Root
     // retourne le path de la route
     // si une lang est fourni, retourne le path compatible avec la langue
     // si pathMatch est fourni, on va retourner le chemin exact si existant, mais ne supporte pas les segments
-    public static function pathFromRoute(string $route,?string $lang=null,bool $null=false,?string $pathMatch=null)
+    final public static function pathFromRoute(string $route,?string $lang=null,bool $null=false,?string $pathMatch=null)
     {
         $return = false;
         $paths = $route::paths();
