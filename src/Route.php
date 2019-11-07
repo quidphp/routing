@@ -425,16 +425,16 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return static::session()->timeout();
     }
 
-    
+
     // canTrigger
     // retourne vrai si la route peut être triggé
     // méthode doit resté public
-    public function canTrigger():bool 
+    public function canTrigger():bool
     {
         return true;
     }
-    
-    
+
+
     // trigger
     // lance la route
     // retourne faux, et passe à la prochaine route
@@ -1442,14 +1442,14 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public static function parent(bool $overload=false):?string
     {
         $return = static::$config['parent'] ?? null;
-        
+
         if(is_string($return))
         $return = $return::getOverloadClass();
-        
+
         return $return;
     }
 
-    
+
     // setParent
     // change le parent de la route
     final public static function setParent(string $value):void
