@@ -1155,10 +1155,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             if(!empty($method))
             $attr['method'] = $method;
         }
-        
+
         if(!empty($attr['data-unload']))
         $attr['data-unload'] = static::lang()->text($attr['data-unload']);
-        
+
         $return = Base\Html::formOpen($uri,$attr,$this->tagOption('form',$option));
 
         return $return;
