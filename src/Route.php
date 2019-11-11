@@ -136,11 +136,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     abstract protected function prepareTitle($return,array $array):array;
 
 
-    // context
-    // retourne le tableau de contexte de la classe
-    abstract public function context(?array $option=null):array;
-
-
     // host
     // retourne le host pour la route
     abstract public static function host():?string;
@@ -652,7 +647,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         try
         {
-            $return = $this->before();
+            $return = $this->processBefore();
 
             if($return !== false)
             {
@@ -664,7 +659,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 $return = $this->trigger();
 
                 if($return !== false)
-                $this->after();
+                $this->processAfter();
 
                 else
                 $return = $this->fallback('trigger');
@@ -684,12 +679,12 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // before
+    // processBefore
     // avant la méthode trigger
     // appele onBefore, possible d'arrêter la route si onBefore retourne faux
     // refresh le csrf si il a été validé
     // met la uri selected
-    final protected function before()
+    final protected function processBefore()
     {
         $return = $this->onBefore();
 
@@ -730,11 +725,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // after
+    // processAfter
     // après la méthode trigger
     // met le code response, le contentType et des headers de response et ajoute la requête à l'historique
     // gère le onAfter qui peut rediriger
-    final protected function after():void
+    final protected function processAfter():void
     {
         if(static::shouldKeepInHistory())
         {
@@ -1273,7 +1268,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // make
     // construit une instance de la route de façon statique
-    final public static function make($request=null,bool $overload=false):self
+    final public static function make($request=null,bool $overload=true):self
     {
         $class = ($overload === true)? static::getOverloadClass():static::class;
         $return = new $class($request);
@@ -1282,19 +1277,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // makeOverload
-    // construit une instance de la route de façon statique
-    // overload est true
-    final public static function makeOverload($request=null):self
-    {
-        return static::make($request,true);
-    }
-
-
     // makeParent
     // retourne une instance la route parente
     // envoie une exception s'il n'y a pas de parent valide
-    final public static function makeParent($request=null,bool $overload=false):self
+    final public static function makeParent($request=null,bool $overload=true):self
     {
         $return = null;
         $parent = static::parent();
@@ -1306,14 +1292,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return = $parent::make($request,$overload);
 
         return $return;
-    }
-
-
-    // makeParentOverload
-    // comme makeParent mais overload est à true
-    final public static function makeParentOverload($request=null):self
-    {
-        return static::makeParent($request,true);
     }
 
 

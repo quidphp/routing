@@ -137,7 +137,7 @@ trait _attrRoute
             if($segment === null)
             $segment = $this;
 
-            $return = $route::makeOverload($segment);
+            $return = $route::make($segment);
         }
 
         return $return;
