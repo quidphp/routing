@@ -99,7 +99,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'uriAbsolute'=>null, // force toutes les uris générés via uri output dans la route à être absolute
         'cliHtmlOverload'=>null, // force les méthodes cli à générer du html, seulement si c'est true et que cli est false
         'permission'=>[ // tableau des permissions
-            '*'=>['access'=>true]], // accorde accès à tout
+            '*'=>['access'=>true]], // accorde accès de base
         'ignore'=>false, // si la route est ignoré pour routes
         'catchAll'=>false, // si true, le dernier segment attrape tout le reste du chemin dans le processus de match
         'debug'=>false, // active ou non le débogagge de match, en lien avec la méthode statique debug
@@ -118,7 +118,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // construit l'objet route
     final public function __construct($request=null)
     {
-        $this->makeAttr(null);
+        $this->attr =& static::$config;
         $this->setRouteRequest($request);
         $this->onMake();
 
@@ -152,8 +152,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // routes
-    // retourne l'objet routes de boot ou un nom de classe de route contenu dans l'objet
-    abstract public static function routes(bool $active=false,$get=null);
+    // retourne l'objet routes de boot du type dela route
+    abstract public static function routes():Routes;
 
 
     // lang
@@ -423,10 +423,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // canTrigger
     // retourne vrai si la route peut être triggé
+    // par défaut vérifie que la route est allowed (donc compatible au niveau du rôle)
     // méthode doit resté public
     public function canTrigger():bool
     {
-        return true;
+        return static::allowed();
     }
 
 
@@ -1260,9 +1261,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // childs
     // retourne toutes les enfants de la route courante
-    final public static function childs(bool $active=false):Routes
+    final public static function childs():Routes
     {
-        return static::routes($active)->childs(static::class);
+        return static::routes()->childs(static::class);
     }
 
 
@@ -1314,14 +1315,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return = true;
 
         return $return;
-    }
-
-
-    // isActive
-    // retourne vrai si la route est active, elle n'est pas ignoré et le role possède la permission d'accès
-    final public static function isActive(?Main\Role $role=null):bool
-    {
-        return (!static::isIgnored() && static::allowed($role))? true:false;
     }
 
 
@@ -1506,7 +1499,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $isRedirectable = static::$config['redirectable'] ?? null;
         $isSitemap = (static::name() === 'sitemap')? true:false;
 
-        if($isRedirectable !== false && static::isActive($role) && static::hasPath())
+        if($isRedirectable !== false && static::allowed($role) && static::hasPath())
         $return = ($isSitemap || static::isMethod('post') || static::isAjax())? false:true;
 
         return $return;

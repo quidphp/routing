@@ -132,9 +132,10 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // hierarchy
     // retourne le tableau de la hiérarchie des éléments de l'objet
     // si existe est false, les parents de route non existantes sont conservés
-    final public function hierarchy(bool $exists=true):array
+    // si climb est true, si un groupe n'a qu'un enfant, retire le groupe
+    final public function hierarchy(bool $exists=true,bool $climb=false):array
     {
-        return Base\Arrs::hierarchy($this->keyParent(),$exists);
+        return Base\Arrs::hierarchy($this->keyParent(),$exists,$climb);
     }
 
 
@@ -333,16 +334,15 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     }
 
 
-    // active
-    // retourne un objet avec toutes les routes actives
-    // route non ignoré et dont la permission d'accès est compatible avec la permission
-    final public function active():self
+    // allowed
+    // retourne un objet avec toutes les routes allowed
+    final public function allowed():self
     {
         $return = new static();
 
         foreach ($this->arr() as $key => $value)
         {
-            if($value::isActive())
+            if($value::allowed())
             $return->add($value);
         }
 
