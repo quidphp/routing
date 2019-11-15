@@ -568,7 +568,7 @@ class RouteSegmentRequest extends RouteRequest
                 $value = Base\Arrs::cast($value);
             }
         }
-
+        
         $return = Base\Validate::arr($value,$array);
 
         return $return;
@@ -710,7 +710,7 @@ class RouteSegmentRequest extends RouteRequest
         if(is_string($callable))
         $callable = [$route,$callable];
 
-        if(static::classIsCallable($callable))
+        if(static::isCallable($callable))
         $return = $callable;
 
         else

@@ -132,10 +132,9 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // hierarchy
     // retourne le tableau de la hiérarchie des éléments de l'objet
     // si existe est false, les parents de route non existantes sont conservés
-    // si climb est true, si un groupe n'a qu'un enfant, retire le groupe
-    final public function hierarchy(bool $exists=true,bool $climb=false):array
+    final public function hierarchy(bool $exists=true):array
     {
-        return Base\Arrs::hierarchy($this->keyParent(),$exists,$climb);
+        return Base\Arrs::hierarchy($this->keyParent(),$exists);
     }
 
 

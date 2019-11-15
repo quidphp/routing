@@ -23,7 +23,7 @@ trait _attrRoute
 
         if(is_string($key) || is_numeric($key))
         {
-            $isCallable = (static::classIsCallable($route))? true:false;
+            $isCallable = (static::isCallable($route))? true:false;
 
             if($key === 0 && (is_string($route) || $isCallable === true))
             $return = $route;
@@ -123,13 +123,13 @@ trait _attrRoute
         $return = null;
         $class = $route;
 
-        if(static::classIsCallable($route))
+        if(static::isCallable($route))
         $class = $route($this,false);
 
         if(is_string($class) && $this->shouldPrepareRoute($key,$class))
         $this->routePrepareConfig($key,$class);
 
-        if(static::classIsCallable($route))
+        if(static::isCallable($route))
         $return = $route($this,true);
 
         elseif(is_string($route))

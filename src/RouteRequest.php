@@ -270,7 +270,7 @@ class RouteRequest extends Main\Root
                     elseif(method_exists($this,$key))
                     $return = $this->$key($value,$session);
 
-                    elseif(static::classIsCallable($value))
+                    elseif(static::isCallable($value))
                     $return = $value($this,$session);
 
                     else
@@ -577,7 +577,7 @@ class RouteRequest extends Main\Root
     final public function post($value):bool
     {
         $return = false;
-
+        
         if($value === null)
         $return = true;
 
