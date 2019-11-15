@@ -568,7 +568,7 @@ class RouteSegmentRequest extends RouteRequest
                 $value = Base\Arrs::cast($value);
             }
         }
-        
+
         $return = Base\Validate::arr($value,$array);
 
         return $return;

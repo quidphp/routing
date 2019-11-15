@@ -769,7 +769,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return;
     }
 
-    
+
     // getMetaFromContract
     // retourne un tableau avec les méta données pour un objet ayant l'interface meta
     final protected function getMetaFromContract(Main\Contract\Meta $meta,array $return):array

@@ -577,7 +577,7 @@ class RouteRequest extends Main\Root
     final public function post($value):bool
     {
         $return = false;
-        
+
         if($value === null)
         $return = true;
 
