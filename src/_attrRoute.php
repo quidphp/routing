@@ -147,7 +147,7 @@ trait _attrRoute
     // shouldPrepareRoute
     // retourne vrai si la route doit être préparé
     // est utilisé dans la méthode route
-    final protected function shouldPrepareRoute($key,string $route):bool
+    protected function shouldPrepareRoute($key,string $route):bool
     {
         return false;
     }
@@ -156,7 +156,7 @@ trait _attrRoute
     // routePrepareConfig
     // permet de préparer une les config d'une route
     // est utilisé dans la méthode route
-    final protected function routePrepareConfig($key,string $route):void
+    protected function routePrepareConfig($key,string $route):void
     {
         return;
     }

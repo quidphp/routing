@@ -53,10 +53,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             'metaDescription'=>[Base\Html::class,'metaDescriptionValue'],
             'metaKeywords'=>[Base\Html::class,'metaKeywordsValue'],
             'metaUri'=>[Base\Html::class,'metaUriValue'],
-            'bodyClass'=>[Base\Attr::class,'prepareClass'],
-            'bodyStyle'=>[Base\Style::class,'str']],
+            'htmlAttr'=>[Base\Attr::class,'arr'],
+            'bodyAttr'=>[Base\Attr::class,'arr']],
         'docOpen'=>[ // utilisé pour l'ouverture du document
-            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%'],
+            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%',"%htmlAttr%"],
             'head'=>[
                 'title'=>'%title%',
                 'meta'=>[
@@ -72,7 +72,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 'script'=>[],
                 'css'=>[],
                 'js'=>[]],
-            'body'=>['%bodyClass%','style'=>'%bodyStyle%']],
+            'body'=>["%bodyAttr%"]],
         'docClose'=>[ // utilisé pour la fermeture du document
             'script'=>[],
             'js'=>[]],
@@ -780,8 +780,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $array['metaKeywords'] = $meta->getMetaKeywords($return['metaKeywords'] ?? null);
         $array['metaDescription'] = $meta->getMetaDescription($return['metaDescription'] ?? null);
         $array['metaImage'] = $meta->getMetaImage($return['metaImage'] ?? null);
-        $array['bodyClass'] = $meta->getBodyClass($return['bodyClass'] ?? null);
-        $array['bodyStyle'] = $meta->getBodyStyle($return['bodyStyle'] ?? null);
+        $array['htmlAttr'] = $meta->getHtmlAttr($return['htmlAttr'] ?? null);
+        $array['bodyAttr'] = $meta->getBodyAttr($return['bodyAttr'] ?? null);
 
         foreach ($array as $key => $value)
         {
@@ -795,7 +795,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaTitle
     // retourne les données pour le metaTitle
-    final public function getMetaTitle($value=null)
+    public function getMetaTitle($value=null)
     {
         return;
     }
@@ -803,7 +803,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaKeywords
     // retourne les données pour le metaKeywords
-    final public function getMetaKeywords($value=null)
+    public function getMetaKeywords($value=null)
     {
         return;
     }
@@ -811,7 +811,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaDescription
     // retourne les données pour la metaDescription
-    final public function getMetaDescription($value=null)
+    public function getMetaDescription($value=null)
     {
         return;
     }
@@ -819,23 +819,23 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaImage
     // retourne les données pour la metaImage
-    final public function getMetaImage($value=null)
+    public function getMetaImage($value=null)
     {
         return;
     }
 
-
-    // getBodyClass
-    // retourne les données pour la classe de body
-    final public function getBodyClass($value=null)
+    
+    // getHtmlAttr
+    // retourne les données pour les attributs de html
+    public function getHtmlAttr($value=null)
     {
         return;
     }
-
-
-    // getBodyStyle
-    // retourne les données pour le style de body
-    final public function getBodyStyle($value=null)
+    
+    
+    // getBodyAttr
+    // retourne les données pour les attributs de body
+    public function getBodyAttr($value=null)
     {
         return;
     }
@@ -927,11 +927,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = $this->getBaseReplace();
         $return = $this->getMetaFromContract($this,$return);
-
+        
         $otherMeta = $this->getOtherMeta();
         if(!empty($otherMeta))
         $return = $this->getMetaFromContract($otherMeta,$return);
-
+        
         $return = $this->onReplace($return);
         $return['title'] = $this->prepareTitle($return['title'] ?? null,$return);
 
@@ -974,11 +974,21 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             {
                 $return = $doc;
                 $replace = $this->getReplace($type);
-
+                
                 if(!empty($replace))
                 {
                     $replace = Base\Arr::keysWrap('%','%',$replace);
                     $return = Base\Arrs::valuesReplace($replace,$return);
+                    
+                    $append = array();
+                    foreach ($replace as $key => $value) 
+                    {
+                        if(is_array($value))
+                        $append[$key] = $value;
+                    }
+                    
+                    if(!empty($append))
+                    $return = Base\Arrs::valuesAppend($append,$return);
                 }
             }
 
