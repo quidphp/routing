@@ -58,7 +58,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             'htmlAttr'=>[Base\Attr::class,'arr'],
             'bodyAttr'=>[Base\Attr::class,'arr']],
         'docOpen'=>[ // utilisé pour l'ouverture du document
-            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%',"%htmlAttr%"],
+            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%','%htmlAttr%'],
             'head'=>[
                 'title'=>'%title%',
                 'meta'=>[
@@ -74,7 +74,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 'script'=>[],
                 'css'=>[],
                 'js'=>[]],
-            'body'=>["%bodyAttr%"]],
+            'body'=>['%bodyAttr%']],
         'docClose'=>[ // utilisé pour la fermeture du document
             'script'=>[],
             'js'=>[]],
@@ -826,15 +826,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return;
     }
 
-    
+
     // getHtmlAttr
     // retourne les données pour les attributs de html
     public function getHtmlAttr($value=null)
     {
         return;
     }
-    
-    
+
+
     // getBodyAttr
     // retourne les données pour les attributs de body
     public function getBodyAttr($value=null)
@@ -929,11 +929,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = $this->getBaseReplace();
         $return = $this->getMetaFromContract($this,$return);
-        
+
         $otherMeta = $this->getOtherMeta();
         if(!empty($otherMeta))
         $return = $this->getMetaFromContract($otherMeta,$return);
-        
+
         $return = $this->onReplace($return);
         $return['title'] = $this->prepareTitle($return['title'] ?? null,$return);
 
@@ -976,19 +976,19 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             {
                 $return = $doc;
                 $replace = $this->getReplace($type);
-                
+
                 if(!empty($replace))
                 {
                     $replace = Base\Arr::keysWrap('%','%',$replace);
                     $return = Base\Arrs::valuesReplace($replace,$return);
-                    
-                    $append = array();
-                    foreach ($replace as $key => $value) 
+
+                    $append = [];
+                    foreach ($replace as $key => $value)
                     {
                         if(is_array($value))
                         $append[$key] = $value;
                     }
-                    
+
                     if(!empty($append))
                     $return = Base\Arrs::valuesAppend($append,$return);
                 }
