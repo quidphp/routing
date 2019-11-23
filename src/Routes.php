@@ -397,7 +397,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
             {
                 foreach ($this->arr() as $key => $value)
                 {
-                    if($value::inSitemap())
+                    if($value::allowed() && $value::inSitemap())
                     {
                         $uri = null;
 
