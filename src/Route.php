@@ -485,7 +485,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return['bool'] = $bool;
         $return['continue'] = $continue;
         $return['output'] = $output;
-        
+
         return $return;
     }
 
