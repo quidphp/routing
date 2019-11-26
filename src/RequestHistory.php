@@ -61,7 +61,7 @@ class RequestHistory extends Main\RequestHistory
 
         if(empty($previous) && $fallback === true)
         $return = Base\Response::redirectSchemeHost($option['code'],$option['kill'],$option['encode']);
-        
+
         if(!empty($previous))
         $return = Base\Response::redirect($previous->uriAbsolute(),$option['code'],$option['kill'],$option['encode']);
 

@@ -10,8 +10,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Routing;
-use Quid\Routing;
 use Quid\Main;
+use Quid\Routing;
 
 // session
 // extended class that adds session support for routes
@@ -23,8 +23,8 @@ class Session extends Main\Session
         'structure'=>[ // callables de structure additionnelles dans data, se merge à celle dans base/session
             'nav'=>'structureNav']
     ];
-    
-    
+
+
     // structureNav
     // gère le champ structure nav de la session
     // mode insert, update ou is

@@ -766,7 +766,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         elseif($value === true)
         {
             $routes = static::routes();
-            static::session()->history()->previousRedirect($routes,true,true,array('code'=>$code,'kill'=>$kill));
+            static::session()->history()->previousRedirect($routes,true,true,['code'=>$code,'kill'=>$kill]);
         }
 
         elseif($value instanceof self)
@@ -919,7 +919,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return = '';
         $prepare = $this->prepareDoc('docOpen');
         $return = Base\Html::docOpen($prepare,$default,$separator,true);
-        
+
         $css = $prepare['head']['css']['type'] ?? null;
         if($this->getAttr('errorCss') && is_string($css))
         {
@@ -928,7 +928,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             if(!empty($css))
             $class::setDocHead($css);
         }
-        
+
         return $return;
     }
 
