@@ -52,14 +52,18 @@ class RequestHistory extends Main\RequestHistory
     // previousRedirect
     // permet de rediriger vers la dernière entrée ou un objet route spécifié en premier argument
     // possible de mettre une classe de route ou un objet route à utiliser comme fallback
+    // ou si fallback est true et que previous est vide, redirige vers le schemeHost
     final public function previousRedirect(Routes $routes,$fallback=null,bool $hasExtra=true,?array $option=null):bool
     {
         $return = false;
         $option = Base\Arr::plus(['encode'=>true,'code'=>true,'kill'=>true],$option);
         $previous = $this->previousRoute($routes,$fallback,$hasExtra);
 
+        if(empty($previous) && $fallback === true)
+        $return = Base\Response::redirectSchemeHost($option['code'],$option['kill'],$option['encode']);
+        
         if(!empty($previous))
-        $return = $previous->redirect($option['code'],$option['kill'],$option['encode']);
+        $return = Base\Response::redirect($previous->uriAbsolute(),$option['code'],$option['kill'],$option['encode']);
 
         return $return;
     }

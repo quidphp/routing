@@ -99,6 +99,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'menu'=>null, // détermine si la route fait partie d'un ou plusieurs menus
         'history'=>true, // la requête est ajouté à l'historique de session
         'uriAbsolute'=>null, // force toutes les uris générés via uri output dans la route à être absolute
+        'errorCss'=>true, // ajoute le fichier css type à la classe erreur, lors du docopen
         'cliHtmlOverload'=>null, // force les méthodes cli à générer du html, seulement si c'est true et que cli est false
         'permission'=>[ // tableau des permissions
             '*'=>['access'=>true]], // accorde accès de base
@@ -165,7 +166,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // session
     // retourne l'objet session
-    abstract public static function session():Main\Session;
+    abstract public static function session():Session;
 
 
     // services
@@ -763,7 +764,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         Base\Response::redirect($value,$code,$kill);
 
         elseif($value === true)
-        Base\Response::redirectReferer(true,true,$code,$kill);
+        {
+            $routes = static::routes();
+            static::session()->history()->previousRedirect($routes,true,true,array('code'=>$code,'kill'=>$kill));
+        }
 
         elseif($value instanceof self)
         Base\Response::redirect($value->uriAbsolute(),$code,$kill);
@@ -909,9 +913,23 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // docOpen
     // génère l'ouverture du document en html
+    // si l'ouverture c'est fait sans erreur et qu'il y a un fichier css type, met le comme css par défaut pour les erreurs
     final public function docOpen(bool $default=true,?string $separator=null):string
     {
-        return Base\Html::docOpen($this->prepareDoc('docOpen'),$default,$separator,true);
+        $return = '';
+        $prepare = $this->prepareDoc('docOpen');
+        $return = Base\Html::docOpen($prepare,$default,$separator,true);
+        
+        $css = $prepare['head']['css']['type'] ?? null;
+        if($this->getAttr('errorCss') && is_string($css))
+        {
+            $class = Main\Error::getOverloadClass();
+            $css = Base\Html::css($css);
+            if(!empty($css))
+            $class::setDocHead($css);
+        }
+        
+        return $return;
     }
 
 
