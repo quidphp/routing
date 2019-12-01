@@ -101,6 +101,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'uriAbsolute'=>null, // force toutes les uris générés via uri output dans la route à être absolute
         'errorCss'=>true, // ajoute le fichier css type à la classe erreur, lors du docopen
         'cliHtmlOverload'=>null, // force les méthodes cli à générer du html, seulement si c'est true et que cli est false
+        'selectedUri'=>true, // ajoute l'uri de la route trigger comme uriSelected
         'permission'=>[ // tableau des permissions
             '*'=>['access'=>true]], // accorde accès de base
         'ignore'=>false, // si la route est ignoré pour routes
@@ -706,7 +707,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             if(static::hasMatch('captcha'))
             $session->emptyCaptcha();
 
-            if($this->hasUri())
+            if($this->getAttr('selectedUri') === true && $this->hasUri())
             {
                 $selected = $this->selectedUri();
                 $uri = $this->uri();
