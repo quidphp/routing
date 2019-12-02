@@ -336,8 +336,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         foreach ($services as $service)
         {
-            $key = $service->getKey();
-
+            $key = $service->getServiceKey(true);
+            
             if($type === 'docOpen')
             {
                 $return['head']['js'] = $return['head']['js'] ?? null;
