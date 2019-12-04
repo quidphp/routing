@@ -1182,16 +1182,28 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             if(!empty($method))
             $attr['method'] = $method;
         }
-
+        
+        if(!empty($attr['data-confirm']))
+        $attr['data-confirm'] = $this->getFormText($attr['data-confirm'],'confirm');
+        
         if(!empty($attr['data-unload']))
-        $attr['data-unload'] = static::lang()->text($attr['data-unload']);
-
+        $attr['data-unload'] = $this->getFormText($attr['data-unload'],'unload');
+        
         $return = Base\Html::formOpen($uri,$attr,$this->tagOption('form',$option));
 
         return $return;
     }
 
-
+    
+    // getFormText
+    // retourne le texte à utiliser pour form
+    // gère unload et confirm
+    protected function getFormText($value,string $type):string
+    {
+        return static::lang()->text($value);
+    }
+    
+    
     // formSubmit
     // ouvre et ferme un formulaire avec un bouton submit sans label ou titre
     final public function formSubmit($title=null,$submitAttr=null,$attr=null,?string $lang=null,?array $option=null):?string
