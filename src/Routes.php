@@ -33,12 +33,12 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // map
     protected static $allow = ['set','unset','remove','filter','sort','serialize','clone']; // méthodes permises
     protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
-    
-    
+
+
     // dynamique
     protected $init = false;
-    
-    
+
+
     // onPrepareKey
     // prepare une clé pour les méthodes qui soumette une clé
     final protected function onPrepareKey($return)
@@ -52,15 +52,15 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
         return $return;
     }
 
-    
+
     // isInit
     // retourne vrai si l'objet a été init
-    final public function isInit():bool 
+    final public function isInit():bool
     {
         return $this->init;
     }
-    
-    
+
+
     // type
     // retourne le type des routes
     final public function type():?string
@@ -453,7 +453,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
         $this->sortDefault();
         $this->setParent();
         $this->init = true;
-        
+
         return $this;
     }
 
