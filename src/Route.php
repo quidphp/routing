@@ -860,7 +860,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if(!empty($path))
         $return = $obj->same($path,null,$lang,$option);
         else
-        $return = $obj->routeLabel(static::name(),$lang,$option);
+        $return = $obj->routeLabel(static::name(true),$lang,$option);
 
         return $return;
     }
@@ -878,7 +878,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if(!empty($path))
         $return = $obj->same($path,$replace,$lang,$option);
         else
-        $return = $obj->routeDescription(static::name(),$replace,$lang,$option);
+        $return = $obj->routeDescription(static::name(true),$replace,$lang,$option);
 
         return $return;
     }
@@ -1428,10 +1428,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // name
     // retourne le nom de la route
-    // est toujours le nom de la classe avec la première lettre lower case
-    final public static function name():string
+    // possible de retourner avec la première lettre lower case
+    final public static function name(bool $lcfirst=false):string
     {
-        return static::className(true);
+        return static::className($lcfirst);
     }
 
 
@@ -1540,7 +1540,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = false;
         $isRedirectable = static::$config['redirectable'] ?? null;
-        $isSitemap = (static::name() === 'sitemap')? true:false;
+        $isSitemap = (static::name(true) === 'sitemap')? true:false;
 
         if($isRedirectable !== false && static::allowed($role) && static::hasPath())
         $return = ($isSitemap || static::isMethod('post') || static::isAjax())? false:true;
