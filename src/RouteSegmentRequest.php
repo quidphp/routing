@@ -554,32 +554,32 @@ class RouteSegmentRequest extends RouteRequest
         return $this->valid['segment'] = $return;
     }
 
-    
+
     // orderRouteSegment
     // méthode qui permet d'ordonner les segments de la route pour le loop de validateSegment
-    final protected function orderRouteSegment():array 
+    final protected function orderRouteSegment():array
     {
-        $return = array();
+        $return = [];
         $requestSegment = $this->requestSegment();
         $route = $this->route();
-        $segments = $route::$config['segment'] ?? array();
+        $segments = $route::$config['segment'] ?? [];
         $segmentsKeys = array_keys($segments);
-        
+
         if(is_array($segments) && Base\Arr::keysAre($segmentsKeys,$requestSegment))
         {
-            foreach ($segments as $key => $value) 
+            foreach ($segments as $key => $value)
             {
                 $return[$key] = $requestSegment[$key];
             }
         }
-        
+
         else
         static::throw('incompatibleSegments',$segmentsKeys,array_keys($requestSegment));
-        
+
         return $return;
     }
-    
-    
+
+
     // validateArray
     // validate une valeur dans un array
     // utiliser pour valider headers, query et post
