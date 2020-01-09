@@ -522,11 +522,12 @@ class RouteSegmentRequest extends RouteRequest
     {
         $return = true;
         $route = $this->route();
-        $keyValue = $this->requestSegment();
+        $loop = $this->orderRouteSegment();
+        $keyValue = $loop;
         $defaultSegment = $route::getDefaultSegment();
         $this->segment = [];
 
-        foreach ($keyValue as $key => $value)
+        foreach ($loop as $key => $value)
         {
             $callable = $this->routeCallableSegment($key);
             $value = (is_string($value) && $value === $defaultSegment)? null:$value;
@@ -544,13 +545,41 @@ class RouteSegmentRequest extends RouteRequest
             }
 
             else
-            $this->segment[$key] = $v;
+            {
+                $keyValue[$key] = $v;
+                $this->segment[$key] = $v;
+            }
         }
 
         return $this->valid['segment'] = $return;
     }
 
-
+    
+    // orderRouteSegment
+    // méthode qui permet d'ordonner les segments de la route pour le loop de validateSegment
+    final protected function orderRouteSegment():array 
+    {
+        $return = array();
+        $requestSegment = $this->requestSegment();
+        $route = $this->route();
+        $segments = $route::$config['segment'] ?? array();
+        $segmentsKeys = array_keys($segments);
+        
+        if(is_array($segments) && Base\Arr::keysAre($segmentsKeys,$requestSegment))
+        {
+            foreach ($segments as $key => $value) 
+            {
+                $return[$key] = $requestSegment[$key];
+            }
+        }
+        
+        else
+        static::throw('incompatibleSegments',$segmentsKeys,array_keys($requestSegment));
+        
+        return $return;
+    }
+    
+    
     // validateArray
     // validate une valeur dans un array
     // utiliser pour valider headers, query et post
