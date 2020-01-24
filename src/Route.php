@@ -218,15 +218,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $this->canTrigger();
     }
 
-    
+
     // onPrepared
     // callback appelé à la fin du processBefore
-    protected function onPrepared() 
+    protected function onPrepared()
     {
         return;
     }
-    
-    
+
+
     // onAfter
     // méthode appelé à la fin de la méthode after
     // possible de spécifier une redirection
@@ -710,7 +710,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             $selectedUri = $this->getAttr('selectedUri');
             if(!empty($selectedUri))
             $this->addSelectedUri($selectedUri);
-            
+
             $uriAbsolute = $this->getAttr('uriAbsolute');
             if(is_bool($uriAbsolute))
             Base\Uri::setAllAbsolute($uriAbsolute);
@@ -718,7 +718,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             $cliHtmlOverload = $this->getAttr('cliHtmlOverload');
             if($cliHtmlOverload === true && !Base\Server::isCli())
             Base\Cli::setHtmlOverload($cliHtmlOverload);
-            
+
             $this->prepareResponse();
             $this->onPrepared();
         }
@@ -1085,24 +1085,24 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         return $this->uriMethod('uriAbsolute',$lang,$option);
     }
 
-    
+
     // addSelectedUri
     // permet d'ajouter l'uri de la route comme uri sélectionné
     final public function addSelectedUri($class=true,?string $lang=null,?array $option=null):bool
     {
         $return = false;
-        
+
         if($this->hasUri() && $this->canTrigger())
         {
             $uri = $this->uri($lang,$option);
-            $selected = array($uri=>$class);
+            $selected = [$uri=>$class];
             Base\Attr::addSelectedUri($selected);
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // isSelectedUri
     // retourne vrai si l'uri de la route est sélectionné, tel que défini dans base/attr
     final public function isSelectedUri(?string $lang=null,?array $option=null):bool
