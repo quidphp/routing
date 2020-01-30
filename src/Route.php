@@ -786,10 +786,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $array['metaImage'] = $meta->getMetaImage($return['metaImage'] ?? null);
         $array['htmlAttr'] = $meta->getHtmlAttr($return['htmlAttr'] ?? null);
         $array['bodyAttr'] = $meta->getBodyAttr($return['bodyAttr'] ?? null);
-        
+
         if($array['metaImage'] instanceof Main\File)
         $array['metaImage'] = $array['metaImage']->pathToUri();
-        
+
         foreach ($array as $key => $value)
         {
             if($value !== null)
