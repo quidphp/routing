@@ -74,7 +74,7 @@ class Request extends Main\Request
             }
 
             // requestUnsafe
-            if(empty($return['type']) && $isSafe === false)
+            if(empty($return['location']) && $isSafe === false)
             {
                 $return['type'] = 'requestUnsafe';
 
@@ -92,7 +92,7 @@ class Request extends Main\Request
             }
 
             // requestInvalid
-            if(empty($return['type']) && $requestInvalid === true)
+            if(empty($return['location']) && $requestInvalid === true)
             {
                 $redirect = (empty($redirect))? $schemeHost:$redirect;
 
