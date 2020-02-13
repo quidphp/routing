@@ -562,7 +562,7 @@ class RouteSegmentRequest extends RouteRequest
         $return = [];
         $requestSegment = $this->requestSegment();
         $route = $this->route();
-        $segments = $route::$config['segment'] ?? [];
+        $segments = Base\Arr::clean($route::$config['segment'] ?? []);
         $segmentsKeys = array_keys($segments);
 
         if(is_array($segments) && Base\Arr::keysAre($segmentsKeys,$requestSegment))
