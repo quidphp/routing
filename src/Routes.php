@@ -417,19 +417,28 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
                         {
                             foreach ($value::allSegment() as $segment)
                             {
-                                $uri = $value::make($segment)->uriAbsolute($lang,$option);
+                                $route = $value::make($segment);
 
-                                if(!in_array($uri,$return,true))
-                                $return[] = $uri;
+                                if($route->canTrigger())
+                                {
+                                    $uri = $route->uriAbsolute($lang,$option);
+
+                                    if(!in_array($uri,$return,true))
+                                    $return[] = $uri;
+                                }
                             }
                         }
 
                         else
                         {
-                            $uri = $value::make()->uriAbsolute($lang,$option);
+                            $route = $value::make();
+                            if($route->canTrigger())
+                            {
+                                $uri = $route->uriAbsolute($lang,$option);
 
-                            if(!in_array($uri,$return,true))
-                            $return[] = $uri;
+                                if(!in_array($uri,$return,true))
+                                $return[] = $uri;
+                            }
                         }
                     }
                 }
