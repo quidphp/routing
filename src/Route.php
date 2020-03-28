@@ -776,6 +776,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // getMetaFromContract
     // retourne un tableau avec les méta données pour un objet ayant l'interface meta
+    // pour meta description, si la valeur est -, remplace par null (donc le défaut va prendre le dessus)
     final protected function getMetaFromContract(Main\Contract\Meta $meta,array $return):array
     {
         $array = [];
@@ -789,6 +790,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         if($array['metaImage'] instanceof Main\File)
         $array['metaImage'] = $array['metaImage']->pathToUri();
+
+        if(Base\Obj::cast($array['metaDescription']) === '-')
+        $array['metaDescription'] = null;
 
         foreach ($array as $key => $value)
         {
