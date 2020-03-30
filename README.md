@@ -11,6 +11,9 @@
 ## License
 **QuidPHP/Routing** is available as an open-source software under the [MIT license](LICENSE).
 
+## Documentation
+**QuidPHP/Routing** documentation is being written. Once ready, it will be available at https://quidphp.github.io/project.
+
 ## Installation
 **QuidPHP/Routing** can be easily installed with [Composer](https://getcomposer.org). It is available on [Packagist](https://packagist.org/packages/quidphp/routing).
 ``` bash
