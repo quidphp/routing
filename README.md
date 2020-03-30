@@ -35,18 +35,19 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 
 ## Convention
 **QuidPHP/Routing** is built on the following conventions:
-- *Traits*: Traits filenames start with an underscore (_).
-- *Coding*: No curly braces are used in a IF statement if the condition can be resolved in only one statement.
-- *Type*: Files, function arguments and return types are strict typed.
-- *Config*: A special $config static property exists in all classes. This property gets recursively merged with the parents' property on initialization.
 - *M-VC*: A route object serves as both a View and a Controller. There should be one route class per route. 
 - *Segment*: A segment within a route path represents a dynamic value. It is wrapped around brackets. A callable that accepts or rejects the value need to be provided.
 - *Templating*: Once the route is triggered, the developer has complete control and can use any HTML rendering technology it desires. Or, simply use the [Quid\Base\Html](https://github.com/quidphp/base/blob/master/src/Html.php) methods to generate the HTML and use traits for reusable page components.
+- *Traits*: Traits filenames start with an underscore (_).
+- *Type*: Files, function arguments and return types are strict typed.
+- *Config*: A special $config static property exists in all classes. This property gets recursively merged with the parents' property on initialization.
+- *Coding*: No curly braces are used in a IF statement if the condition can be resolved in only one statement.
 
 ## Overview
-**QuidPHP/Routing** contains 11 classes and traits. Here is an overview:
-- [BreakException](src/BreakException.php) - Class for a break exception which breaks the root matching loop
-- [Exception](src/Exception.php) - Class used for a catchable route exception, the next available route will instead be triggered
+**QuidPHP/Routing** contains 13 classes and traits. Here is an overview:
+- [BreakException](src/BreakException.php) - Class for an exception which breaks the root matching loop
+- [Exception](src/Exception.php) - Class used for a route exception, the next available route will instead be triggered
+- [Flash](src/Flash.php) - Class for a collection containing flash-like data, manages route key
 - [Nav](src/Nav.php) - Class for storing route navigation-related data
 - [Redirection](src/Redirection.php) - Class managing a URI redirection array
 - [Request](src/Request.php) - Extended class with methods to route an HTTP request
@@ -55,19 +56,17 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [RouteRequest](src/RouteRequest.php) - Class that analyzes if a request matches a route
 - [RouteSegmentRequest](src/RouteSegmentRequest.php) - Class that analyzes if a request matches a route with segment (non-static value)
 - [Routes](src/Routes.php) - Class for a collection of many untriggered routes
-- [_segment](src/_segment.php) - Trait that provides logic for a route with segment (non-static value)
+- [Session](src/Session.php) - Extended class that adds session support for routes
+- [_attrRoute](src/_attrRoute.php) - Trait that provides methods to work with routes in the attributes property
 
 ## Testing
-**QuidPHP/Routing** contains 10 test classes:
+**QuidPHP/Routing** contains 7 test classes:
 - [BreakException](test/BreakException.php) - Class for testing Quid\Routing\BreakException
 - [Exception](test/Exception.php) - Class for testing Quid\Routing\Exception
 - [Nav](test/Nav.php) - Class for testing Quid\Routing\Nav
 - [Redirection](test/Redirection.php) - Class for testing Quid\Routing\Redirection
 - [Request](test/Request.php) - Class for testing Quid\Routing\Request
 - [RequestHistory](test/RequestHistory.php) - Class for testing Quid\Routing\RequestHistory
-- [Route](test/Route.php) - Class for testing Quid\Routing\Route
-- [RouteRequest](test/RouteRequest.php) - Class for testing Quid\Routing\RouteRequest
-- [RouteSegmentRequest](test/RouteSegmentRequest.php) - Class for testing Quid\Routing\RouteSegmentRequest
-- [Routes](test/Routes.php) - Class for testing Quid\Routing\Routes
+- [Session](test/Session.php) - Class for testing Quid\Routing\Session
 
 **QuidPHP/Routing** testsuite can be run by creating a new [quidphp/project](https://github.com/quidphp/project).

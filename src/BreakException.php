@@ -13,7 +13,7 @@ namespace Quid\Routing;
 use Quid\Main;
 
 // breakException
-// class for a break exception which breaks the root matching loop
+// class for an exception which breaks the root matching loop
 class BreakException extends Main\Exception
 {
     // config
