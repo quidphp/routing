@@ -36,7 +36,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             'header'=>null, // validation sur le tableau des headers
             'lang'=>null, // toutes les langs sont acceptés
             'ip'=>null, // tous les ip sont acceptés
-            'browser'=>null, // tous les browsers sont acceptés
             'session'=>null, // validation sur contenu de session
             'role'=>null, // validation du code ou de la classe de permission
             'csrf'=>null, // validation que le champ csrf et le même que dans session

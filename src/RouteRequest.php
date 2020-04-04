@@ -528,33 +528,6 @@ class RouteRequest extends Main\Root
     }
 
 
-    // browser
-    // retourne vrai si la requête et la route match browser
-    final public function browser($value):bool
-    {
-        $return = false;
-
-        if($value === null || $value === false)
-        $return = true;
-
-        else
-        {
-            $browserName = $this->request()->browserName();
-
-            if(!empty($browserName))
-            {
-                if(is_string($value))
-                $value = [$value];
-
-                if(is_array($value) && !empty($value) && Base\Arr::in($browserName,$value,false))
-                $return = true;
-            }
-        }
-
-        return $return;
-    }
-
-
     // query
     // retourne vrai si la requête et la route match query
     final public function query($value):bool
