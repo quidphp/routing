@@ -20,9 +20,9 @@ class Nav extends Main\Map
     public static $config = [];
 
 
-    // map
-    protected static $is = 'string'; // les données de nav doivent être des routes, donc is est string
-    protected static $allow = ['set','unset','empty','serialize']; // méthodes permises
+    // dynamique
+    protected $mapAllow = ['set','unset','empty','serialize']; // méthodes permises
+    protected $mapIs = 'string'; // les données de nav doivent être des routes, donc is est string
 
 
     // route

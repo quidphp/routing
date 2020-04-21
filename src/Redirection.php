@@ -26,8 +26,8 @@ class Redirection extends Main\Map
     public static $config = [];
 
 
-    // map
-    protected static $allow = ['set','unset','remove','empty','overwrite','serialize']; // méthodes permises
+    // dynamique
+    protected $mapAllow = ['set','unset','remove','empty','overwrite','serialize']; // méthodes permises
 
 
     // onPrepareKey

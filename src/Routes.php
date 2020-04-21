@@ -30,13 +30,10 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     ];
 
 
-    // map
-    protected static $allow = ['set','unset','remove','filter','sort','serialize','clone']; // méthodes permises
-    protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
-
-
     // dynamique
     protected $init = false;
+    protected $mapAllow = ['set','unset','remove','filter','sort','serialize','clone']; // méthodes permises
+    protected $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
 
 
     // onPrepareKey
