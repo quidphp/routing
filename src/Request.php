@@ -50,7 +50,7 @@ class Request extends Main\Request
         $redirect = $this->redirect();
         $hasExtension = $this->hasExtension();
         $argumentNotCli = $this->isPathArgumentNotCli();
-        $requestInvalid = (!empty($redirect) || $argumentNotCli)? true:false;
+        $requestInvalid = (!empty($redirect) || $argumentNotCli);
 
         // externalPost
         if($isExternalPost === true)

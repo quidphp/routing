@@ -36,7 +36,7 @@ class Session extends Main\Session
         $return = Routing\Nav::newOverload();
 
         elseif($mode === 'is')
-        $return = ($value instanceof Routing\Nav)? true:false;
+        $return = ($value instanceof Routing\Nav);
 
         return $return;
     }

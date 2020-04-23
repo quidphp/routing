@@ -25,7 +25,7 @@ trait _attrRoute
 
         if(is_string($key) || is_numeric($key))
         {
-            $isCallable = (static::isCallable($route))? true:false;
+            $isCallable = static::isCallable($route);
 
             if($key === 0 && (is_string($route) || $isCallable === true))
             $return = $route;

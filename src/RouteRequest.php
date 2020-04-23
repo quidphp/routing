@@ -72,7 +72,7 @@ class RouteRequest extends Main\Root
     // retourne vrai si la route et la requête match
     public function isValid(Main\Session $session,bool $exception=false):bool
     {
-        return ($this->isValidMatch($session,$exception))? true:false;
+        return $this->isValidMatch($session,$exception);
     }
 
 
@@ -80,7 +80,7 @@ class RouteRequest extends Main\Root
     // envoie une exception si la route et la requête n'ont pas passés les tests match
     public function checkValid():bool
     {
-        $return = ($this->valid('match'))? true:false;
+        $return = $this->valid('match');
 
         if($return === false)
         static::throw();
@@ -120,7 +120,7 @@ class RouteRequest extends Main\Root
     // retourne vrai si la requête de l'objet routeRequest et la requête courante, storé dans core/request inst
     final public function isRequestInst():bool
     {
-        return ($this->request() === Main\Request::instSafe())? true:false;
+        return $this->request() === Main\Request::instSafe();
     }
 
 

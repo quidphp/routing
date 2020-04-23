@@ -270,7 +270,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // callback avant chaque appel à permission can, vérifie que la table à la permission access
     final protected function onRolePermission($key,array $array):bool
     {
-        return (array_key_exists('access',$array) && $array['access'] === true)? true:false;
+        return array_key_exists('access',$array) && $array['access'] === true;
     }
 
 
@@ -387,7 +387,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si la route est présentement triggé
     final public function isTriggered():bool
     {
-        return ($this->trigger === true)? true:false;
+        return $this->trigger === true;
     }
 
 
@@ -1363,7 +1363,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si la route est ignoré
     final public static function isIgnored():bool
     {
-        return ((static::$config['ignore'] ?? null) === true)? true:false;
+        return (static::$config['ignore'] ?? null) === true;
     }
 
 
@@ -1385,7 +1385,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si le groupe est celui spécifié
     final public static function isGroup($value):bool
     {
-        return ($value === static::group())? true:false;
+        return $value === static::group();
     }
 
 
@@ -1560,7 +1560,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = false;
         $isRedirectable = static::$config['redirectable'] ?? null;
-        $isSitemap = (static::name(true) === 'sitemap')? true:false;
+        $isSitemap = (static::name(true) === 'sitemap');
 
         if($isRedirectable !== false && static::allowed($role) && static::hasPath())
         $return = ($isSitemap || static::isMethod('post') || static::isAjax())? false:true;
@@ -1573,7 +1573,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si la route devrait être gardé dasn l'history
     final public static function shouldKeepInHistory():bool
     {
-        return (!empty(static::$config['history']))? true:false;
+        return !empty(static::$config['history']);
     }
 
 
@@ -1700,7 +1700,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = null;
         $route = static::make($request);
-        $debug = ($debug === true && static::isDebug())? true:false;
+        $debug = ($debug === true && static::isDebug());
 
         if($route->isValid($debug))
         $return = $route;
@@ -1720,7 +1720,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si la route est en mode débogagge
     final public static function isDebug($value=null):bool
     {
-        return (static::$config['debug'] === true || ($value !== null && static::$config['debug'] === $value))? true:false;
+        return static::$config['debug'] === true || ($value !== null && static::$config['debug'] === $value);
     }
 
 
