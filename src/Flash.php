@@ -18,7 +18,7 @@ use Quid\Main;
 class Flash extends Main\Flash
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // onPrepareKey

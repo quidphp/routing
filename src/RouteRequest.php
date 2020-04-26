@@ -18,13 +18,13 @@ use Quid\Main;
 class RouteRequest extends Main\Root
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $route = null; // nom de la classe de la route
-    protected $request = null; // copie ou référence de la requête
-    protected $valid = []; // garde en mémoire les tests passés
+    protected string $route; // nom de la classe de la route
+    protected Main\Request $request; // copie ou référence de la requête
+    protected array $valid = []; // garde en mémoire les tests passés
     protected $fallback = null; // garde en mémoire la raison que la route ira en fallback
 
 
@@ -434,7 +434,7 @@ class RouteRequest extends Main\Root
 
                 if(is_array($value) && !empty($value))
                 {
-                    $value = array_map('strtolower',$value);
+                    $value = Base\Arr::map($value,fn($v) => strtolower($v));
 
                     if(in_array($method,$value,true))
                     $return = true;

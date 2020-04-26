@@ -18,7 +18,7 @@ use Quid\Routing;
 class Session extends Main\Session
 {
     // config
-    public static $config = [
+    public static array $config = [
         'historyClass'=>Routing\RequestHistory::class, // classe de l'historique de requête
         'structure'=>[ // callables de structure additionnelles dans data, se merge à celle dans base/session
             'nav'=>'structureNav']

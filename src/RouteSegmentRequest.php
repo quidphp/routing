@@ -18,16 +18,16 @@ use Quid\Main;
 class RouteSegmentRequest extends RouteRequest
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $type = null; // défini si la une requête a été fourni ou une valeur et la requête est celle de inst
-    protected $langCode = null; // garde en mémoire la lang de la session
-    protected $routeSegment = null; // garde en mémoire les segments requis par le path de la route
-    protected $requestSegment = null; // garde en mémoire les segments fournis par la request
-    protected $make = null; // garde en cache le résultat de makeRequestSegment
-    protected $segment = null; // garde en mémoire les données de segment, le retour de validateSegment
+    protected string $langCode; // garde en mémoire la lang de la session
+    protected ?int $type = null; // défini si la une requête a été fourni ou une valeur et la requête est celle de inst
+    protected ?array $routeSegment = null; // garde en mémoire les segments requis par le path de la route
+    protected ?array $requestSegment = null; // garde en mémoire les segments fournis par la request
+    protected ?array $make = null; // garde en cache le résultat de makeRequestSegment
+    protected ?array $segment = null; // garde en mémoire les données de segment, le retour de validateSegment
 
 
     // construct
@@ -99,7 +99,7 @@ class RouteSegmentRequest extends RouteRequest
     // change le nom de classe de la route
     // la classe doit être une sous-classe de routeSegment
     // lance la méthode reset
-    final public function setRoute(Route $route):parent
+    final public function setRoute(Route $route):self
     {
         parent::setRoute($route);
         $lang = $this->langCode();
@@ -133,7 +133,7 @@ class RouteSegmentRequest extends RouteRequest
     // si request est objet request, utilise la requête
     // sinon c'est une valeur, utilise la requête courante et envoie à parseRequestSegmentFromValue
     // lance la méthode reset
-    final public function setRequest($request=null):parent
+    final public function setRequest($request=null):self
     {
         $this->reset();
 

@@ -57,7 +57,7 @@ trait _attrRoute
         $route = $this->routeAttr($key);
 
         if(is_string($route) && $overload === true)
-        $return = $route::getOverloadClass();
+        $return = $route::classOverload();
 
         else
         $return = $route;

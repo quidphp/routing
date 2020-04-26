@@ -23,7 +23,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
 
     // config
-    public static $config = [
+    public static array $config = [
         'priorityIncrement'=>10, // incrémentation de la priorité lors de la méthode init
         'methodIgnore'=>'isIgnored',
         'subClass'=>Route::class
@@ -31,9 +31,9 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
 
     // dynamique
-    protected $init = false;
-    protected $mapAllow = ['set','unset','remove','filter','sort','serialize','clone']; // méthodes permises
-    protected $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
+    protected bool $init = false;
+    protected ?array $mapAllow = ['set','unset','remove','filter','sort','serialize','clone']; // méthodes permises
+    protected ?string $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
 
 
     // onPrepareKey

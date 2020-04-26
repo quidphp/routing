@@ -17,11 +17,11 @@ use Quid\Main;
 class Nav extends Main\Map
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['set','unset','empty','serialize']; // méthodes permises
+    protected ?array $mapAllow = ['set','unset','empty','serialize']; // méthodes permises
     protected $mapIs = 'string'; // les données de nav doivent être des routes, donc is est string
 
 

@@ -23,11 +23,11 @@ class Redirection extends Main\Map
 
 
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['set','unset','remove','empty','overwrite','serialize']; // méthodes permises
+    protected ?array $mapAllow = ['set','unset','remove','empty','overwrite','serialize']; // méthodes permises
 
 
     // onPrepareKey
@@ -153,7 +153,7 @@ class Redirection extends Main\Map
 
     // set
     // ajoute une nouvelle entrée dans le tableau de redirection
-    final public function set($key,$value):parent
+    final public function set($key,$value):self
     {
         $value = $this->onPrepareValue($value);
 

@@ -18,7 +18,7 @@ use Quid\Main;
 class Request extends Main\Request
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // construct

@@ -22,7 +22,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // config
-    public static $config = [
+    public static array $config = [
         'path'=>'undefined', // match path de la route, peut y avoir plusieurs, si il y a clé c'est une lang
         'match'=>[ // vérification lancé pour trouver le match
             'ssl'=>null, // si la requête passe via ssl ou non
@@ -113,8 +113,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // dynamique
-    protected $routeRequest = null; // variable qui contient l'objet routeRequest
-    protected $trigger = false; // garde en mémoire si la route est trigger ou non
+    protected RouteRequest $routeRequest; // variable qui contient l'objet routeRequest
+    protected bool $trigger = false; // garde en mémoire si la route est trigger ou non
 
 
     // construct
@@ -323,9 +323,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             if(static::isCallable($jsInit))
             $callable = $jsInit;
             else
-            $callable = function() use($jsInit) {
-                return $jsInit;
-            };
+            $callable = fn() => $jsInit;
 
             $return['script'] = Base\Arr::append($return['script'],[$callable]);
         }
@@ -927,7 +925,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $css = $prepare['head']['css']['type'] ?? null;
         if($this->getAttr('errorCss') && is_string($css))
         {
-            $class = Main\Error::getOverloadClass();
+            $class = Main\Error::classOverload();
             $css = Base\Html::css($css);
             if(!empty($css))
             $class::setDocHead($css);
@@ -1334,7 +1332,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // construit une instance de la route de façon statique
     final public static function make($request=null,bool $overload=true):self
     {
-        $class = ($overload === true)? static::getOverloadClass():static::class;
+        $class = ($overload === true)? static::classOverload():static::class;
         $return = new $class($request);
 
         return $return;
@@ -1481,7 +1479,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return = static::$config['parent'] ?? null;
 
         if(is_string($return))
-        $return = $return::getOverloadClass();
+        $return = $return::classOverload();
 
         return $return;
     }
@@ -1542,7 +1540,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
             if(is_array($method) && !empty($method))
             {
-                $method = array_map('strtolower',$method);
+                $method = Base\Arr::map($method,fn($v) => strtolower($v));
 
                 if(in_array($value,$method,true))
                 $return = true;
@@ -1867,10 +1865,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return = null;
 
         if(static::isSegmentClass())
-        $return = RouteSegmentRequest::getOverloadClass();
+        $return = RouteSegmentRequest::classOverload();
 
         else
-        $return = RouteRequest::getOverloadClass();
+        $return = RouteRequest::classOverload();
 
         return $return;
     }
