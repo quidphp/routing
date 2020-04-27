@@ -22,7 +22,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // config
-    public static array $config = [
+    protected static array $config = [
         'path'=>'undefined', // match path de la route, peut y avoir plusieurs, si il y a clé c'est une lang
         'match'=>[ // vérification lancé pour trouver le match
             'ssl'=>null, // si la requête passe via ssl ou non
@@ -325,7 +325,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             else
             $callable = fn() => $jsInit;
 
-            $return['script'] = Base\Arr::append($return['script'],[$callable]);
+            $return['script'] = Base\Arr::merge($return['script'],[$callable]);
         }
 
         return $return;
@@ -352,7 +352,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                     if(!empty($js))
                     {
                         $append = (is_array($js))? $js:[$key=>$js];
-                        $return['head']['js'] = Base\Arr::append($return['head']['js'] ?? [],$append);
+                        $return['head']['js'] = Base\Arr::merge($return['head']['js'] ?? [],$append);
                     }
                 }
 
@@ -361,7 +361,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 {
                     $script = $service->docOpenScript();
                     if(!empty($script))
-                    $return['head']['script'] = Base\Arr::append($return['head']['script'] ?? [],$script);
+                    $return['head']['script'] = Base\Arr::merge($return['head']['script'] ?? [],$script);
                 }
             }
 
@@ -372,7 +372,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 {
                     $script = $service->docCloseScript();
                     if(!empty($script))
-                    $return['script'] = Base\Arr::append($return['script'] ?? [],$script);
+                    $return['script'] = Base\Arr::merge($return['script'] ?? [],$script);
                 }
             }
         }
@@ -1015,7 +1015,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             }
 
             $return = $this->onPrepareDoc($type,$return);
-            $return = Base\Call::digStaticMethod($return);
+            $return = Base\Call::dig(true,$return);
         }
 
         else

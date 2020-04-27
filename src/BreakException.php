@@ -17,7 +17,7 @@ use Quid\Main;
 class BreakException extends Main\Exception
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'code'=>36 // code de l'exception
     ];
 }

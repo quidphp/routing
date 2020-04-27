@@ -18,7 +18,7 @@ use Quid\Main;
 class Flash extends Main\Flash
 {
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // onPrepareKey
@@ -35,7 +35,7 @@ class Flash extends Main\Flash
             if($route::isSegmentClass())
             {
                 $segments = array_values($route->segments());
-                $return = Base\Arr::append($return,$segments);
+                $return = Base\Arr::merge($return,$segments);
             }
         }
 

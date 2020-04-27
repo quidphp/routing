@@ -18,7 +18,7 @@ use Quid\Main;
 class RouteSegmentRequest extends RouteRequest
 {
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique
@@ -280,7 +280,7 @@ class RouteSegmentRequest extends RouteRequest
     {
         $return = false;
         $route = $this->route();
-        $catchAll = $route::$config['catchAll'] ?? false;
+        $catchAll = $route::getConfig('catchAll') ?? false;
         $routeSegment = $this->routeSegment();
 
         if($catchAll === true && !empty($routeSegment))
@@ -562,7 +562,7 @@ class RouteSegmentRequest extends RouteRequest
         $return = [];
         $requestSegment = $this->requestSegment();
         $route = $this->route();
-        $segments = Base\Arr::clean($route::$config['segment'] ?? []);
+        $segments = Base\Arr::clean($route::getConfig('segment') ?? []);
         $segmentsKeys = array_keys($segments);
 
         if(is_array($segments) && Base\Arr::keysAre($segmentsKeys,$requestSegment))
@@ -732,7 +732,7 @@ class RouteSegmentRequest extends RouteRequest
     {
         $return = null;
         $route = $this->route();
-        $segments = $route::$config['segment'] ?? null;
+        $segments = $route::getConfig('segment') ?? null;
         $callable = null;
 
         if(is_array($segments) && array_key_exists($key,$segments))

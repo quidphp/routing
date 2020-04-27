@@ -17,7 +17,7 @@ use Quid\Main;
 class Exception extends Main\Exception
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'code'=>35 // code de l'exception
     ];
 }

@@ -18,7 +18,7 @@ use Quid\Main;
 class RequestHistory extends Main\RequestHistory
 {
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // previousRoute

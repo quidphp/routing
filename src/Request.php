@@ -18,7 +18,7 @@ use Quid\Main;
 class Request extends Main\Request
 {
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // construct
@@ -141,7 +141,7 @@ class Request extends Main\Request
         {
             $session = $route::session();
             $return['method'] = 'post';
-            $postMatch = $route::$config['match']['post'] ?? null;
+            $postMatch = $route::getConfig('match/post');
             $post = [];
 
             if($route::hasMatch('csrf'))

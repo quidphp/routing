@@ -18,7 +18,7 @@ use Quid\Main;
 class RouteRequest extends Main\Root
 {
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique
@@ -248,7 +248,7 @@ class RouteRequest extends Main\Root
         $return = false;
         $lang = $session->lang();
         $route = $this->route();
-        $match = $route::$config['match'] ?? [];
+        $match = $route::getConfig('match') ?? [];
 
         $path = $this->routePath($lang,true,true);
         $emptyPath = $this->routePath(null,true,true);
@@ -269,7 +269,7 @@ class RouteRequest extends Main\Root
                     if($value === null)
                     $return = true;
 
-                    elseif(method_exists($this,$key))
+                    elseif($this->hasMethod($key))
                     $return = $this->$key($value,$session);
 
                     elseif(static::isCallable($value))
@@ -775,7 +775,7 @@ class RouteRequest extends Main\Root
             $return = Base\Path::addLang($lang,$return);
         }
 
-        $routeQuery = $route::$config['query'] ?? null;
+        $routeQuery = $route::getConfig('query');
         if(!empty($routeQuery) && $option['query'] === true)
         {
             $requestQuery = $request->queryArray();

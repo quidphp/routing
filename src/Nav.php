@@ -17,7 +17,7 @@ use Quid\Main;
 class Nav extends Main\Map
 {
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique

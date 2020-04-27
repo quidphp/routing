@@ -23,7 +23,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
 
     // config
-    public static array $config = [
+    protected static array $config = [
         'priorityIncrement'=>10, // incrémentation de la priorité lors de la méthode init
         'methodIgnore'=>'isIgnored',
         'subClass'=>Route::class
