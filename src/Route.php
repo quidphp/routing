@@ -57,7 +57,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             'htmlAttr'=>[Base\Attr::class,'arr'],
             'bodyAttr'=>[Base\Attr::class,'arr']],
         'docOpen'=>[ // utilisé pour l'ouverture du document
-            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%','data-uri'=>'%uri%','data-error'=>'none','%htmlAttr%'],
+            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%','data-uri'=>'%uri%','%htmlAttr%'],
             'head'=>[
                 'title'=>'%title%',
                 'meta'=>[
