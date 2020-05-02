@@ -649,10 +649,12 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         try
         {
-            $return = $this->processBefore();
+            $return = $this->onBefore();
 
             if($return !== false)
             {
+                $this->processBefore();
+
                 $timeout = static::timeout();
                 if(array_key_exists('trigger',$timeout))
                 static::timeoutIncrement('trigger');
@@ -683,44 +685,37 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // processBefore
     // avant la méthode trigger
-    // appele onBefore, possible d'arrêter la route si onBefore retourne faux
-    // refresh le csrf si il a été validé
-    // met la uri selected
-    final protected function processBefore()
+    // refresh le csrf si il a été validé, met la uri selected etc
+    protected function processBefore():void
     {
-        $return = $this->onBefore();
+        $session = static::session();
+        $response = $this->getAttr('response') ?? [];
 
-        if($return !== false)
-        {
-            $session = static::session();
-            $response = $this->getAttr('response') ?? [];
+        if(array_key_exists('timeLimit',$response) && is_int($response['timeLimit']))
+        Base\Response::timeLimit($response['timeLimit']);
 
-            if(array_key_exists('timeLimit',$response) && is_int($response['timeLimit']))
-            Base\Response::timeLimit($response['timeLimit']);
+        if(static::hasMatch('csrf'))
+        $session->refreshCsrf();
 
-            if(static::hasMatch('csrf'))
-            $session->refreshCsrf();
+        if(static::hasMatch('captcha'))
+        $session->emptyCaptcha();
 
-            if(static::hasMatch('captcha'))
-            $session->emptyCaptcha();
+        $selectedUri = $this->getAttr('selectedUri');
+        if(!empty($selectedUri))
+        $this->addSelectedUri($selectedUri);
 
-            $selectedUri = $this->getAttr('selectedUri');
-            if(!empty($selectedUri))
-            $this->addSelectedUri($selectedUri);
+        $uriAbsolute = $this->getAttr('uriAbsolute');
+        if(is_bool($uriAbsolute))
+        Base\Uri::setAllAbsolute($uriAbsolute);
 
-            $uriAbsolute = $this->getAttr('uriAbsolute');
-            if(is_bool($uriAbsolute))
-            Base\Uri::setAllAbsolute($uriAbsolute);
+        $cliHtmlOverload = $this->getAttr('cliHtmlOverload');
+        if($cliHtmlOverload === true && !Base\Server::isCli())
+        Base\Cli::setHtmlOverload($cliHtmlOverload);
 
-            $cliHtmlOverload = $this->getAttr('cliHtmlOverload');
-            if($cliHtmlOverload === true && !Base\Server::isCli())
-            Base\Cli::setHtmlOverload($cliHtmlOverload);
+        $this->prepareResponse();
+        $this->onPrepared();
 
-            $this->prepareResponse();
-            $this->onPrepared();
-        }
-
-        return $return;
+        return;
     }
 
 
