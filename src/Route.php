@@ -101,6 +101,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'errorCss'=>true, // ajoute le fichier css type à la classe erreur, lors du docopen
         'cliHtmlOverload'=>null, // force les méthodes cli à générer du html, seulement si c'est true et que cli est false
         'selectedUri'=>true, // ajoute l'uri de la route trigger comme uriSelected
+        'jsonEncodePretty'=>false, // si le retour est un tableau, utilise jsonEncodePretty
         'permission'=>[ // tableau des permissions
             '*'=>['access'=>true]], // accorde accès de base
         'ignore'=>false, // si la route est ignoré pour routes
@@ -472,7 +473,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
             else
             {
-                $output = Base\Str::cast($output);
+                $encodePretty = $this->getAttr('jsonEncodePretty');
+                $output = Base\Str::cast($output,null,false,$encodePretty);
                 $bool = true;
             }
         }
