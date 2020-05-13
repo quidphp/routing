@@ -1204,7 +1204,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if(!empty($attr['data-unload']))
         $attr['data-unload'] = $this->getFormText($attr['data-unload'],'unload');
 
-        $return = Base\Html::formOpen($uri,$attr,$this->tagOption('form',$option));
+        $option = (array) $this->tagOption('form',$option);
+
+        if(!array_key_exists('csrf',$option))
+        $option['csrf'] = static::hasMatch('csrf');
+
+        if(!array_key_exists('genuine',$option))
+        $option['genuine'] = static::hasMatch('genuine');
+
+        $return = Base\Html::formOpen($uri,$attr,$option);
 
         return $return;
     }
