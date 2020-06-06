@@ -94,7 +94,7 @@ class Request extends Main\Request
             // requestInvalid
             if(empty($return['location']) && $requestInvalid === true)
             {
-                $redirect = (empty($redirect))? $schemeHost:$redirect;
+                $redirect = $redirect ?: $schemeHost;
 
                 $return['type'] = 'requestInvalid';
 
