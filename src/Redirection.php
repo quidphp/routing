@@ -88,17 +88,7 @@ class Redirection extends Main\Map
     // retourne vrai si toutes les uri ont une redirection
     final public function exists(...$keys):bool
     {
-        $return = false;
-
-        foreach ($keys as $key)
-        {
-            $return = is_string($this->get($key));
-
-            if($return === false)
-            break;
-        }
-
-        return $return;
+        return Base\Arr::every($keys,fn($key) => is_string($this->get($key)));
     }
 
 

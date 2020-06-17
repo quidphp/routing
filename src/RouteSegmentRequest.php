@@ -149,9 +149,7 @@ class RouteSegmentRequest extends RouteRequest
             $this->parseRequestSegmentFromValue($request);
         }
 
-        if(!$this->request instanceof Main\Request)
-        static::throw();
-
+        static::checkClass($this->request,Main\Request::class);
         return $this;
     }
 

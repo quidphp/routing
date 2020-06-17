@@ -174,15 +174,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // ne retourne pas les routes non existantes
     final public function tops():self
     {
-        $return = new static();
-
-        foreach ($this->arr() as $k => $v)
-        {
-            if($this->parent($v) === null)
-            $return->add($v);
-        }
-
-        return $return;
+        return $this->filter(fn($v) => $this->parent($v) === null);
     }
 
 
@@ -316,15 +308,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // retourne un objet avec toutes les routes avec segment
     final public function withSegment():self
     {
-        $return = new static();
-
-        foreach ($this->arr() as $key => $value)
-        {
-            if($value::isSegmentClass())
-            $return->add($value);
-        }
-
-        return $return;
+        return $this->filter(fn($value) => $value::isSegmentClass());
     }
 
 
@@ -332,15 +316,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // retourne un objet avec toutes les routes sans segment
     final public function withoutSegment():self
     {
-        $return = new static();
-
-        foreach ($this->arr() as $key => $value)
-        {
-            if(!$value::isSegmentClass())
-            $return->add($value);
-        }
-
-        return $return;
+        return $this->filter(fn($value) => !$value::isSegmentClass());
     }
 
 
@@ -348,15 +324,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
     // retourne un objet avec toutes les routes allowed
     final public function allowed():self
     {
-        $return = new static();
-
-        foreach ($this->arr() as $key => $value)
-        {
-            if($value::allowed())
-            $return->add($value);
-        }
-
-        return $return;
+        return $this->filter(fn($value) => $value::allowed());
     }
 
 

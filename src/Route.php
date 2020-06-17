@@ -1007,7 +1007,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                     }
 
                     if(!empty($append))
-                    $return = Base\Arrs::valuesAppend($append,$return);
+                    $return = Base\Arrs::valuesMerge($append,$return);
                 }
             }
 
@@ -1848,18 +1848,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si un chemin contient un segment
     final public static function isSegmentClass():bool
     {
-        $return = false;
-
-        foreach (static::paths() as $path)
-        {
-            if(is_string($path) && strpos($path,'[') !== false)
-            {
-                $return = true;
-                break;
-            }
-        }
-
-        return $return;
+        return Base\Arr::some(static::paths(),fn($path) => is_string($path) && strpos($path,'[') !== false);
     }
 
 
