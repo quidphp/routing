@@ -130,11 +130,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // getBaseReplace
-    // retourne le tableau de remplacement de base
-    abstract public function getBaseReplace():array;
-
-
     // prepareTitle
     // prépare le titre après le onReplace
     abstract protected function prepareTitle($return,array $array):array;
@@ -308,6 +303,30 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final protected function attrPermissionRolesObject():Main\Roles
     {
         return static::session()->roles(true);
+    }
+
+
+    // getBaseReplace
+    // retourne le tableau de remplacement de base
+    public function getBaseReplace():array
+    {
+        $return = [];
+        $parent = static::parent();
+        $request = $this->request();
+        $uri = (static::hasPath())? $this->uriRelative():$request->relative();
+
+        $return['label'] = $this->title();
+        $return['name'] = static::name(true);
+        $return['type'] = static::type();
+        $return['uri'] = $uri;
+        $return['metaUri'] = $uri;
+        $return['group'] = static::group();
+        $return['parent'] = (!empty($parent))? $parent::name(true):null;
+        $return['title'] = $return['label'];
+        $return['htmlAttr'] = null;
+        $return['bodyAttr'] = null;
+
+        return $return;
     }
 
 
