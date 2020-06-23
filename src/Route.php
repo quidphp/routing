@@ -57,7 +57,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             'htmlAttr'=>[Base\Attr::class,'arr'],
             'bodyAttr'=>[Base\Attr::class,'arr']],
         'docOpen'=>[ // utilisé pour l'ouverture du document
-            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%','data-uri'=>'%uri%','%htmlAttr%'],
+            'html'=>['lang'=>'%lang%','data-route'=>'%name%','data-group'=>'%group%','data-uri'=>'%uri%','data-navigation'=>'%navigation%','%htmlAttr%'],
             'head'=>[
                 'title'=>'%title%',
                 'meta'=>[
@@ -323,6 +323,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return['group'] = static::group();
         $return['parent'] = (!empty($parent))? $parent::name(true):null;
         $return['title'] = $return['label'];
+        $return['navigation'] = (static::allowNavigation() === true)? 1:0;
         $return['htmlAttr'] = null;
         $return['bodyAttr'] = null;
 
