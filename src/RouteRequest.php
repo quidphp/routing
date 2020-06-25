@@ -36,8 +36,6 @@ class RouteRequest extends Main\Root
     {
         $this->setRoute($route);
         $this->setRequest($request);
-
-        return;
     }
 
 
@@ -63,8 +61,6 @@ class RouteRequest extends Main\Root
     {
         $this->valid = [];
         $this->fallback = null;
-
-        return;
     }
 
 
@@ -169,8 +165,6 @@ class RouteRequest extends Main\Root
         $fallback = $key;
 
         $this->fallback = $fallback;
-
-        return;
     }
 
 

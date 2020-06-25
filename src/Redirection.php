@@ -136,8 +136,6 @@ class Redirection extends Main\Map
 
         if(!empty($value))
         Base\Response::redirect($value,$code,$kill,$encode);
-
-        return;
     }
 
 
@@ -171,8 +169,6 @@ class Redirection extends Main\Map
         static::throw('requireArray');
 
         $this->checkAfter();
-
-        return;
     }
 }
 ?>

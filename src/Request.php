@@ -30,8 +30,6 @@ class Request extends Main\Request
         $value = static::fromRoute($value);
 
         parent::__construct($value,$attr);
-
-        return;
     }
 
 

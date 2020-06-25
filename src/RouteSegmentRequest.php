@@ -39,8 +39,6 @@ class RouteSegmentRequest extends RouteRequest
         $this->setLangCode($lang);
         $this->setRoute($route);
         $this->setRequest($request);
-
-        return;
     }
 
 
@@ -51,8 +49,6 @@ class RouteSegmentRequest extends RouteRequest
         parent::reset();
         $this->segment = null;
         $this->make = null;
-
-        return;
     }
 
 
@@ -82,8 +78,6 @@ class RouteSegmentRequest extends RouteRequest
     final protected function setLangCode(string $lang):void
     {
         $this->langCode = $lang;
-
-        return;
     }
 
 
@@ -180,8 +174,6 @@ class RouteSegmentRequest extends RouteRequest
 
         else
         static::throw('invalidRouteSegment');
-
-        return;
     }
 
 
@@ -267,8 +259,6 @@ class RouteSegmentRequest extends RouteRequest
 
         else
         static::throw('invalidRouteSegment');
-
-        return;
     }
 
 

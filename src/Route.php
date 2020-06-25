@@ -125,8 +125,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $this->attr =& static::$config;
         $this->setRouteRequest($request);
         $this->onMake();
-
-        return;
     }
 
 
@@ -191,8 +189,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public function __clone()
     {
         $this->routeRequest = clone $this->routeRequest;
-
-        return;
     }
 
 
@@ -283,8 +279,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public function offsetSet($key,$value):void
     {
         static::throw('arrayAccess','notAllowed');
-
-        return;
     }
 
 
@@ -293,8 +287,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public function offsetUnset($key):void
     {
         static::throw('arrayAccess','notAllowed');
-
-        return;
     }
 
 
@@ -591,8 +583,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $routeRequest = RouteRequest::newOverload($this,$request);
 
         $this->routeRequest = $routeRequest;
-
-        return;
     }
 
 
@@ -736,8 +726,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         $this->prepareResponse();
         $this->onPrepared();
-
-        return;
     }
 
 
@@ -759,8 +747,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $redirect = $this->onAfter();
         if(!empty($redirect))
         $this->processRedirect($redirect);
-
-        return;
     }
 
 
@@ -783,8 +769,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         elseif($value instanceof self)
         Base\Response::redirect($value->uriAbsolute(),$code,$kill);
-
-        return;
     }
 
 
@@ -1340,8 +1324,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         if(!empty($response['header']) && is_array($response['header']))
         Base\Response::setsHeader($response['header']);
-
-        return;
     }
 
 
@@ -1456,8 +1438,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             if(!empty($parent) && !in_array($parent,static::routeBaseClasses(),true))
             $parent::setType($value,$dig);
         }
-
-        return;
     }
 
 
@@ -1491,8 +1471,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public static function setPriority(int $value):void
     {
         static::$config['priority'] = $value;
-
-        return;
     }
 
 
@@ -1521,8 +1499,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         else
         static::throw('invalidParentClass');
-
-        return;
     }
 
 
