@@ -134,7 +134,6 @@ class RouteRequest extends Main\Root
 
     // fallback
     // retourne la raison du fallback
-    // peut être null, une string ou un array
     final public function fallback()
     {
         return $this->fallback;
