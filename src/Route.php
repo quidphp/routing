@@ -1325,6 +1325,17 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
+    // remake
+    // cette méthode permet de reconstruire la route
+    // utile si la route a des segments, et qu'on veut que les segments deviennent requestSegments dans routeRequest
+    // ceci est utilisé pour permettre le changement de langue
+    final public function remake(bool $overload=true):self
+    {
+        $request = (static::isSegmentClass())? $this->segments():null;
+        return static::make($request,$overload);
+    }
+
+
     // childs
     // retourne toutes les enfants de la route courante
     final public static function childs():Routes

@@ -312,15 +312,10 @@ class RouteSegmentRequest extends RouteRequest
     // envoie une exception si la propriété requestSegment est toujours null ou si elle ne match pas avec les segments de la route
     final public function requestSegment():array
     {
-        $return = null;
-
         if(!$this->isRouteRequestCompatible())
         static::throw($this->route(),'segmentMismatch','requires',...$this->routeSegment());
 
-        else
-        $return = $this->requestSegment;
-
-        return $return;
+        return $this->requestSegment;
     }
 
 
@@ -328,18 +323,9 @@ class RouteSegmentRequest extends RouteRequest
     // retourne vrai si l'objet contient le ou les segments de requête données en argument
     final public function hasRequestSegment(string ...$values):bool
     {
-        $return = false;
         $segment = $this->requestSegment();
 
-        foreach ($values as $value)
-        {
-            $return = array_key_exists($value,$segment);
-
-            if($return === false)
-            break;
-        }
-
-        return $return;
+        return Base\Arr::every($values,fn($value) => array_key_exists($value,$segment));
     }
 
 
@@ -418,11 +404,13 @@ class RouteSegmentRequest extends RouteRequest
     // si la méthode makeSegment retourne true, utilise replaceSegment si disponible
     // retourne un tableau, utilisé par la méthode uri
     // le résultat de cette méthode est gardé en cache dans la propriété makeRequestSegment
-    final public function makeRequestSegment():array
+    // l'argument lang est maintenant envoyé dans le callback (par exemple pour permettre à slug de changer de lang)
+    final public function makeRequestSegment(string $lang):array
     {
         $return = $this->make;
+        $langChange = ($lang !== $this->langCode());
 
-        if(empty($return))
+        if(empty($return) || $langChange === true)
         {
             $route = $this->route();
             $defaultSegment = $route::getDefaultSegment();
@@ -440,7 +428,7 @@ class RouteSegmentRequest extends RouteRequest
                 else
                 {
                     $callable = $this->routeCallableSegment($key);
-                    $v = $callable('make',$value,$requestSegment);
+                    $v = $callable('make',$value,$requestSegment,$lang);
 
                     if($v === false && is_string($defaultSegment))
                     $v = $defaultSegment;
@@ -462,6 +450,7 @@ class RouteSegmentRequest extends RouteRequest
                 $return[$key] = $v;
             }
 
+            if($langChange === false)
             $this->make = $return;
         }
 
@@ -696,7 +685,7 @@ class RouteSegmentRequest extends RouteRequest
     {
         $return = null;
         $path = $this->routePath($lang);
-        $segment = $this->makeRequestSegment();
+        $segment = $this->makeRequestSegment($lang);
 
         $path = Base\Segment::sets(null,$segment,$path);
         $option = Base\Arr::plus($option,['schemeHost'=>true]);
