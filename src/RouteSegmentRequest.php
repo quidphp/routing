@@ -405,7 +405,7 @@ class RouteSegmentRequest extends RouteRequest
     // retourne un tableau, utilisé par la méthode uri
     // le résultat de cette méthode est gardé en cache dans la propriété makeRequestSegment
     // l'argument lang est maintenant envoyé dans le callback (par exemple pour permettre à slug de changer de lang)
-    final public function makeRequestSegment(string $lang):array
+    final public function makeRequestSegment(?string $lang=null):array
     {
         $return = $this->make;
         $langChange = ($lang !== $this->langCode());
