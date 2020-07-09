@@ -16,7 +16,9 @@ use Quid\Main;
 class Request extends Main\Request
 {
     // config
-    protected static array $config = [];
+    protected static array $config = [
+        'navigation'=>'Quid-Navigation'
+    ];
 
 
     // construct
@@ -28,6 +30,22 @@ class Request extends Main\Request
         $value = static::fromRoute($value);
 
         parent::__construct($value,$attr);
+    }
+
+
+    // isAjaxNavigation
+    // retourne vrai si la requête vient de la navigation history api
+    final public function isAjaxNavigation():bool
+    {
+        return $this->isAjax() && $this->isHeader($this->getAttr('navigation'));
+    }
+
+
+    // isAjaxNotNavigation
+    // retourne vrai si la requête est ajax mais pas la navigation via history api
+    final public function isAjaxNotNavigation():bool
+    {
+        return $this->isAjax() && !$this->isHeader($this->getAttr('navigation'));
     }
 
 

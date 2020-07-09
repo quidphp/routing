@@ -30,7 +30,7 @@ class RequestHistory extends Main\RequestHistory
         {
             $return = $previous->route($routes);
 
-            if(!empty($return) && !$return->isRedirectable())
+            if(!empty($return) && (!$return::isRedirectable() || !$return->canTrigger()))
             $return = null;
         }
 

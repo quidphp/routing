@@ -33,6 +33,12 @@ class Request extends Base\Test
 
         // construct
 
+        // isAjaxNavigation
+        assert(!$badExtension->isAjaxNavigation());
+
+        // isAjaxNotNavigation
+        assert(!$badExtension->isAjaxNotNavigation());
+
         // manageRedirect
         assert($badExtension->manageRedirect() === ['type'=>null,'code'=>null,'location'=>null]);
         assert($externalPost->manageRedirect() === ['type'=>'externalPost','code'=>400,'location'=>null]);
