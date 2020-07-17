@@ -1184,6 +1184,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
+    // aWithoutQuery
+    // génère un tag pour la route, les query ne sont pas suivis
+    // utile pour les formulaires de recherche avec valeur dans query
+    final public function aWithoutQuery($title=null,$attr=null,?string $lang=null,?array $option=null):?string
+    {
+        return $this->a($title,$attr,$lang,Base\Arr::plus($option,['query'=>false]));
+    }
+
+
     // formOpen
     // ouvre un form tag pour la route
     // les options sont pour base/html formOpen
