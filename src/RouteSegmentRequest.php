@@ -264,15 +264,10 @@ class RouteSegmentRequest extends RouteRequest
     // retourne vrai si la route est catchAll
     final public function isRouteCatchAll():bool
     {
-        $return = false;
         $route = $this->route();
         $catchAll = $route::getConfig('catchAll') ?? false;
         $routeSegment = $this->routeSegment();
-
-        if($catchAll === true && !empty($routeSegment))
-        $return = true;
-
-        return $return;
+        return $catchAll === true && !empty($routeSegment);
     }
 
 
@@ -298,9 +293,7 @@ class RouteSegmentRequest extends RouteRequest
         {
             $routeSegment = $this->routeSegment();
             $requestSegment = $this->requestSegment;
-
-            if(is_array($requestSegment) && !empty($requestSegment) && count($requestSegment) === count($routeSegment))
-            $return = true;
+            $return = (is_array($requestSegment) && !empty($requestSegment) && count($requestSegment) === count($routeSegment));
         }
 
         return $return;
@@ -616,9 +609,7 @@ class RouteSegmentRequest extends RouteRequest
             {
                 $match = $this->request()->pathMatch();
                 $value = Base\Path::stripStart($value);
-
-                if(Base\Path::sameWithSegments($value,$match))
-                $return = true;
+                $return = (Base\Path::sameWithSegments($value,$match));
             }
         }
 
@@ -664,9 +655,7 @@ class RouteSegmentRequest extends RouteRequest
                         $value = Base\Path::stripWrap($value,false,false);
                         $match = Base\Path::str($match);
                         $match = Base\Path::stripWrap($match,false,false);
-
-                        if(Base\Path::sameWithSegments($value,$match))
-                        $return = true;
+                        $return = (Base\Path::sameWithSegments($value,$match));
                     }
                 }
             }

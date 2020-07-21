@@ -309,9 +309,7 @@ class RouteRequest extends Main\Root
         {
             $match = $this->request()->pathMatch();
             $value = Base\Path::stripStart($value);
-
-            if($value === $match)
-            $return = true;
+            $return = ($value === $match);
         }
 
         return $return;
@@ -328,10 +326,7 @@ class RouteRequest extends Main\Root
         $return = true;
 
         elseif(is_bool($value))
-        {
-            if($value === $this->request()->isSsl())
-            $return = true;
-        }
+        $return = ($value === $this->request()->isSsl());
 
         return $return;
     }
@@ -347,10 +342,7 @@ class RouteRequest extends Main\Root
         $return = true;
 
         elseif(is_bool($value))
-        {
-            if($value === $this->request()->isAjax())
-            $return = true;
-        }
+        $return = ($value === $this->request()->isAjax());
 
         return $return;
     }
@@ -366,10 +358,7 @@ class RouteRequest extends Main\Root
         $return = true;
 
         elseif(is_bool($value))
-        {
-            if($value === $this->request()->isCli())
-            $return = true;
-        }
+        $return = ($value === $this->request()->isCli());
 
         return $return;
     }
@@ -393,8 +382,7 @@ class RouteRequest extends Main\Root
                 if(is_string($value))
                 $value = [$value];
 
-                if(is_array($value) && !empty($value) && in_array($host,$value,true))
-                $return = true;
+                $return = (is_array($value) && !empty($value) && in_array($host,$value,true));
             }
         }
 
@@ -423,9 +411,7 @@ class RouteRequest extends Main\Root
                 if(is_array($value) && !empty($value))
                 {
                     $value = Base\Arr::map($value,fn($v) => strtolower($v));
-
-                    if(in_array($method,$value,true))
-                    $return = true;
+                    $return = (in_array($method,$value,true));
                 }
             }
         }
@@ -480,8 +466,7 @@ class RouteRequest extends Main\Root
                 if(is_string($value))
                 $value = [$value];
 
-                if(is_array($value) && !empty($value) && in_array($lang,$value,true))
-                $return = true;
+                $return = (is_array($value) && !empty($value) && in_array($lang,$value,true));
             }
         }
 
@@ -506,9 +491,7 @@ class RouteRequest extends Main\Root
             if(is_array($value))
             {
                 $ip = $this->request()->ip();
-
-                if(!empty($ip) && Base\Ip::allowed($ip,$value))
-                $return = true;
+                $return = (!empty($ip) && Base\Ip::allowed($ip,$value));
             }
         }
 
@@ -621,9 +604,7 @@ class RouteRequest extends Main\Root
         elseif($value === true && !empty($session))
         {
             $requestCsrf = $this->request()->csrf();
-
-            if($session->isCsrf($requestCsrf))
-            $return = true;
+            $return = ($session->isCsrf($requestCsrf));
         }
 
         return $return;
@@ -642,9 +623,7 @@ class RouteRequest extends Main\Root
         elseif($value === true && !empty($session))
         {
             $requestCaptcha = $this->request()->captcha();
-
-            if($session->isCaptcha($requestCaptcha))
-            $return = true;
+            $return = ($session->isCaptcha($requestCaptcha));
         }
 
         return $return;
@@ -665,9 +644,7 @@ class RouteRequest extends Main\Root
         elseif(!empty($session))
         {
             $timedOut = $this->timedOut($value,$session);
-
-            if($timedOut === null)
-            $return = true;
+            $return = ($timedOut === null);
         }
 
         return $return;

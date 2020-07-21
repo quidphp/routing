@@ -426,15 +426,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si la route a un path pour la langue
     final public static function hasPath(?string $lang=null):bool
     {
-        $return = false;
         $class = static::routeRequestClass();
         $lang ??= static::session()->lang();
         $path = $class::pathFromRoute(static::class,$lang);
-
-        if($path !== null && $path !== false)
-        $return = true;
-
-        return $return;
+        return $path !== null && $path !== false;
     }
 
 
@@ -583,9 +578,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if(is_int($timeout))
         {
             $now = Base\Datetime::now();
-
-            if(($now - $value) >= $timeout)
-            $return = true;
+            $return = (($now - $value) >= $timeout);
         }
 
         return $return;
@@ -1205,14 +1198,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si la route peut générer une uri pour la langue
     final public function hasUri(?string $lang=null,?array $option=null):bool
     {
-        $return = false;
         $lang ??= static::session()->lang();
         $uri = $this->routeRequest()->uri($lang,$option);
-
-        if(is_string($uri))
-        $return = true;
-
-        return $return;
+        return is_string($uri);
     }
 
 
@@ -1287,13 +1275,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si l'uri de la route est sélectionné, tel que défini dans base/attr
     final public function isSelectedUri(?string $lang=null,?array $option=null):bool
     {
-        $return = false;
         $uri = $this->uri($lang,$option);
-
-        if(is_string($uri) && Base\Attr::isSelectedUri($uri))
-        $return = true;
-
-        return $return;
+        return is_string($uri) && Base\Attr::isSelectedUri($uri);
     }
 
 
@@ -1571,13 +1554,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne vrai si la route fait partie d'un menu donné en argument
     final public static function inMenu(string $value):bool
     {
-        $return = false;
         $menus = (array) (static::$config['menu'] ?? null);
-
-        if(in_array($value,$menus,true))
-        $return = true;
-
-        return $return;
+        return in_array($value,$menus,true);
     }
 
 
@@ -1737,9 +1715,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             if(is_array($method) && !empty($method))
             {
                 $method = Base\Arr::map($method,fn($v) => strtolower($v));
-
-                if(in_array($value,$method,true))
-                $return = true;
+                $return = (in_array($value,$method,true));
             }
         }
 
@@ -1775,13 +1751,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // permet de vérifier si un élément de validation de la route se retrouve dans match
     final public static function hasMatch(string $type):bool
     {
-        $return = false;
         $match = static::$config['match'] ?? [];
-
-        if(!empty($match[$type]))
-        $return = true;
-
-        return $return;
+        return !empty($match[$type]);
     }
 
 
