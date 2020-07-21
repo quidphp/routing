@@ -82,6 +82,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             'method'=>'get', // method par défaut si pas de méthode a la route
             'attr'=>null,
             'option'=>null],
+        'cache'=>false, // détermine s'il faut tenter de mettre en cache le rendu de la route
+        'cacheClass'=>null, // détermine la classe à utiliser pour les caches de route
+        'cacheHeader'=>'QUID-CACHE', // header utiliser pour signifier que la route provient d'une cache
+        'cacheTimeout'=>null, // permet de spécifier un timeout à une cache (nombre de secondes maximale)
+        'cachePattern'=>['[%%%!!!cacheRoute-','-cacheRoute!!!%%%]'], // pattern pour le remplacement dans le contenu string de la route
         'type'=>null, // type de la route
         'label'=>null, // nom de la route
         'description'=>null, // description de la route
@@ -327,7 +332,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $jsInit = $this->getAttr('jsInit');
 
-        if(!empty($jsInit) && $this->request()->isAjax() === false)
+        if(!empty($jsInit) && $this->request()->isAjaxNotNavigation() === false)
         {
             $callable = null;
 
@@ -423,7 +428,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = false;
         $class = static::routeRequestClass();
-        $lang = ($lang === null)? static::session()->lang():$lang;
+        $lang ??= static::session()->lang();
         $path = $class::pathFromRoute(static::class,$lang);
 
         if($path !== null && $path !== false)
@@ -460,6 +465,178 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     public function trigger()
     {
         return false;
+    }
+
+
+    // getCacheClass
+    // retoure la classe à utiliser pour gérer la cache
+    final protected function getCacheClass():?string
+    {
+        $return = $this->getAttr('cacheClass');
+
+        if(is_string($return) && !is_a($return,Main\Contract\Cache::class,true))
+        static::throw($return,'mustImplement',Main\Contract\Cache::class);
+
+        return $return;
+    }
+
+
+    // getCacheContext
+    // retourne le contexte de cache
+    public function getCacheContext():array
+    {
+        return ['uri'=>$this->uriRelative()];
+    }
+
+
+    // getCacheReplace
+    // retourne le tableau de remplacement pour la cache
+    protected function getCacheReplace():array
+    {
+        return [];
+    }
+
+
+    // getCacheReplaceForm
+    // retourne le tableau de remplacement pour les formulaires de la route
+    final protected function getCacheReplaceForm():array
+    {
+        $session = static::session();
+
+        return [
+            'csrf'=>$session->csrf(),
+            'timestamp'=>Base\Datetime::now()
+        ];
+    }
+
+
+    // getCacheReplacePattern
+    // retourne les patterns de remplacement pour les clés
+    final protected function getCacheReplacePattern():array
+    {
+        return $this->getAttr('cachePattern');
+    }
+
+
+    // makeCacheKey
+    // retourne une clé utilisable pour le remplacement dans la cache
+    final protected function makeCacheKey(string $key):string
+    {
+        $pattern = $this->getCacheReplacePattern();
+        return $pattern[0].$key.$pattern[1];
+    }
+
+
+    // prepareCacheReplace
+    // prépare le tableau de remplacement pour la cache
+    final protected function prepareCacheReplace():array
+    {
+        $return = $this->getCacheReplaceForm();
+        $return = Base\Arr::merge($return,$this->getCacheReplace());
+        $pattern = $this->getCacheReplacePattern();
+        $return = Base\Arr::keysWrap($pattern[0],$pattern[1],$return);
+
+        return $return;
+    }
+
+
+    // setCacheHeader
+    // ajoute un header à la réponse pour indiquer qu'on utilise une cache
+    // l'heure de création de la cache est la valeur du header
+    final protected function setCacheHeader(int $value):?int
+    {
+        $return = null;
+        $cacheHeader = $this->getAttr('cacheHeader');
+        $date = Base\Datetime::gmt($value);
+
+        if(!empty($cacheHeader))
+        $return = Base\Response::setHeader($cacheHeader,$date);
+
+        return $return;
+    }
+
+
+    // shouldCache
+    // retourne vrai s'il la route gère la mise en cache
+    protected function shouldCache():bool
+    {
+        return $this->getAttr('cache',true) === true && !empty($this->getCacheClass()) && static::isRedirectable();
+    }
+
+
+    // isCacheValid
+    // retourne vrai si la cache est valide, permet à une route
+    // à étendre
+    protected function isCacheValid(Main\Contract\Cache $cache):bool
+    {
+        return true;
+    }
+
+
+    // isCacheTimedout
+    // retourne vrai si la cache est timedout et ne doit pas être considéré
+    final protected function isCacheTimedout(int $value):bool
+    {
+        $return = false;
+        $timeout = $this->getAttr('cacheTimeout');
+
+        if(is_int($timeout))
+        {
+            $now = Base\Datetime::now();
+
+            if(($now - $value) >= $timeout)
+            $return = true;
+        }
+
+        return $return;
+    }
+
+
+    // triggerWithCache
+    // gère le trigger et la cache au besoin
+    final protected function triggerWithCache()
+    {
+        $return = null;
+        $found = false;
+        $shouldCache = $this->shouldCache();
+
+        if($shouldCache === true)
+        {
+            $class = $this->getCacheClass();
+            $context = $this->getCacheContext();
+            $cache = $class::findByContext($context);
+
+            if(!empty($cache))
+            {
+                $date = $cache->getDate();
+
+                if($this->isCacheValid($cache) && !$this->isCacheTimedout($date))
+                {
+                    $found = true;
+                    $return = $cache->getContent();
+                    $this->setCacheHeader($date);
+                }
+
+                if($found === false)
+                $cache->delete();
+            }
+        }
+
+        if($found === false)
+        {
+            $return = $this->trigger();
+
+            if($shouldCache === true && is_string($return))
+            $class::store($context,$return);
+        }
+
+        if(is_string($return))
+        {
+            $replace = $this->prepareCacheReplace();
+            $return = Base\Str::replace($replace,$return);
+        }
+
+        return $return;
     }
 
 
@@ -670,7 +847,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                 static::timeoutIncrement('trigger');
 
                 $this->trigger = true;
-                $return = $this->trigger();
+                $return = $this->triggerWithCache();
 
                 if($return !== false)
                 $this->processAfter();
@@ -1029,7 +1206,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public function hasUri(?string $lang=null,?array $option=null):bool
     {
         $return = false;
-        $lang = ($lang === null)? static::session()->lang():$lang;
+        $lang ??= static::session()->lang();
         $uri = $this->routeRequest()->uri($lang,$option);
 
         if(is_string($uri))
@@ -1045,7 +1222,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final protected function uriMethod(string $method,?string $lang=null,?array $option=null):string
     {
         $return = '';
-        $lang = ($lang === null)? static::session()->lang():$lang;
+        $lang ??= static::session()->lang();
         $option = Base\Arr::plus($option,$this->getAttr('uri'));
         $return = $this->routeRequest()->$method($lang,$option);
 
@@ -1198,7 +1375,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // les options sont pour base/html formOpen
     final public function formOpen($attr=null,?string $lang=null,?array $option=null):?string
     {
-        $return = null;
         $uri = $this->uri($lang,$option);
         $attr = $this->tagAttr('form',$attr);
 
@@ -1217,15 +1393,16 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         $option = (array) $this->tagOption('form',$option);
 
+        $option['csrfValue'] = $this->makeCacheKey('csrf');
+        $option['timestampValue'] = $this->makeCacheKey('timestamp');
+
         if(!array_key_exists('csrf',$option))
         $option['csrf'] = static::hasMatch('csrf');
 
         if(!array_key_exists('genuine',$option))
         $option['genuine'] = static::hasMatch('genuine');
 
-        $return = Base\Html::formOpen($uri,$attr,$option);
-
-        return $return;
+        return Base\Html::formOpen($uri,$attr,$option);
     }
 
 
@@ -1244,7 +1421,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = $this->formOpen($attr,$lang,$option);
         $return .= Base\Html::submit($title,$submitAttr);
-        $return .= Base\Html::formClose();
+        $return .= Base\Html::formCl();
 
         return $return;
     }
