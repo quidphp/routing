@@ -522,19 +522,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // prepareCacheReplace
-    // prépare le tableau de remplacement pour la cache
-    final protected function prepareCacheReplace():array
-    {
-        $return = $this->getCacheReplaceForm();
-        $return = Base\Arr::merge($return,$this->getCacheReplace());
-        $pattern = $this->getCacheReplacePattern();
-        $return = Base\Arr::keysWrap($pattern[0],$pattern[1],$return);
-
-        return $return;
-    }
-
-
     // setCacheHeader
     // ajoute un header à la réponse pour indiquer qu'on utilise une cache
     // l'heure de création de la cache est la valeur du header
@@ -625,8 +612,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         if(is_string($return))
         {
-            $replace = $this->prepareCacheReplace();
+            $pattern = $this->getCacheReplacePattern();
+            $replace = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplace());
+            $replaceForm = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplaceForm());
             $return = Base\Str::replace($replace,$return);
+            $return = Base\Str::replace($replaceForm,$return);
         }
 
         return $return;
