@@ -1147,40 +1147,35 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = [];
 
-        if(in_array($type,['docOpen','docClose'],true))
-        {
-            $doc = $this->getAttr($type);
-
-            if(is_array($doc))
-            {
-                $return = $doc;
-                $replace = $this->getReplace($type);
-
-                if(!empty($replace))
-                {
-                    $replace = Base\Arr::keysWrap('%','%',$replace);
-                    $return = Base\Arrs::valuesReplace($replace,$return);
-
-                    $append = [];
-                    foreach ($replace as $key => $value)
-                    {
-                        if(is_array($value))
-                        $append[$key] = $value;
-                    }
-
-                    if(!empty($append))
-                    $return = Base\Arrs::valuesMerge($append,$return);
-                }
-            }
-
-            $return = $this->onPrepareDoc($type,$return);
-            $return = Base\Call::dig(true,$return);
-        }
-
-        else
+        if(!in_array($type,['docOpen','docClose'],true))
         static::throw();
 
-        return $return;
+        $doc = $this->getAttr($type);
+
+        if(is_array($doc))
+        {
+            $return = $doc;
+            $replace = $this->getReplace($type);
+
+            if(!empty($replace))
+            {
+                $replace = Base\Arr::keysWrap('%','%',$replace);
+                $return = Base\Arrs::valuesReplace($replace,$return);
+
+                $append = [];
+                foreach ($replace as $key => $value)
+                {
+                    if(is_array($value))
+                    $append[$key] = $value;
+                }
+
+                if(!empty($append))
+                $return = Base\Arrs::valuesMerge($append,$return);
+            }
+        }
+
+        $return = $this->onPrepareDoc($type,$return);
+        return Base\Call::dig(true,$return);
     }
 
 

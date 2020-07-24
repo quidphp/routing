@@ -74,12 +74,7 @@ class RouteRequest extends Main\Root
     // envoie une exception si la route et la requête n'ont pas passés les tests match
     public function checkValid():bool
     {
-        $return = $this->valid('match');
-
-        if($return === false)
-        static::throw();
-
-        return $return;
+        return $this->valid('match') ?: static::throw();
     }
 
 
