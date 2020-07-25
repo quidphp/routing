@@ -1052,21 +1052,18 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $title = $this->makeTitle($lang);
         $title = Base\Obj::cast($title);
 
-        if(is_string($title))
-        {
-            if(is_scalar($pattern))
-            {
-                $obj = static::lang();
-                $option = Base\Arr::plus($option,['pattern'=>$pattern]);
-                $return = $obj->textAfter($title,$option);
-            }
+        if(!is_string($title))
+        static::throw('requiresString');
 
-            elseif($pattern === null)
-            $return = $title;
+        if(is_scalar($pattern))
+        {
+            $obj = static::lang();
+            $option = Base\Arr::plus($option,['pattern'=>$pattern]);
+            $return = $obj->textAfter($title,$option);
         }
 
-        else
-        static::throw('requiresString');
+        elseif($pattern === null)
+        $return = $title;
 
         return $return;
     }
@@ -1417,22 +1414,16 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public function tagAttr(string $tag,$attr=null):?array
     {
         $return = null;
-        $tagConfig = $this->getAttr($tag);
+        $tagConfig = $this->getAttr($tag) ?: static::throw('tagNotDefined');
 
-        if($tagConfig !== null)
-        {
-            if(!is_array($attr))
-            $attr = [$attr];
+        if(!is_array($attr))
+        $attr = [$attr];
 
-            if(!empty($tagConfig['attr']))
-            $return = Base\Attr::append($tagConfig['attr'],$attr);
-
-            else
-            $return = $attr;
-        }
+        if(!empty($tagConfig['attr']))
+        $return = Base\Attr::append($tagConfig['attr'],$attr);
 
         else
-        static::throw('tagNotDefined');
+        $return = $attr;
 
         if(!static::allowNavigation())
         {
@@ -1448,16 +1439,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // retourne un tableau contenant les options à utiliser pour une tag
     final public function tagOption(string $tag,?array $option=null):?array
     {
-        $return = null;
-        $tagConfig = $this->getAttr($tag);
-
-        if($tagConfig !== null)
-        $return = (!empty($tagConfig['option']))? Base\Arr::plus($tagConfig['option'],$option):$option;
-
-        else
-        static::throw('tagNotDefined');
-
-        return $return;
+        $tagConfig = $this->getAttr($tag) ?: static::throw('tagNotDefined');
+        return (!empty($tagConfig['option']))? Base\Arr::plus($tagConfig['option'],$option):$option;
     }
 
 
@@ -1514,16 +1497,13 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // envoie une exception s'il n'y a pas de parent valide
     final public static function makeParent($request=null,bool $overload=true):self
     {
-        $return = null;
         $parent = static::parent();
         $target = current(static::routeBaseClasses());
 
         if(empty($parent) || !is_subclass_of($parent,$target,true))
         static::throw('invalidParent');
 
-        $return = $parent::make($request,$overload);
-
-        return $return;
+        return $parent::make($request,$overload);
     }
 
 
@@ -1652,11 +1632,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $target = current(static::routeBaseClasses());
 
-        if(is_subclass_of($value,$target,true))
-        static::$config['parent'] = $value;
-
-        else
+        if(!is_subclass_of($value,$target,true))
         static::throw('invalidParentClass');
+
+        static::$config['parent'] = $value;
     }
 
 

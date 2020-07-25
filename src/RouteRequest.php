@@ -216,7 +216,7 @@ class RouteRequest extends Main\Root
         elseif($request === null || (is_object($request) && !$request instanceof Main\Request))
         $request = Main\Request::instSafe() ?? Main\Request::live();
 
-        static::checkClass($request,Main\Request::class);
+        static::typecheck($request,Main\Request::class);
         $this->request = $request;
 
         return $this;

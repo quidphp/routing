@@ -368,33 +368,21 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
 
         foreach ($langs as $lang)
         {
-            if(is_string($lang))
+            if(!is_string($lang))
+            static::throw('invalidLang');
+
+            foreach ($this->arr() as $key => $value)
             {
-                foreach ($this->arr() as $key => $value)
+                if($value::allowed() && $value::inSitemap())
                 {
-                    if($value::allowed() && $value::inSitemap())
+                    $uri = null;
+
+                    if($value::isSegmentClass())
                     {
-                        $uri = null;
-
-                        if($value::isSegmentClass())
+                        foreach ($value::allSegment() as $segment)
                         {
-                            foreach ($value::allSegment() as $segment)
-                            {
-                                $route = $value::make($segment);
+                            $route = $value::make($segment);
 
-                                if($route->canTrigger())
-                                {
-                                    $uri = $route->uriAbsolute($lang,$option);
-
-                                    if(!in_array($uri,$return,true))
-                                    $return[] = $uri;
-                                }
-                            }
-                        }
-
-                        else
-                        {
-                            $route = $value::make();
                             if($route->canTrigger())
                             {
                                 $uri = $route->uriAbsolute($lang,$option);
@@ -404,11 +392,20 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
                             }
                         }
                     }
+
+                    else
+                    {
+                        $route = $value::make();
+                        if($route->canTrigger())
+                        {
+                            $uri = $route->uriAbsolute($lang,$option);
+
+                            if(!in_array($uri,$return,true))
+                            $return[] = $uri;
+                        }
+                    }
                 }
             }
-
-            else
-            static::throw('invalidLang');
         }
 
         return $return;

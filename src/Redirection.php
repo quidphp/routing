@@ -157,15 +157,11 @@ class Redirection extends Main\Map
     {
         $value = $this->onPrepareReplace($value);
 
-        if(is_array($value))
-        {
-            $this->checkBefore(false,...array_values($value));
-            $this->sets($value);
-        }
-
-        else
+        if(!is_array($value))
         static::throw('requireArray');
 
+        $this->checkBefore(false,...array_values($value));
+        $this->sets($value);
         $this->checkAfter();
     }
 }

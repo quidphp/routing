@@ -105,12 +105,7 @@ trait _attrRoute
     // comme routeSafe mais doit absolument retourner une route
     final public function route($key=null,$segment=null):Route
     {
-        $return = $this->routeSafe($key,$segment);
-
-        if(empty($return))
-        static::throw($key);
-
-        return $return;
+        return $this->routeSafe($key,$segment) ?: static::throw($key);
     }
 
 

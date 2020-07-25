@@ -63,11 +63,7 @@ class RouteSegmentRequest extends RouteRequest
     final public function checkValid():bool
     {
         $return = ($this->valid('match') && $this->valid('segment'));
-
-        if($return === false)
-        static::throw();
-
-        return $return;
+        return $return ?: static::throw();
     }
 
 
@@ -101,11 +97,10 @@ class RouteSegmentRequest extends RouteRequest
         if(is_string($path))
         $segment = Base\Segment::get(null,$path);
 
-        if(is_array($segment) && !empty($segment))
-        $this->routeSegment = $segment;
-
-        else
+        if(!is_array($segment) || empty($segment))
         static::throw('invalidSegment',$this->route);
+
+        $this->routeSegment = $segment;
 
         return $this;
     }
@@ -141,7 +136,7 @@ class RouteSegmentRequest extends RouteRequest
             $this->parseRequestSegmentFromValue($request);
         }
 
-        static::checkClass($this->request,Main\Request::class);
+        static::typecheck($this->request,Main\Request::class);
         return $this;
     }
 
@@ -152,26 +147,22 @@ class RouteSegmentRequest extends RouteRequest
     {
         $routeSegment = $this->routeSegment();
 
-        if(is_array($routeSegment) && !empty($routeSegment))
-        {
-            $this->type = 1;
-
-            $catchAll = $this->isRouteCatchAll();
-            $request = $this->request();
-            $requestPath = $request->pathMatch();
-            $lang = $this->langCode();
-            $routePath = $this->routePath($lang);
-            $requestSegment = Base\Path::getSegments($routePath,$requestPath);
-
-            if($catchAll === true && $requestSegment === null)
-            $requestSegment = $this->parseRequestSegmentFromRequestCatchAll();
-
-            if(is_array($requestSegment) && !empty($requestSegment) && count($requestSegment) === count($routeSegment))
-            $this->requestSegment = Base\Arr::cast($requestSegment);
-        }
-
-        else
+        if(!is_array($routeSegment) || empty($routeSegment))
         static::throw('invalidRouteSegment');
+
+        $this->type = 1;
+        $catchAll = $this->isRouteCatchAll();
+        $request = $this->request();
+        $requestPath = $request->pathMatch();
+        $lang = $this->langCode();
+        $routePath = $this->routePath($lang);
+        $requestSegment = Base\Path::getSegments($routePath,$requestPath);
+
+        if($catchAll === true && $requestSegment === null)
+        $requestSegment = $this->parseRequestSegmentFromRequestCatchAll();
+
+        if(is_array($requestSegment) && !empty($requestSegment) && count($requestSegment) === count($routeSegment))
+        $this->requestSegment = Base\Arr::cast($requestSegment);
     }
 
 
@@ -230,33 +221,30 @@ class RouteSegmentRequest extends RouteRequest
     {
         $routeSegment = $this->routeSegment();
 
-        if(is_array($routeSegment) && !empty($routeSegment))
+        if(!is_array($routeSegment) || empty($routeSegment))
+        static::throw('invalidRouteSegment');
+
+        $this->type = 2;
+
+        foreach ($routeSegment as $i => $k)
         {
-            $this->type = 2;
-
-            foreach ($routeSegment as $i => $k)
+            if(is_array($value))
             {
-                if(is_array($value))
-                {
-                    if(array_key_exists($k,$value))
-                    $v = $value[$k];
+                if(array_key_exists($k,$value))
+                $v = $value[$k];
 
-                    elseif(array_key_exists($i,$value))
-                    $v = $value[$i];
-
-                    else
-                    $v = null;
-                }
+                elseif(array_key_exists($i,$value))
+                $v = $value[$i];
 
                 else
-                $v = $value;
-
-                $this->requestSegment[$k] = $v;
+                $v = null;
             }
-        }
 
-        else
-        static::throw('invalidRouteSegment');
+            else
+            $v = $value;
+
+            $this->requestSegment[$k] = $v;
+        }
     }
 
 
@@ -327,11 +315,7 @@ class RouteSegmentRequest extends RouteRequest
     final public function checkRequestSegment(string ...$values):bool
     {
         $return = $this->hasRequestSegment(...$values);
-
-        if($return === false)
-        static::throw();
-
-        return $return;
+        return $return ?: static::throw();
     }
 
 
@@ -447,10 +431,7 @@ class RouteSegmentRequest extends RouteRequest
             $this->make = $return;
         }
 
-        if(empty($return))
-        static::throw();
-
-        return $return;
+        return $return ?: static::throw();
     }
 
 
@@ -527,24 +508,15 @@ class RouteSegmentRequest extends RouteRequest
     // méthode qui permet d'ordonner les segments de la route pour le loop de validateSegment
     final protected function orderRouteSegment():array
     {
-        $return = [];
         $requestSegment = $this->requestSegment();
         $route = $this->route();
         $segments = Base\Arr::clean($route::getConfig('segment') ?? []);
         $segmentsKeys = array_keys($segments);
 
-        if(is_array($segments) && Base\Arr::keysAre($segmentsKeys,$requestSegment))
-        {
-            foreach ($segments as $key => $value)
-            {
-                $return[$key] = $requestSegment[$key];
-            }
-        }
-
-        else
+        if(!Base\Arr::keysAre($segmentsKeys,$requestSegment))
         static::throw('incompatibleSegments',$segmentsKeys,array_keys($requestSegment));
 
-        return $return;
+        return Base\Arr::map($segments,fn($value,$key) => $requestSegment[$key]);
     }
 
 
@@ -555,8 +527,6 @@ class RouteSegmentRequest extends RouteRequest
     // supporte un tableau multidimensionnel
     final protected function validateArray($value,array $array):bool
     {
-        $return = false;
-
         if(is_array($value))
         {
             $segment = $this->requestSegment();
@@ -568,9 +538,7 @@ class RouteSegmentRequest extends RouteRequest
             }
         }
 
-        $return = Base\Validate::arr($value,$array);
-
-        return $return;
+        return Base\Validate::arr($value,$array);
     }
 
 
@@ -584,12 +552,7 @@ class RouteSegmentRequest extends RouteRequest
         elseif($exception === true)
         $this->checkValidSegment();
 
-        $return = $this->segment;
-
-        if(empty($return))
-        static::throw();
-
-        return $return;
+        return $this->segment ?: static::throw();
     }
 
 
@@ -672,20 +635,15 @@ class RouteSegmentRequest extends RouteRequest
     // envoie une exception si une valeur de segment n'est pas string ou numérique
     final public function uri(string $lang,?array $option=null):?string
     {
-        $return = null;
         $path = $this->routePath($lang);
         $segment = $this->makeRequestSegment($lang);
-
         $path = Base\Segment::sets(null,$segment,$path);
         $option = Base\Arr::plus($option,['schemeHost'=>true]);
 
-        if(is_string($path) && strlen($path))
-        $return = $this->uriPrepare($path,$lang,$option);
-
-        else
+        if(!is_string($path) || !strlen($path))
         static::throw('segmentReplaceFailed');
 
-        return $return;
+        return $this->uriPrepare($path,$lang,$option);
     }
 
 
