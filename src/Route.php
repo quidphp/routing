@@ -515,7 +515,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // makeCacheKey
     // retourne une clé utilisable pour le remplacement dans la cache
-    final protected function makeCacheKey(string $key):string
+    // méthode publique car elle peut être appelé d'une row par exemple
+    final public function makeCacheKey(string $key):string
     {
         $pattern = $this->getCacheReplacePattern();
         return $pattern[0].$key.$pattern[1];
