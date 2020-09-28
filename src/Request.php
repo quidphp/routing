@@ -8,7 +8,7 @@ declare(strict_types=1);
  */
 
 namespace Quid\Routing;
-use Quid\Base;
+use Quid\Base\Html;
 use Quid\Main;
 
 // request
@@ -166,10 +166,10 @@ class Request extends Main\Request
 
             if($route::hasMatch('genuine'))
             {
-                $name = Base\Html::getGenuineName();
+                $name = Html::getGenuineName();
                 $post[$name] = '';
 
-                $name = Base\Html::getGenuineName(2);
+                $name = Html::getGenuineName(2);
                 $post[$name] = 1;
             }
 

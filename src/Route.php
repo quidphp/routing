@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Quid\Routing;
 use Quid\Base;
+use Quid\Base\Cli;
+use Quid\Base\Html;
 use Quid\Main;
 
 // route
@@ -47,11 +49,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'timeout'=>null, // défini les timeouts à lier à la route trigger
         'query'=>null, // détermine les éléments de query conservés dans la route
         'replace'=>[ // permet de spécifier des callbacks pour les valeurs du tableau de remplacement
-            'title'=>[Base\Html::class,'titleValue'],
-            'metaTitle'=>[Base\Html::class,'titleValue'],
-            'metaDescription'=>[Base\Html::class,'metaDescriptionValue'],
-            'metaKeywords'=>[Base\Html::class,'metaKeywordsValue'],
-            'metaUri'=>[Base\Html::class,'metaUriValue'],
+            'title'=>[Html::class,'titleValue'],
+            'metaTitle'=>[Html::class,'titleValue'],
+            'metaDescription'=>[Html::class,'metaDescriptionValue'],
+            'metaKeywords'=>[Html::class,'metaKeywordsValue'],
+            'metaUri'=>[Html::class,'metaUriValue'],
             'htmlAttr'=>[Base\Attr::class,'arr'],
             'bodyAttr'=>[Base\Attr::class,'arr']],
         'docOpen'=>[ // utilisé pour l'ouverture du document
@@ -492,9 +494,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // getCacheReplaceForm
-    // retourne le tableau de remplacement pour les formulaires de la route
-    final protected function getCacheReplaceForm():array
+    // getCacheReplaceSystem
+    // retourne le tableau de remplacement pour le système
+    protected function getCacheReplaceSystem():array
     {
         $session = static::session();
 
@@ -615,9 +617,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         {
             $pattern = $this->getCacheReplacePattern();
             $replace = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplace());
-            $replaceForm = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplaceForm());
+            $replaceSystem = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplaceSystem());
             $return = Base\Str::replace($replace,$return);
-            $return = Base\Str::replace($replaceForm,$return);
+            $return = Base\Str::replace($replaceSystem,$return);
         }
 
         return $return;
@@ -881,7 +883,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         $cliHtmlOverload = $this->getAttr('cliHtmlOverload');
         if($cliHtmlOverload === true && !Base\Server::isCli())
-        Base\Cli::setHtmlOverload($cliHtmlOverload);
+        Cli::setHtmlOverload($cliHtmlOverload);
 
         $this->prepareResponse();
         $this->onPrepared();
@@ -1077,13 +1079,13 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = '';
         $prepare = $this->prepareDoc('docOpen');
-        $return = Base\Html::docOpen($prepare,$default,$separator,true);
+        $return = Html::docOpen($prepare,$default,$separator,true);
 
         $css = $prepare['head']['css']['type'] ?? null;
         if($this->getAttr('errorCss') && is_string($css))
         {
             $class = Main\Error::classOverload();
-            $css = Base\Html::css($css);
+            $css = Html::css($css);
             if(!empty($css))
             $class::setDocHead($css);
         }
@@ -1096,7 +1098,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // génère la fermeture du document en html
     final public function docClose(bool $default=true,bool $closeBody=true,?string $separator=null):string
     {
-        return Base\Html::docClose($this->prepareDoc('docClose'),$default,$closeBody,$separator,true);
+        return Html::docClose($this->prepareDoc('docClose'),$default,$closeBody,$separator,true);
     }
 
 
@@ -1153,11 +1155,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if(is_array($doc))
         {
             $return = $doc;
-            $replace = $this->getReplace($type);
+            $replace = $this->getPrepareDocReplace($type);
 
             if(!empty($replace))
             {
-                $replace = Base\Arr::keysWrap('%','%',$replace);
                 $return = Base\Arrs::valuesReplace($replace,$return);
 
                 $append = [];
@@ -1174,6 +1175,17 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         $return = $this->onPrepareDoc($type,$return);
         return Base\Call::dig(true,$return);
+    }
+
+
+    // getPrepareDocReplace
+    // retourne le tableau de remplacement pour prepareDoc
+    protected function getPrepareDocReplace(string $type):array
+    {
+        $return = $this->getReplace($type);
+        $return = Base\Arr::keysWrap('%','%',$return);
+
+        return $return;
     }
 
 
@@ -1271,7 +1283,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = null;
         $uri = $this->uri($lang,$option);
-        $return = Base\Html::a($uri,$title,$this->tagAttr('a',$attr),$this->tagOption('a',$option));
+        $return = Html::a($uri,$title,$this->tagAttr('a',$attr),$this->tagOption('a',$option));
 
         return $return;
     }
@@ -1285,7 +1297,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = null;
         $uri = $this->uri($lang,$option);
-        $return = Base\Html::aOpen($uri,$title,$this->tagAttr('a',$attr),$this->tagOption('a',$option));
+        $return = Html::aOpen($uri,$title,$this->tagAttr('a',$attr),$this->tagOption('a',$option));
 
         return $return;
     }
@@ -1368,7 +1380,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if(!array_key_exists('genuine',$option))
         $option['genuine'] = static::hasMatch('genuine');
 
-        return Base\Html::formOpen($uri,$attr,$option);
+        return Html::formOpen($uri,$attr,$option);
     }
 
 
@@ -1386,8 +1398,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     final public function formSubmit($title=null,$submitAttr=null,$attr=null,?string $lang=null,?array $option=null):?string
     {
         $return = $this->formOpen($attr,$lang,$option);
-        $return .= Base\Html::submit($title,$submitAttr);
-        $return .= Base\Html::formCl();
+        $return .= Html::submit($title,$submitAttr);
+        $return .= Html::formCl();
 
         return $return;
     }
@@ -1398,7 +1410,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // méthode statique
     final public static function submitLabel($pattern=null,$attr=null,?string $lang=null):?string
     {
-        return Base\Html::submit(static::label($pattern,$lang),$attr);
+        return Html::submit(static::label($pattern,$lang),$attr);
     }
 
 
@@ -1406,7 +1418,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // fait un tag submit avec title pour soumettre le formulaire
     final public function submitTitle($pattern=null,$attr=null,?string $lang=null):?string
     {
-        return Base\Html::submit($this->title($pattern,$lang),$attr);
+        return Html::submit($this->title($pattern,$lang),$attr);
     }
 
 
