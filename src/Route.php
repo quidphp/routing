@@ -355,7 +355,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // si un des éléments est false dans le tableau de config, à ce moment n'append pas le service (ça vaut dire que la route n'a pas de js/css/script)
     final protected function prepareDocServices(string $type,array $return):array
     {
-        $services = static::services();
+        $services = static::services()->filter(fn($service) => $service->isServiceType('route'));
 
         foreach ($services as $service)
         {
@@ -363,35 +363,54 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
             if($type === 'docOpen')
             {
-                $return['head']['js'] = $return['head']['js'] ?? null;
-                if($return['head']['js'] !== false)
-                {
-                    $js = $service->docOpenJs();
-                    if(!empty($js))
-                    {
-                        $append = (is_array($js))? $js:[$key=>$js];
-                        $return['head']['js'] = Base\Arr::merge($return['head']['js'] ?? [],$append);
-                    }
-                }
+                $return['head']['js'] ??= null;
+                $return['head']['css'] ??= null;
+                $return['head']['script'] ??= null;
 
-                $return['head']['script'] = $return['head']['script'] ?? null;
-                if($return['head']['script'] !== false)
-                {
-                    $script = $service->docOpenScript();
-                    if(!empty($script))
-                    $return['head']['script'] = Base\Arr::merge($return['head']['script'] ?? [],$script);
-                }
+                $jsSource =& $return['head']['js'];
+                $cssSource =& $return['head']['css'];
+                $scriptSource =& $return['head']['script'];
             }
 
             elseif($type === 'docClose')
             {
-                $return['script'] = $return['script'] ?? null;
-                if($return['script'] !== false)
+                $return['js'] ??= null;
+                $return['script'] ??= null;
+
+                $jsSource =& $return['js'];
+                $cssSource = false;
+                $scriptSource =& $return['script'];
+            }
+
+            if($jsSource !== false)
+            {
+                $method = $type.'Js';
+                $js = $service->$method();
+
+                if(!empty($js))
                 {
-                    $script = $service->docCloseScript();
-                    if(!empty($script))
-                    $return['script'] = Base\Arr::merge($return['script'] ?? [],$script);
+                    $append = (is_array($js))? $js:[$key=>$js];
+                    $jsSource = Base\Arr::merge($jsSource,$append);
                 }
+            }
+
+            if($cssSource !== false)
+            {
+                $method = $type.'Css';
+                $css = $service->$method();
+                if(!empty($css))
+                {
+                    $append = (is_array($css))? $css:[$key=>$css];
+                    $cssSource = Base\Arr::merge($cssSource,$append);
+                }
+            }
+
+            if($scriptSource !== false)
+            {
+                $method = $type.'Script';
+                $script = $service->$method();
+                if(!empty($script))
+                $scriptSource = Base\Arr::merge($scriptSource,$script);
             }
         }
 
