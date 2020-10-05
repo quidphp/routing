@@ -56,11 +56,14 @@ trait _service
     // méthode protégé utilisé pour obtenir server et public paths
     final protected function makeServerPublicPath(string $type):?string
     {
-        $return = $this->getAttr(['paths',$type]);
+        $return = null;
         $basename = $this->getBasename();
 
-        if(!empty($return) && !empty($basename))
-        $return = Base\Str::replace(['%basename%'=>$basename],$return);
+        if(!empty($basename))
+        {
+            $return = $this->getAttr(['paths',$type]);
+            $return = Base\Str::replace(['%basename%'=>$basename],$return);
+        }
 
         return $return;
     }
