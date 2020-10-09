@@ -577,6 +577,23 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
+    // cacheReplaceClosure
+    // retourne une closure qui permet de faire le remplacement de cache sur une string
+    final protected function cacheReplaceClosure():\Closure
+    {
+        $pattern = $this->getCacheReplacePattern();
+        $replace = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplace());
+        $replaceSystem = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplaceSystem());
+
+        return function(string $return) use($replace,$replaceSystem) {
+            $return = Base\Str::replace($replace,$return);
+            $return = Base\Str::replace($replaceSystem,$return);
+
+            return $return;
+        };
+    }
+
+
     // isCacheTimedout
     // retourne vrai si la cache est timedout et ne doit pas être considéré
     final protected function isCacheTimedout(int $value):bool
@@ -634,11 +651,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         if(is_string($return))
         {
-            $pattern = $this->getCacheReplacePattern();
-            $replace = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplace());
-            $replaceSystem = Base\Arr::keysWrap($pattern[0],$pattern[1],$this->getCacheReplaceSystem());
-            $return = Base\Str::replace($replace,$return);
-            $return = Base\Str::replace($replaceSystem,$return);
+            $closure = $this->cacheReplaceClosure();
+            $return = $closure($return);
         }
 
         return $return;
@@ -1162,6 +1176,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // prepareDoc
     // méthode utilisé par docOpen et docClose
+    // retourne le tableau de préparation
     final protected function prepareDoc(string $type):array
     {
         $return = [];
@@ -1194,6 +1209,22 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         $return = $this->onPrepareDoc($type,$return);
         return Base\Call::dig(true,$return);
+    }
+
+
+    // prepareDocOpen
+    // retourne le tableau de préparation pour docOpen
+    final protected function prepareDocOpen():array
+    {
+        return $this->prepareDoc('docOpen');
+    }
+
+
+    // prepareDocClose
+    // retourne le tableau de préparation pour docClose
+    final protected function prepareDocClose():array
+    {
+        return $this->prepareDoc('docClose');
     }
 
 
