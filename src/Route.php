@@ -1316,6 +1316,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
+    // getSelectedUri
+    // retourne la classe de l'uri si c'est selected
+    final public function getSelectedUri(?string $lang=null,?array $option=null)
+    {
+        $uri = $this->uri($lang,$option);
+        return (is_string($uri))? Base\Attr::getSelectedUri($uri):null;
+    }
+
+
     // isSelectedUri
     // retourne vrai si l'uri de la route est sélectionné, tel que défini dans base/attr
     final public function isSelectedUri(?string $lang=null,?array $option=null):bool
