@@ -680,6 +680,10 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             else
             {
                 $encodePretty = $this->getAttr('jsonEncodePretty');
+
+                if(is_array($output))
+                $output = Base\Obj::cast($output,0,null,true);
+
                 $output = Base\Str::cast($output,null,false,$encodePretty);
                 $bool = true;
             }
