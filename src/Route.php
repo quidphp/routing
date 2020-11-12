@@ -1146,9 +1146,11 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $return = $this->getBaseReplace();
         $return = $this->getMetaFromContract($this,$return);
 
-        $otherMeta = $this->getOtherMeta();
-        if(!empty($otherMeta))
-        $return = $this->getMetaFromContract($otherMeta,$return);
+        $otherMetas = $this->getOtherMetas();
+        foreach ($otherMetas as $otherMeta)
+        {
+            $return = $this->getMetaFromContract($otherMeta,$return);
+        }
 
         $return = $this->onReplace($return);
         $return['title'] = $this->prepareTitle($return['title'] ?? null,$return);
@@ -1169,12 +1171,12 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
-    // getOtherMeta
-    // retourne un objet qui implémente l'interface meta
+    // getOtherMetas
+    // retourne un tableau d'objets qui implémente l'interface meta
     // doit être étendu, est utilisé dans getReplace
-    public function getOtherMeta():?Main\Contract\Meta
+    public function getOtherMetas():array
     {
-        return null;
+        return [];
     }
 
 
