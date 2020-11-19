@@ -33,6 +33,9 @@ trait _attrRoute
                 if(array_key_exists($key,$route))
                 $return = $route[$key];
 
+                elseif(in_array($key,$route,true))
+                $return = $key;
+
                 elseif($key === 0)
                 $return = current($route);
             }
