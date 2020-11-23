@@ -514,7 +514,7 @@ class RouteSegmentRequest extends RouteRequest
         $segmentsKeys = array_keys($segments);
 
         if(!Base\Arr::keysAre($segmentsKeys,$requestSegment))
-        static::throw('incompatibleSegments',$segmentsKeys,array_keys($requestSegment));
+        static::throw('incompatibleSegments',$route,$segmentsKeys,array_keys($requestSegment));
 
         return Base\Arr::map($segments,fn($value,$key) => $requestSegment[$key]);
     }
