@@ -1700,7 +1700,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         if(is_string($return))
         $return = $return::classOverload();
 
-        return $return;
+        return $return ?: null;
     }
 
 
