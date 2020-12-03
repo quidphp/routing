@@ -32,7 +32,7 @@ class RouteSegmentRequest extends RouteRequest
     // construit l'objet routeRequest et lance le processus de match
     // si request est vide prend la requête courante
     // le code de lang doit être inclus pour aller chercher les path dans route
-    final public function __construct(Route $route,$request=null,string $lang)
+    final public function __construct(Route $route,$request,string $lang)
     {
         $this->setLangCode($lang);
         $this->setRoute($route);

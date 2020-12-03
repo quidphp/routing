@@ -116,7 +116,7 @@ trait _attrRoute
     // construit la route a créer
     // accepte une callable ou un nom de route ou de classe étendant route
     // peut faire une préparation sur la route avant le make
-    final protected function makeRoute($key=null,$route,$segment=null):?Route
+    final protected function makeRoute($key,$route,$segment=null):?Route
     {
         $return = null;
         $class = $route;
