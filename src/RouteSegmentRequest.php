@@ -667,7 +667,7 @@ class RouteSegmentRequest extends RouteRequest
         $return = $callable;
 
         else
-        static::throw('segmentMethodNotFound',$key);
+        static::throw('segmentMethodNotFound',$route,$key);
 
         return $return;
     }
