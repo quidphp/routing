@@ -1697,6 +1697,9 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     {
         $return = static::$config['parent'] ?? null;
 
+        if(static::isCallable($return))
+        $return = $return();
+
         if(is_string($return))
         $return = $return::classOverload();
 
