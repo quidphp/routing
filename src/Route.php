@@ -629,14 +629,20 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             {
                 $date = $cache->getDate();
 
+                // à revoir, que la classe de la cache retourne si la ligne est valide ou non
                 if($this->isCacheValid($cache) && !$this->isCacheTimedout($date))
                 {
-                    $found = true;
                     $return = $cache->getContent();
-                    $this->setCacheHeader($date);
+                    $found = true;
+
+                    if(is_string($return) && !strlen($return))
+                    $found = false;
                 }
 
-                if($found === false)
+                if($found === true)
+                $this->setCacheHeader($date);
+
+                else
                 $cache->delete();
             }
         }
