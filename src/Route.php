@@ -65,6 +65,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
                     'keywords'=>'%metaKeywords%',
                     'og:type'=>'website',
                     'og:title'=>'%title%',
+                    'og:description'=>'%metaDescription%',
                     'og:url'=>'%metaUri%',
                     'og:image'=>'%metaImage%',
                     'viewport'=>'width=device-width, initial-scale=1',
@@ -651,7 +652,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         {
             $return = $this->trigger();
 
-            if($shouldCache === true && is_string($return))
+            if($shouldCache === true && is_string($return) && strlen($return))
             $class::store($context,$return);
         }
 
