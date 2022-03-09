@@ -25,17 +25,17 @@ trait _service
 
 
     // getBasename
-    // retourne le basename pour la création des symlink
+    // retourne le basename pour la copie
     final public function getBasename():?string
     {
         return $this->getAttr(['paths','basename']);
     }
 
 
-    // getSymlink
-    // retorune les symlinks nécessaires au service
-    // permet que des scripts soient accessibles publiquements
-    final public function getSymlink():?array
+    // getCopyLink
+    // retorune les liens nécessaires au service
+    // permet que des scripts soient copiés et accessibles publiquements
+    final public function getCopyLink():?array
     {
         $return = null;
         $serverFromPath = $this->getServerFromPath();
@@ -71,7 +71,6 @@ trait _service
 
     // getServerFromPath
     // retourne le chemin server source
-    // utilisé pour le symlink
     final public function getServerFromPath():?string
     {
         return $this->makeServerPublicPath('serverFrom');
@@ -80,7 +79,6 @@ trait _service
 
     // getServerToPath
     // retourne le chemin server target
-    // utilisé pour le symlink
     final public function getServerToPath():?string
     {
         return $this->makeServerPublicPath('serverTo');
