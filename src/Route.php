@@ -570,8 +570,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // isCacheValid
-    // retourne vrai si la cache est valide, permet à une route
-    // à étendre
+    // retourne vrai si la cache est valide, permet à une route d'étendre
     protected function isCacheValid(Main\Contract\Cache $cache):bool
     {
         return true;
@@ -630,8 +629,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             {
                 $date = $cache->getDate();
 
-                // à revoir, que la classe de la cache retourne si la ligne est valide ou non
-                if($this->isCacheValid($cache) && !$this->isCacheTimedout($date))
+                if($cache->isValid() && $this->isCacheValid($cache) && !$this->isCacheTimedout($date))
                 {
                     $return = $cache->getContent();
                     $found = true;
