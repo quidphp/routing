@@ -73,4 +73,4 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [RequestHistory](test/RequestHistory.php) - Class for testing Quid\Routing\RequestHistory
 - [Session](test/Session.php) - Class for testing Quid\Routing\Session
 
-**QuidPHP/Routing** PHP testsuite can be run by creating a new [quidphp/project](https://github.com/quidphp/project).
+**QuidPHP/Routing** PHP testsuite can be run by creating a new [quidphp/assert](https://github.com/quidphp/assert) project..

@@ -2,7 +2,7 @@
     "name": "quidphp/routing",
     "type": "library",
     "description": "PHP library that provides a route matching and triggering procedure",
-    "keywords": ["quidphp","quid","framework"],
+    "keywords": ["quidphp","quid","php-framework"],
     "homepage": "https://quidphp.com",
     "license": "MIT",
     "authors": [{
