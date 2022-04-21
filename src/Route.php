@@ -36,7 +36,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             'header'=>null, // validation sur le tableau des headers
             'lang'=>null, // toutes les langs sont acceptés
             'ip'=>null, // tous les ip sont acceptés
-            'session'=>null, // validation sur contenu de session
+            'session'=>null, // validation sur méthode de session
             'role'=>null, // validation du code ou de la classe de permission
             'csrf'=>null, // validation que le champ csrf et le même que dans session
             'captcha'=>null, // validation que le champ captcha est le même que dans session
@@ -272,6 +272,14 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     }
 
 
+    // response
+    // retourne l'objet response
+    public static function response():Main\ResponseCurrent
+    {
+        return Main\ResponseCurrent::singleton();
+    }
+
+
     // arr
     // retourne le tableau de segments pour utiliser via this
     final protected function arr():array
@@ -429,16 +437,20 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
     // allowed
     // retourne vrai si le role de la session courante permet d'accéder à la route
-    final public static function allowed(?Main\Role $role=null):bool
+    // valide le match session et ensuite role
+    final public static function allowed():bool
     {
         $return = false;
-        $value = static::$config['match']['role'] ?? null;
         $class = static::routeRequestClass();
+        $session = static::session();
+        $roleValue = static::$config['match']['role'] ?? null;
+        $sessionValue = static::$config['match']['session'] ?? null;
 
-        if(empty($role))
-        $role = static::session()->role();
-
-        $return = $class::allowed($value,$role);
+        if(!is_string($sessionValue) || $session->$sessionValue() === true)
+        {
+            $role = $session->role();
+            $return = $class::allowed($roleValue,$role);
+        }
 
         return $return;
     }
@@ -555,7 +567,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $date = Base\Datetime::gmt($value);
 
         if(!empty($cacheHeader))
-        $return = Base\Response::setHeader($cacheHeader,$date);
+        $return = static::response()->setHeader($cacheHeader,$date);
 
         return $return;
     }
@@ -702,7 +714,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
         catch (BreakException $e)
         {
-            Base\Response::serverError();
+            static::response()->serverError();
             $e->catched();
         }
 
@@ -754,7 +766,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         }
 
         if(is_int($code))
-        Base\Response::setCode(400);
+        static::response()->setCode(400);
 
         if(!empty($log))
         {
@@ -907,7 +919,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $response = $this->getAttr('response') ?? [];
 
         if(array_key_exists('timeLimit',$response) && is_int($response['timeLimit']))
-        Base\Response::timeLimit($response['timeLimit']);
+        static::response()->timeLimit($response['timeLimit']);
 
         if(static::hasMatch('csrf'))
         $session->refreshCsrf();
@@ -962,7 +974,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $value = $value::make();
 
         if(is_string($value))
-        Base\Response::redirect($value,$code,$kill);
+        static::response()->redirect($value,$code,$kill);
 
         elseif($value === true)
         {
@@ -971,7 +983,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         }
 
         elseif($value instanceof self)
-        Base\Response::redirect($value->uriAbsolute(),$code,$kill);
+        static::response()->redirect($value->uriAbsolute(),$code,$kill);
     }
 
 
@@ -990,7 +1002,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $array['bodyAttr'] = $meta->getBodyAttr($return['bodyAttr'] ?? null);
 
         if($array['metaImage'] instanceof Main\File)
-        $array['metaImage'] = $array['metaImage']->pathToUri();
+        $array['metaImage'] = $array['metaImage']->pathToUri(true);
 
         if(Base\Obj::cast($array['metaDescription']) === '-')
         $array['metaDescription'] = null;
@@ -1532,16 +1544,17 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // selon les configurations spécifié dans static config
     final protected function prepareResponse():void
     {
+        $currentResponse = static::response();
         $response = $this->getAttr('response') ?? [];
 
-        if(!Base\Response::isCodeError() && !empty($response['code']) && is_int($response['code']))
-        Base\Response::setCode($response['code']);
+        if(!$currentResponse->isCodeError() && !empty($response['code']) && is_int($response['code']))
+        $currentResponse->setCode($response['code']);
 
         if(!empty($response['contentType']) && is_string($response['contentType']))
-        Base\Response::setContentType($response['contentType']);
+        $currentResponse->setContentType($response['contentType']);
 
         if(!empty($response['header']) && is_array($response['header']))
-        Base\Response::setsHeader($response['header']);
+        $currentResponse->setsHeader($response['header']);
     }
 
 
@@ -1616,8 +1629,8 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // inSitemap
-    // retourne vrai si la route fait partie de sitemap
-    final public static function inSitemap(?Role $role=null):bool
+    // retourne vrai si la route fait partie de sitemap pour la session courante
+    final public static function inSitemap():bool
     {
         $return = static::$config['sitemap'] ?? null;
 
@@ -1627,7 +1640,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
             $return = false;
 
             else
-            $return = static::isRedirectable($role);
+            $return = static::isRedirectable();
         }
 
         return $return;
@@ -1774,15 +1787,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
 
 
     // isRedirectable
-    // retourne vrai si la route est redirigable
+    // retourne vrai si la route est redirigable pour la session courante
     // c'est à dire pas ignore, ni post, ni ajax, ni error, ni sitemap
-    final public static function isRedirectable(?Main\Role $role=null):bool
+    final public static function isRedirectable():bool
     {
         $return = false;
         $isRedirectable = static::$config['redirectable'] ?? null;
         $isSitemap = (static::name(true) === 'sitemap');
 
-        if($isRedirectable !== false && static::allowed($role) && static::hasPath())
+        if($isRedirectable !== false && static::allowed() && static::hasPath())
         $return = ($isSitemap || static::isMethod('post') || static::isAjax())? false:true;
 
         return $return;

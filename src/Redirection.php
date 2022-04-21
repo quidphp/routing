@@ -131,9 +131,10 @@ class Redirection extends Main\Map
     final public function trigger($key,$code=301,$kill=true,bool $encode=true):void
     {
         $value = $this->get($key);
+        $response = Route::response();
 
         if(!empty($value))
-        Base\Response::redirect($value,$code,$kill,$encode);
+        $response->redirect($value,$code,$kill,$encode);
     }
 
 

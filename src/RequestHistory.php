@@ -56,12 +56,13 @@ class RequestHistory extends Main\RequestHistory
         $return = false;
         $option = Base\Arr::plus(['encode'=>true,'code'=>true,'kill'=>true],$option);
         $previous = $this->previousRoute($routes,$fallback,$hasExtra);
+        $response = Route::response();
 
         if(empty($previous) && $fallback === true)
-        $return = Base\Response::redirectSchemeHost($option['code'],$option['kill'],$option['encode']);
+        $return = $response->redirectSchemeHost($option['code'],$option['kill'],$option['encode']);
 
         if(!empty($previous))
-        $return = Base\Response::redirect($previous->uriAbsolute(),$option['code'],$option['kill'],$option['encode']);
+        $return = $response->redirect($previous->uriAbsolute(),$option['code'],$option['kill'],$option['encode']);
 
         return $return;
     }
