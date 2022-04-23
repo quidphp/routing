@@ -96,7 +96,7 @@ class Routes extends Main\Extender implements Main\Contract\Hierarchy
         $return = null;
 
         if($after instanceof Route)
-        $after = get_class($after);
+        $after = $after::class;
 
         foreach ($this->arr() as $value)
         {

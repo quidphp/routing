@@ -50,10 +50,6 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         'query'=>null, // détermine les éléments de query conservés dans la route
         'replace'=>[ // permet de spécifier des callbacks pour les valeurs du tableau de remplacement
             'title'=>[Html::class,'titleValue'],
-            'metaTitle'=>[Html::class,'titleValue'],
-            'metaDescription'=>[Html::class,'metaDescriptionValue'],
-            'metaKeywords'=>[Html::class,'metaKeywordsValue'],
-            'metaUri'=>[Html::class,'metaUriValue'],
             'htmlAttr'=>[Base\Attr::class,'arr'],
             'bodyAttr'=>[Base\Attr::class,'arr']],
         'docOpen'=>[ // utilisé pour l'ouverture du document
@@ -970,11 +966,13 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
     // le code utilisé par défaut est 302
     final protected function processRedirect($value,$code=true,bool $kill=true):void
     {
+        $response = static::response();
+
         if(is_string($value) && is_subclass_of($value,self::class,true))
         $value = $value::make();
 
         if(is_string($value))
-        static::response()->redirect($value,$code,$kill);
+        $response->redirect($value,$code,$kill);
 
         elseif($value === true)
         {
@@ -983,7 +981,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         }
 
         elseif($value instanceof self)
-        static::response()->redirect($value->uriAbsolute(),$code,$kill);
+        $response->redirect($value->uriAbsolute(),$code,$kill);
     }
 
 
@@ -1001,14 +999,17 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         $array['htmlAttr'] = $meta->getHtmlAttr($return['htmlAttr'] ?? null);
         $array['bodyAttr'] = $meta->getBodyAttr($return['bodyAttr'] ?? null);
 
-        if($array['metaImage'] instanceof Main\File)
-        $array['metaImage'] = $array['metaImage']->pathToUri(true);
-
         if(Base\Obj::cast($array['metaDescription']) === '-')
         $array['metaDescription'] = null;
 
         foreach ($array as $key => $value)
         {
+            if($value instanceof Main\File)
+            $array[$key] = $value->pathToUri(true);
+
+            elseif($value instanceof Cell)
+            $value = $value->value();
+
             if($value !== null)
             $return[$key] = $value;
         }
