@@ -62,7 +62,7 @@ The dependency will be resolved by using the [Composer](https://getcomposer.org)
 - [_attrRoute](src/_attrRoute.php) - Trait that provides methods to work with routes in the attributes property
 - [_service](src/_service.php) - Trait that provides methods to link a service to a route
 
-## Testing
+### Testing
 **QuidPHP/Routing** contains 7 test classes:
 - [BreakException](test/BreakException.php) - Class for testing Quid\Routing\BreakException
 - [Exception](test/Exception.php) - Class for testing Quid\Routing\Exception
