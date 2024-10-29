@@ -1005,7 +1005,7 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         foreach ($array as $key => $value)
         {
             if($value instanceof Main\File)
-            $array[$key] = $value->pathToUri(true);
+            $value = $value->pathToUri(true);
 
             elseif($value instanceof Cell)
             $value = $value->value();
