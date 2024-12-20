@@ -49,6 +49,14 @@ class Request extends Main\Request
     }
 
 
+    // isPathApi
+    // retourne vrai si la requête semble être un api
+    final public function isPathApi():bool
+    {
+        return str_starts_with($this->path(),'/api/') && strlen($this->path()) > 5;
+    }
+
+
     // manageRedirect
     // vérifie la requête et manage les redirections possibles
     // certaines errors vont générer un code http 400 plutôt que 404 (bad request)
@@ -64,6 +72,12 @@ class Request extends Main\Request
         $redirect = $this->redirect();
         $hasExtension = $this->hasExtension();
         $argumentNotCli = $this->isPathArgumentNotCli();
+        $isApi = $this->isPathApi();
+
+        // ajouté récemment pour pouvoir éviter la redirection de language si c'est un api
+        if($isApi)
+        $requestInvalid = false;
+        else
         $requestInvalid = (!empty($redirect) || $argumentNotCli);
 
         // externalPost

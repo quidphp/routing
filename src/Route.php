@@ -658,8 +658,15 @@ abstract class Route extends Main\ArrObj implements Main\Contract\Meta
         {
             $return = $this->trigger();
 
-            if($shouldCache === true && is_string($return) && strlen($return))
-            $class::store($context,$return);
+            if($shouldCache === true)
+            {
+                // added to handle caching of api calls
+                if(is_array($return))
+                $return = Base\Json::encode($return);
+
+                if(is_string($return) && strlen($return))
+                $class::store($context,$return);
+            }
         }
 
         if(is_string($return))
